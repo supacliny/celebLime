@@ -77,6 +77,7 @@ def verify():
                          'friends_count': user.friends_count,
                          'geo_enabled': user.geo_enabled,
                          'id': user.id,
+                         'ip': request.access_route[0],
                          'lang': user.lang,
                          'location': user.location,
                          'last_logged_in': datetime.datetime.utcnow(),
@@ -95,6 +96,7 @@ def verify():
                          'screen_name': user.screen_name,
                          'statuses_count': user.statuses_count,
                          'time_zone': user.time_zone,
+                         'total_logins': 1,
                          'url': user.url,
                          'utc_offset': user.utc_offset,
                          'verified': user.verified }
@@ -108,6 +110,7 @@ def verify():
         # maintain the original added_at field
         if already_user:
             user_details['added_at'] = already_user['added_at']
+            user_details['total_logins'] = already_user['total_logins'] + 1
 
         # now update that user
         try:
@@ -166,33 +169,3 @@ def not_found(error=None):
 if __name__ == '__main__':
     app.run(port=8000)
 
-# Tweepy User API variables
-#  'contributors_enabled' 
-#  'created_at'
-#  'description'
-#  'favourites_count'
-#  'followers_count'
-#  'following'
-#  'friends_count'
-#  'geo_enabled'
-#  'id'
-#  'lang'
-#  'location'
-#  'name'
-#  'notifications'
-#  'profile_background_color'
-#  'profile_background_image_url'
-#  'profile_background_tile'
-#  'profile_image_url'
-#  'profile_link_color'
-#  'profile_sidebar_border_color'
-#  'profile_sidebar_fill_color'
-#  'profile_text_color'
-#  'profile_use_background_image'
-#  'protected'
-#  'screen_name'
-#  'statuses_count'
-#  'time_zone'
-#  'url'
-#  'utc_offset'
-#  'verified'

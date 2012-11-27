@@ -1,0 +1,132 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>celebLime</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/static/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+    <link href="/static/css/docs.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/prettify.css" rel="stylesheet">
+    <link href="/static/css/index.css" rel="stylesheet">
+
+    <!-- Le javascript -->
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap-tooltip.js"></script>
+    <script src="/static/js/bootstrap-tab.js"></script>
+    <script>
+        $(function() {
+
+        $(".celeb").click(function() {
+          document.location.href = "celeb/" + $(this).attr("rel");
+        });
+
+        });
+
+        $(document).ready(function () {
+          $("[rel=tooltip]").tooltip();
+        });
+
+        $(function () {
+          $('.tabs a:last').tab('show')
+        });
+    </script>
+ </head>
+
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+        {% if not logged_in %}
+          <a class="manage" href="{{ url_for('login') }}">login</a>
+        {% else %}
+          <a class="manage" href="{{ url_for('logout') }}">logout</a>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit">
+        <h1>Look. Listen. <span rel="tooltip" title="Lime (from Trinidad) [verb]: to hang out or party.">Lime.</span></h1>
+        <p>Sync your music with the playlists of celebrities.</p>
+      </div>
+
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#celebrities" data-toggle="tab">Celebrities</a></li>
+      <li><a href="#fans" data-toggle="tab">Fans</a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade in active" id="celebrities">
+       <div class="row">
+
+      <!-- row of columns -->
+        <div rel="Lebron" class="span4 celeb" style="background-image: url('/static/img/photos/lebron.jpg'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
+          <h1>LeBron James</h1>
+          <div class="headphones">
+            <highlight style="float: left">Now Playing</highlight><div class="name">Help is coming</div><div class="by">by</div><div class="artist">T.I.</div>
+          </div>
+        </div>
+
+        <div rel="Lebron" class="span4 celeb" style="background-image: url('/static/img/photos/kobe.jpg'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
+          <h1>Kobe Bryant</h1>
+          <div class="headphones">
+            <highlight style="float: left">Now Playing</highlight><div class="name">Mojo so dope</div><div class="by">by</div><div class="artist">Kid...</div>
+          </div>
+        </div>
+ 
+        <div rel="Lebron" class="span4 celeb" style="background-image: url('/static/img/photos/jay-z.jpg'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
+          <h1>Jay-Z</h1>
+          <div class="headphones">
+            <highlight style="float: left">Now Playing</highlight><div class="name">Heartless</div><div class="by">by</div><div class="artist">Kanye...</div>
+          </div>
+        </div>
+
+      </div> <!-- /row -->
+     </div> <!-- /active -->
+
+     <div class="tab-pane fade" id="fans">
+      {% for c in celebs %}
+
+      {% if loop.first  %}
+        <div class="row">
+      {% else %}
+        {% if loop.index is divisibleby 3 %}
+          <div class="row">
+        {% endif %}
+      {% endif %}  
+
+        <div rel="{{c.auid}}" class="span4 song celeb" style="color: #eeeddd; padding: 10px">
+              <div class="thumb" style="background-image: url('{{c.pictureSM}}')"></div>
+              <div class="rowA">
+                  <h2>{{c.name}}</h2>&nbsp
+              </div>
+              <div class="rowB">
+                  <highlight>Now Playing</highlight><img src="/static/img/icons/headphones.png" width="25" height="25" style="padding-bottom: 4px; padding-left:10px">
+              </div>
+        </div>  
+
+      {% if loop.index is divisibleby 3 %}
+      </div>
+      {% endif %}
+
+      {% endfor %}
+      
+      </div> <!-- /fans -->
+     </div> <!-- /tab-content -->
+    </div> <!-- /container -->
+
+    <script type="text/javascript" src="/static/js/cookies.js"></script>
+    <script type="text/javascript" src="/static/js/login.js"></script>
+
+  </body>
+</html>

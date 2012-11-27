@@ -1,0 +1,280 @@
+body 
+{
+    padding-top: 60px;
+    padding-bottom: 40px;
+    font-family: klavika-bold;
+    background-color: #383839;
+    background-repeat: no-repeat;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#5c5f62), to(#383839));
+    background-image: -webkit-linear-gradient(#5c5f62, #383839);
+    background-image: -moz-linear-gradient(#5c5f62, #383839);
+    background-image: -o-linear-gradient(top, #5c5f62, #383839);
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#5c5f62), to(#383839));
+    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#5c5f62', EndColorStr='#383839', GradientType=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#5c5f62', EndColorStr='#383839', GradientType=0))";
+}
+button 
+{
+  background:none;
+  border:none; 
+  padding:10px;
+}
+highlight 
+{
+  opacity: 0.98;
+  padding: 2px 4px;
+  color: #d14;
+  font-size: 14px;
+  background-color: #2e2e2e;
+  border: 1px solid #e1e1e8;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+@font-face 
+{
+    font-family: digitalfont;
+    src: url('/static/font/ds-digib.ttf');
+}
+@font-face 
+{
+    font-family: klavika-bold;
+    src: url('/static/font/klavika-regular.otf');
+}
+@font-face 
+{
+    font-family: klavika-regular;
+    src: url('/static/font/klavika-regular.otf');
+}
+@font-face 
+{
+    font-family: klavika-light;
+    src: url('/static/font/klavika-light.otf');
+}
+.digital 
+{
+    font-family: digitalfont;
+    font-size: 18px;
+}
+.row 
+{
+    margin-bottom: 20px;
+}
+.now 
+{
+    color: #990000;
+    font-size: 12px;
+    font-weight: 500;
+}
+.headphones 
+{
+    opacity: 0.80;
+    height: 25px;
+    margin-top: 85px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 0px;
+    background-color: #2c2c2c;
+    background-image: -moz-linear-gradient(top, #333333, #222222);
+    background-image: -ms-linear-gradient(top, #333333, #222222);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#333333), to(#222222));
+    background-image: -webkit-linear-gradient(top, #333333, #222222);
+    background-image: -o-linear-gradient(top, #333333, #222222);
+    background-image: linear-gradient(top, #333333, #222222);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#333333', endColorstr='#222222', GradientType=0);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+.hero-unit p 
+{
+  font-family: klavika-regular;
+  margin-left: -137px;
+  margin-top: -120px;
+  margin-bottom: 100px;
+  font-size: 18.5px;
+  font-weight: 100;
+  line-height: 27px;
+  color: #eeeddd;
+}
+.navbar .brand 
+{
+  float: left;
+  display: block;
+  padding: 10px 20px 10px;
+  margin-left: -15px;
+  font-size: 20px;
+  font-weight: 200;
+  line-height: 1;
+  color: #eeeddd;
+}
+.navbar .manage
+{
+  float: right;
+  display: block;
+  padding: 10px;
+  margin-left: 0px;
+  margin-right: -10px;
+  font-family: klavika-regular;
+  font-size: 20px;
+  font-weight: 200;
+  line-height: 1;
+  color: black;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .1), 0 0 30px rgba(255, 255, 255, .125);
+}
+.navbar .manage:hover 
+{
+  text-decoration: none;
+}
+.tooltip-inner 
+{
+  max-width: 300px;
+  padding: 3px 8px;
+  color: #eeeddd;
+  text-align: center;
+  text-decoration: none;
+  background-color: #2c2c2c;
+  .border-radius(4px);
+}
+.name
+{
+  font-family: digitalfont;
+  font-size: 20px;
+  opacity: 0.90;
+  color: #eeeddd;
+  float: left;
+  padding-top: 3px;
+  padding-right: 5px;
+  padding-left: 5px;
+  padding-bottom: 8px;
+}
+.artist
+{
+  font-family: digitalfont;
+  font-size: 16px;
+  opacity: 0.90;
+  color: #eeeddd;
+  float: left;
+  padding-top: 4px;
+}
+.listen
+{
+  font-family: klavika-regular;
+  font-size: 18px;
+  float: left;
+  padding-right: 5px;
+  color: #eeeaaa;
+}
+.by
+{
+  font-family: klavika-regular;
+  font-size: 14px;
+  float: left;
+  padding-top: 5px;
+  padding-right: 5px;
+  color: #eeeaaa;
+}
+.date
+{
+  font-family: arial;
+  font-size: 14px;
+  font-weight: bold;
+  opacity: 0.90;
+  color: #eeeddd;
+  float: left;
+}
+.song
+{
+  background-color: #2c2c2c;
+  opacity: 0.90;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  width: 280px;
+  height: 50px;
+}
+.thumb
+{
+  width: 50px;
+  height: 50px;
+  float: left;
+  margin: 0px 10px 0px 0px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+.rowA h2
+{
+   width: 100%;
+   height: 12px;
+   margin-top: -5px;
+   margin-left: 60px;
+   vertical-align: middle
+}
+.rowB
+{
+   width: 100%;
+   vertical-align: middle
+   padding-below: 5px;
+}
+.nav 
+{
+  margin-left: 0;
+  margin-bottom: 18px;
+  list-style: none;
+}
+.nav-tabs 
+{
+  font-size: 20px;
+  border-bottom: 2px solid #2e2e2e;
+}
+.nav-tabs > li 
+{
+  margin-bottom: -1px;
+}
+.nav-tabs > li > a 
+{
+  font-family: klavika-light;  
+  padding-top: 8px;
+  padding-bottom: 8px;
+  line-height: 18px;
+  border: 1px solid transparent;
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li > a:hover 
+{
+  font-family: klavika-light;
+  color: #d14; 
+  background-color: #2e2e2e;
+  border-color: #2e2e2e #2e2e2e #2e2e2e;
+}
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover 
+{
+  font-family: klavika-bold;   
+  color: #eeeddd;
+  background-color: #2e2e2e;
+  border: 1px solid #2e2e2e;
+  border-bottom-color: transparent;
+  cursor: default;
+}
+.nav-tabs > li > a 
+{
+  color: #eeeddd;
+  background-color: #2e2e2e;
+  padding-right: 12px;
+  padding-left: 12px;
+  margin-right: 2px;
+  line-height: 14px;
+}
+.span4 h1
+{
+  color: #eeeddd;
+}

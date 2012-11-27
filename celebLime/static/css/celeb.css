@@ -1,0 +1,486 @@
+body 
+{
+  font-family: klavika-bold;
+  padding-top: 60px;
+  padding-bottom: 40px;
+  background-repeat: repeat;
+  background-attachment: fixed;
+}
+button 
+{
+  background:none;
+  border:none; 
+  padding:10px;
+}
+highlight 
+{
+  opacity: 0.98;
+  padding: 2px 4px;
+  color: #d14;
+  font-size: 14px;
+  background-color: #2e2e2e;
+  border: 1px solid #e1e1e8;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+@font-face 
+{
+  font-family: digitalfont;
+  src: url('/static/font/ds-digib.ttf');
+}
+@font-face 
+{
+  font-family: klavika-bold;
+  src: url('/static/font/klavika-regular.otf');
+}
+@font-face 
+{
+  font-family: klavika-regular;
+  src: url('/static/font/klavika-regular.otf');
+}
+.navbar .brand 
+{
+  float: left;
+  display: block;
+  padding: 10px 20px 10px;
+  margin-left: -15px;
+  font-size: 20px;
+  font-weight: 200;
+  line-height: 1;
+  color: #eeeddd;
+}
+.navbar .manage
+{
+  float: right;
+  display: block;
+  padding: 10px;
+  margin-left: 0px;
+  margin-right: -10px;
+  font-family: klavika-regular;
+  font-size: 20px;
+  font-weight: 200;
+  line-height: 1;
+  color: black;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .1), 0 0 30px rgba(255, 255, 255, .125);
+}
+.navbar .manage:hover 
+{
+  text-decoration: none;
+}
+.digital 
+{
+  font-family: digitalfont;
+  font-size: 18px;
+}
+.celebname 
+{
+  opacity: 0.90;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: #2c2c2c;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+}
+.celebname h1 
+{
+  padding-top: 5px;
+  margin-top: 0px;
+  margin-bottom: -5px;
+  margin-left: 0px;
+  font-size: 50px;
+  line-height: 1;
+  color: #eeeddd;
+  letter-spacing: -1px;
+}
+.blackback 
+{
+  background-color: #2c2c2c;
+  opacity: 0.90;
+  color: #eeeddd;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+}
+.playlists
+{
+  margin-left: 0px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  width: 560px;
+}
+.playlists_header 
+{
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  margin-bottom: 0px;
+}
+.playlist_header 
+{
+  margin-left: 50px;
+  width: 500px;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  margin-top: 10px;
+}
+.playlist_container 
+{
+  margin-top:5px;
+  margin-left:150px;
+  width: 410px;
+  padding-top:2px;
+  padding-bottom:10px;
+}
+.playlist
+{
+  color: #eeeddd;
+  padding-bottom: 5px;
+}
+.toplists
+{
+  margin-left: 100px;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-bottom: -5px;
+  width: 300px;
+}
+.toplists_header 
+{
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  margin-bottom:5px;
+}
+.toplist_header 
+{
+  margin-left:30px;
+  padding:10px;
+  width:700px;
+}
+.toplist_container 
+{
+  margin-top:5px;
+  margin-left:0px;
+  width:300px;
+  padding-top:2px;
+  padding-bottom:10px;
+}
+.toplist
+{
+  color: #eeeddd;
+  padding-bottom: 10px;
+}
+.track
+{
+  background-color: #585858;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  width: 280px;
+  height: 35px;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.trackname
+{
+  font-family: digitalfont;
+  font-size: 16px;
+  opacity: 0.90;
+  color: #eeeddd;
+  float: left;
+  padding-top: 10px;
+  padding-right: 5px;
+  padding-bottom: 10px;
+}
+.trackartist
+{
+  font-family: digitalfont;
+  font-size: 16px;
+  opacity: 0.90;
+  color: #eeeddd;
+  float: left;
+  padding-top: 10px;
+  padding-right: 5px;
+  padding-bottom: 10px;
+}
+.listenwith
+{
+  font-family: klavika-regular;
+  font-size: 18px;
+  float: left;
+  padding-top: 10px;
+  padding-right: 5px;
+  padding-bottom: 10px;
+  padding-right: 5px;
+  color: #eeeaaa;
+}
+.listenwithcontainer
+{
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  width: 280px;
+  height: 190px;
+  padding: 10px;
+}
+.listenwiththumb
+{
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px
+}
+.leftcol 
+{
+  margin-left:40px;
+  margin-right: 20px;
+  float:left;
+  width: 400px;
+}
+.rightcol 
+{
+  margin-left:40px;
+  margin-right: 80px;
+  float:right;
+  width: 400px;
+}
+.wrap 
+{
+  width:1000px;
+  margin:0 auto;
+}
+.number
+{
+  font-family: klavika-regular;
+  font-size: 18px;
+  opacity: 0.90;
+  color: #eeeaaa;
+  float: left;
+  padding-right: 5px;
+  padding-top: 10px;
+}
+.name
+{
+  font-family: digitalfont;
+  font-size: 20px;
+  opacity: 0.90;
+  color: #eeeddd;
+  float: left;
+  padding-top: 10px;
+  padding-right: 5px;
+  padding-bottom: 10px;
+}
+.artist
+{
+  font-family: digitalfont;
+  font-size: 16px;
+  opacity: 0.90;
+  color: #eeeddd;
+  float: left;
+  padding-top: 10px;
+}
+.listen
+{
+  font-family: klavika-regular;
+  font-size: 18px;
+  float: left;
+  padding-right: 5px;
+  color: #eeeaaa;
+}
+.by
+{
+  font-family: klavika-regular;
+  font-size: 14px;
+  float: left;
+  padding-top: 11px;
+  padding-right: 5px;
+  color: #eeeaaa;
+}
+.date
+{
+  font-family: arial;
+  font-size: 14px;
+  font-weight: bold;
+  opacity: 0.90;
+  color: #eeeddd;
+  float: left;
+}
+.song
+{
+  background-color: #585858;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  width: 390px;
+  height: 70px;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.thumb
+{
+  width: 50px;
+  height: 50px;
+  float: left;
+  padding-right: 0px;
+  margin: 10px 10px 10px 10px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+.headthumb
+{
+  width: 40px;
+  height: 40px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 0px;
+  margin-right: 10px;
+  float: left;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+.rowA
+{
+   width: 100%;
+   height: 42px;
+   padding-left: 10px;
+   vertical-align: middle
+}
+.rowB
+{
+   width: 100%;
+   padding-left: 10px;
+   vertical-align: middle
+}
+.spotify
+{
+  display: none;
+  float: right;
+  margin-right: 15px;
+  background-color: #383838;
+}
+.spotifylist
+{
+  display: none;
+  float: right;
+  margin-right: 10px;
+  background-color: #383838;
+}
+.spotifyartist
+{
+  display: none;
+  float: right;
+  margin-right: 15px;
+  background-color: #383838;
+}
+.itunes
+{
+  display: none;
+  float: right;
+  margin-right: 3px;
+  margin-top: -1px;
+  background-color: #383838;
+}
+.song:hover
+{
+  background-color: #383838;
+  color: transparent;
+  text-shadow: 0 0 4px #cacaca;
+
+}
+.song:hover .spotify
+{
+  display: block;
+}
+.song:hover .itunes
+{
+  display: block;
+}
+.track:hover
+{
+  background-color: #383838;
+  color: transparent;
+  text-shadow: 0 0 4px #cacaca;
+}
+.track:hover .spotify
+{
+  display: block;
+}
+.track:hover .itunes
+{
+  display: block;
+}
+.track:hover .spotifyartist
+{
+  display: block;
+}
+.playlist_header:hover
+{
+  background-color: #383838;
+  color: transparent;
+  text-shadow: 0 0 1px #cacaca;
+}
+.playlist_header:hover .spotifylist
+{
+  display: block;
+}
+.realplaylist .rowB .by 
+{
+    padding-top:0px;
+}
+.realplaylist .rowB .artist 
+{
+    padding-top:0px;
+}
+.followbutton
+{
+  font-family: klavika-regular;
+  font-size: 16px;
+  opacity: 0.90;
+  color: #eeeaaa;
+  background-color: #1c1c1c;
+  border: 2px solid #333333;
+  float: right;
+  margin-top: 8px;
+  margin-right: 0px;
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 2px;
+}
+.followbutton:hover 
+{
+  text-decoration: none;
+  color: #eeeaaa;
+}
+.numfollowers
+{
+  font-family: klavika-regular;
+  font-size: 16px;
+  opacity: 0.90;
+  color: #aaaddd;
+  background-color: #2c2c2c;
+  float: right;
+  margin-top: 10px;
+  margin-right: 5px;
+  padding-top: 5px;
+  padding-bottom: 2px;
+}
+.followers
+{
+  font-family: klavika-regular;
+  font-size: 16px;
+  opacity: 0.90;
+  color: #eeeddd;
+  background-color: #2c2c2c;
+  float: right;
+  margin-top: 10px;
+  margin-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 2px;
+}

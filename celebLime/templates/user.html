@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>{{user.name}}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- Le styles -->
+        <link href="/static/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+        <link href="/static/css/docs.css" rel="stylesheet">
+        <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="/static/css/bootstrap.css" rel="stylesheet">
+        <link href="/static/css/prettify.css" rel="stylesheet">
+        <link href="/static/css/celeb.css" rel="stylesheet">
+
+        <!-- Le javascript -->
+        <script src="/static/js/jquery.min.js"></script>
+        <script>
+            $(function () {
+
+            $(".spotify").click(function() {
+                var spid = $(this).attr("rel").split('/').pop();
+                document.location.href = "spotify:track:" + spid;
+            });
+
+            $(".spotifylist").click(function(event) {
+                event.stopPropagation();
+                var spid = $(this).attr("rel").split('/').pop();
+                var userid = $(this).attr("rel").split('/');
+                var href = "spotify:user:" + userid[4] + ":playlist:" + spid;
+                document.location.href = href;
+            });
+
+            $(".itunes").click(function() {
+                var iid = $(this).attr("rel").split('/').pop();
+                document.location.href = "itms://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewArtist?id=" + iid;
+            });
+
+         
+            $(".innercollapsable").hide();
+
+            $(".default").show();
+
+            $(".outerclickable").click(
+            function() {
+            z=$(this);
+            $(this).siblings(".innercollapsable").slideToggle();
+            });
+
+            });
+        </script>
+    </head>
+
+    <!-- Le html -->
+    <body style="background-image:url('/static/img/photos/basketball2.jpg');">
+        <div class="navbar navbar-fixed-top">
+          <div class="navbar-inner">
+            <div class="container">
+            {% if not logged_in %}
+              <a class="manage" href="{{ url_for('login') }}">login</a>
+            {% else %}
+              <a class="manage" href="{{ url_for('logout') }}">logout</a>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="container">
+
+            <div class="celebname">
+                <div class="headthumb" style="background-image: url('{{user.profile_image_url}}')"></div>
+                <h1>{{user.name}}<a class="followbutton" href="#">LISTEN</a><div class="followers">listeners</div><div class="numfollowers">{{user.followers_count}}</div></h1>
+            </div>
+
+            <div class="wrap">
+                <div class="leftcol">
+                    <div class="playlists">
+
+                        <h2 class="playlists_header outerclickable blackback">Recently listened:</h2>
+
+                        <div class="playlists_container innercollapsable default">
+
+                            <div class="playlist">
+
+                                {% if c.plays %}
+                                <div class="playlist_container blackback">
+                                {% else %}
+                                <div class="playlist_container blackback">
+                                <h3 style="color: #9c9c9c; margin-left: 10px; margin-top: 5px; margin-bottom: -5px;">Listened to no songs recently but I will soon!</h3>
+                                {% endif %}
+
+                                    {% for s in c.plays %}
+                                    <div class="song">
+                                        <div class="thumb" style="background-image: url('{{s.image}}')"></div>
+                                        <div class="rowA">
+                                            <div class="name">{{truncate(s.title, 20)}}</div><div class="by">by</div><div class="artist">{{truncate(s.artist, 20)}}</div>&nbsp
+                                        </div>
+                                        <div class="rowB">
+                                            <div class="listen">Listened</div><div class="date">{{s.time}}</div><div class="spotify" rel="{{s.url}}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="{{s.url}}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="playlists realplaylist">
+                    <h2 class="playlists_header outerclickable blackback">Playlists:</h2>
+
+                    <div class="playlists_container innercollapsable">
+                        {% for playlist in playlists %}
+
+                        <div class="playlist">
+                            <h3 class="playlist_header outerclickable blackback">{{playlist.name}}<div class="spotifylist" rel="{{playlist._id}}"><img src="/static/img/icons/spotify-logo.png" width="22" height="20" style="vertical-align: top"/></div></h3>
+
+                            <div class="playlist_container innercollapsable blackback">
+
+                                {% for song in playlist.songs %}
+                                <div class="song">
+                                    <div class="thumb" style="background-image: url('{{song.artwork}}')"></div>
+                                    <div class="rowA">
+                                        <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
+                                    </div>
+                                    <div class="rowB">
+                                        <div class="listen">Listened</div><div class="date">{{song.duration}}</div><div class="spotify" rel="{{song.songid}}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="{{song.songid}}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+                </div>
+
+                <div class="rightcol">  
+
+                    <div class="toplists">
+
+                        <h2 class="toplists_header outerclickable blackback">Listens with:</h2>
+
+                        <div class="toplists_container innercollapsable default">
+
+                            <div class="toplist">
+
+                                <div class="listenwithcontainer blackback">
+                                        <div class="listenwiththumb"><img src="/static/img/icons/beats.jpg" width="100%" height="100%"/></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+          
+                    <div class="toplists">
+
+                        <h2 class="toplists_header outerclickable blackback">Top Tracks:</h2>
+
+                        {% if c.plays %} 
+                        <div class="toplists_container innercollapsable">                       
+                            <div class="toplist">
+                                <div class="toplist_container blackback">
+                                    {% for s in c.plays %}
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">{{ loop.index }}.</div><div class="trackname">{{truncate(s.title, 20)}}</div><div style="padding-top: 8px"><div class="spotify" rel="{{s.url}}"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="{{s.url}}"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+
+                        {% endif %}
+                    </div>
+
+                    <div class="toplists">
+
+                        <h2 class="toplists_header outerclickable blackback">Favorite Artists:</h2>
+
+                        {% if c.plays %}
+                        <div class="toplists_container innercollapsable">
+                            <div class="toplist">
+                                <div class="toplist_container blackback">
+                                    {% for s in c.plays %}
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">{{ loop.index }}.</div><div class="trackartist">{{truncate(s.title, 20)}}</div><div style="padding-top: 8px"><div class="spotify" rel="{{s.url}}"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="{{s.url}}"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+
+                        {% endif %}
+                    </div>
+ 
+                </div> <!-- /rightcol -->
+            </div> <!-- /wrap -->
+        </div> <!-- /container -->
+
+    </body>
+</html>

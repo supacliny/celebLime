@@ -24,7 +24,7 @@
         $(function() {
 
         $(".celeb").click(function() {
-          document.location.href = "celeb/" + $(this).attr("rel");
+          document.location.href = "user/" + $(this).attr("rel");
         });
 
         });
@@ -67,35 +67,36 @@
 
     <div class="tab-content">
       <div class="tab-pane fade in active" id="celebrities">
+      {% for c in celebs %}
+
+      {% if loop.first  %}
        <div class="row">
+      {% else %}
+        {% if loop.index is divisibleby 3 %}
+          <div class="row">
+        {% endif %}
+      {% endif %}  
+
 
       <!-- row of columns -->
-        <div rel="Lebron" class="span4 celeb" style="background-image: url('/static/img/photos/lebron.jpg'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
-          <h1>LeBron James</h1>
+        <div rel="{{c.id}}" class="span4 celeb" style="background-image: url('{{c.profile_image_url}}'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
+          <h1>{{c.name}}</h1>
           <div class="headphones">
             <highlight style="float: left">Now Playing</highlight><div class="name">Help is coming</div><div class="by">by</div><div class="artist">T.I.</div>
           </div>
         </div>
 
-        <div rel="Lebron" class="span4 celeb" style="background-image: url('/static/img/photos/kobe.jpg'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
-          <h1>Kobe Bryant</h1>
-          <div class="headphones">
-            <highlight style="float: left">Now Playing</highlight><div class="name">Mojo so dope</div><div class="by">by</div><div class="artist">Kid...</div>
-          </div>
-        </div>
- 
-        <div rel="Lebron" class="span4 celeb" style="background-image: url('/static/img/photos/jay-z.jpg'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
-          <h1>Jay-Z</h1>
-          <div class="headphones">
-            <highlight style="float: left">Now Playing</highlight><div class="name">Heartless</div><div class="by">by</div><div class="artist">Kanye...</div>
-          </div>
-        </div>
+      {% if loop.index is divisibleby 3 %}
+      </div>
+      {% endif %}
+
+      {% endfor %}
 
       </div> <!-- /row -->
      </div> <!-- /active -->
 
      <div class="tab-pane fade" id="fans">
-      {% for c in celebs %}
+      {% for f in fans %}
 
       {% if loop.first  %}
         <div class="row">
@@ -105,10 +106,10 @@
         {% endif %}
       {% endif %}  
 
-        <div rel="{{c.auid}}" class="span4 song celeb" style="color: #eeeddd; padding: 10px">
-              <div class="thumb" style="background-image: url('{{c.pictureSM}}')"></div>
+        <div rel="{{f.id}}" class="span4 song celeb" style="color: #eeeddd; padding: 10px">
+              <div class="thumb" style="background-image: url('{{f.profile_image_url}}')"></div>
               <div class="rowA">
-                  <h2>{{c.name}}</h2>&nbsp
+                  <h2>{{f.name}}</h2>&nbsp
               </div>
               <div class="rowB">
                   <highlight>Now Playing</highlight><img src="/static/img/icons/headphones.png" width="25" height="25" style="padding-bottom: 4px; padding-left:10px">
@@ -124,9 +125,6 @@
       </div> <!-- /fans -->
      </div> <!-- /tab-content -->
     </div> <!-- /container -->
-
-    <script type="text/javascript" src="/static/js/cookies.js"></script>
-    <script type="text/javascript" src="/static/js/login.js"></script>
 
   </body>
 </html>

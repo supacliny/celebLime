@@ -20,6 +20,10 @@
         <script>
             $(function () {
 
+            $(".song").click(function() {
+                openWindow($(this).attr("rel"));
+            });    
+
             $(".spotify").click(function() {
                 var spid = $(this).attr("rel").split('/').pop();
                 document.location.href = "spotify:track:" + spid;
@@ -49,6 +53,11 @@
             $(this).siblings(".innercollapsable").slideToggle();
             });
 
+            function openWindow( url )
+            {
+              window.open(url, '_blank');
+              window.focus();
+            }
             });
         </script>
     </head>
@@ -70,35 +79,39 @@
         <div class="container">
 
             <div class="celebname">
-                <div class="headthumb" style="background-image: url('{{user.profile_image_url}}')"></div>
-                <h1>{{user.name}}<a class="followbutton" href="#">LISTEN</a><div class="followers">listeners</div><div class="numfollowers">{{user.followers_count}}</div></h1>
+                <div class="headthumb" style="background-image: url('{{ user.profile_image_url }}')"></div>
+                <h1>{{ user.name }}<a class="followbutton" href="#">LISTEN</a><div class="followers">listeners</div><div class="numfollowers">{{ user.followers_count }}</div></h1>
             </div>
 
             <div class="wrap">
                 <div class="leftcol">
                     <div class="playlists">
 
-                        <h2 class="playlists_header outerclickable blackback">Recently listened:</h2>
+                        <h2 class="playlists_header outerclickable blackback">Recently listened: </h2>
 
                         <div class="playlists_container innercollapsable default">
 
                             <div class="playlist">
 
-                                {% if c.plays %}
+                                {% if streaming %}
                                 <div class="playlist_container blackback">
                                 {% else %}
                                 <div class="playlist_container blackback">
                                 <h3 style="color: #9c9c9c; margin-left: 10px; margin-top: 5px; margin-bottom: -5px;">Listened to no songs recently but I will soon!</h3>
                                 {% endif %}
 
-                                    {% for s in c.plays %}
-                                    <div class="song">
-                                        <div class="thumb" style="background-image: url('{{s.image}}')"></div>
+                                    {% for song in streaming %}
+                                    <div class="song" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
+                                        <div class="thumb" style="background-image: url('{{ song.artwork }}')"></div>
                                         <div class="rowA">
-                                            <div class="name">{{truncate(s.title, 20)}}</div><div class="by">by</div><div class="artist">{{truncate(s.artist, 20)}}</div>&nbsp
+                                            <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
                                         </div>
                                         <div class="rowB">
-                                            <div class="listen">Listened</div><div class="date">{{s.time}}</div><div class="spotify" rel="{{s.url}}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="{{s.url}}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                        {% if now %}
+                                            <highlight style="float: left">Now Playing</highlight>
+                                        {% else %}
+                                            <div class="listen">Listened</div><div class="date">{{ format_date(song.played_at) }}</div>
+                                        {% endif %}
                                         </div>
                                     </div>
                                     {% endfor %}
@@ -115,18 +128,18 @@
                         {% for playlist in playlists %}
 
                         <div class="playlist">
-                            <h3 class="playlist_header outerclickable blackback">{{playlist.name}}<div class="spotifylist" rel="{{playlist._id}}"><img src="/static/img/icons/spotify-logo.png" width="22" height="20" style="vertical-align: top"/></div></h3>
+                            <h3 class="playlist_header outerclickable blackback">{{ playlist.name }}</h3>
 
                             <div class="playlist_container innercollapsable blackback">
 
                                 {% for song in playlist.songs %}
-                                <div class="song">
-                                    <div class="thumb" style="background-image: url('{{song.artwork}}')"></div>
+                                <div class="song" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
+                                    <div class="thumb" style="background-image: url('{{ song.artwork }}')"></div>
                                     <div class="rowA">
                                         <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
                                     </div>
                                     <div class="rowB">
-                                        <div class="listen">Listened</div><div class="date">{{song.duration}}</div><div class="spotify" rel="{{song.songid}}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="{{song.songid}}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                        <div class="listen">Listened</div><div class="date">{{ song.duration }}</div>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -163,14 +176,14 @@
 
                         <h2 class="toplists_header outerclickable blackback">Top Tracks:</h2>
 
-                        {% if c.plays %} 
+                        {% if top %} 
                         <div class="toplists_container innercollapsable">                       
                             <div class="toplist">
                                 <div class="toplist_container blackback">
-                                    {% for s in c.plays %}
+                                    {% for song in top %}
                                     <div class="track">
                                         <div class="rowA">
-                                            <div class="number">{{ loop.index }}.</div><div class="trackname">{{truncate(s.title, 20)}}</div><div style="padding-top: 8px"><div class="spotify" rel="{{s.url}}"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="{{s.url}}"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                            <div class="number">{{ loop.index }}.</div><div class="trackname">{{ song.title | truncate(20) }}</div>
                                         </div>
                                     </div>
                                     {% endfor %}
@@ -186,14 +199,14 @@
 
                         <h2 class="toplists_header outerclickable blackback">Favorite Artists:</h2>
 
-                        {% if c.plays %}
+                        {% if top %}
                         <div class="toplists_container innercollapsable">
                             <div class="toplist">
                                 <div class="toplist_container blackback">
-                                    {% for s in c.plays %}
+                                    {% for song in top %}
                                     <div class="track">
                                         <div class="rowA">
-                                            <div class="number">{{ loop.index }}.</div><div class="trackartist">{{truncate(s.title, 20)}}</div><div style="padding-top: 8px"><div class="spotify" rel="{{s.url}}"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="{{s.url}}"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                            <div class="number">{{ loop.index }}.</div><div class="trackartist">{{ song.artist| truncate(20) }}</div>
                                         </div>
                                     </div>
                                     {% endfor %}

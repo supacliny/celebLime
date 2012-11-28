@@ -6,6 +6,7 @@ import tweepy
 import json
 import datetime
 import pytz
+import jinja2
 
 CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"
@@ -145,9 +146,9 @@ def user(userid):
     userid = int(userid)
     user = mongo.db.users.find_one({"id": userid})
 
-    playlists_cursor = mongo.db.playlists.find({"id": userid})
-
     playlists = []
+
+    playlists_cursor = mongo.db.playlists.find({"id": userid})
 
     for playlist in playlists_cursor:
 
@@ -163,9 +164,46 @@ def user(userid):
 
         playlists.append(playlist)
 
-    c = []
-    
-    return render_template("user.html", user=user, playlists=playlists, c=c, logged_in=logged_in)
+    streaming = []
+
+    # sort in descending order by date
+    streaming_cursor = mongo.db.streaming.find({"id": userid}).limit(25).sort([("played_at", -1)])
+
+    for song in streaming_cursor:
+
+        songid = song["songid"]
+
+        songinfo = mongo.db.songs.find_one({"songid": songid})
+
+        songinfo["played_at"] = song["played_at"]
+
+        streaming.append(songinfo)
+
+    # determine if streaming now?
+    now = False
+
+    if streaming:
+        most_recent_song = streaming[0]
+        song_start = most_recent_song["played_at"]
+        song_duration = most_recent_song["duration"]
+
+ #       if ((song_start + datetime.timedelta(seconds=song_duration)) >= datetime.datetime.utcnow()):
+        now = True
+
+    top = []
+
+    # sort in descending order by number of times played
+    top_cursor = mongo.db.streaming.find({"id": userid}).limit(10).sort([("number", -1)])
+
+    for song in top_cursor:
+
+        songid = song["songid"]
+
+        songinfo = mongo.db.songs.find_one({"songid": songid})
+
+        top.append(songinfo)
+
+    return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, now=now, logged_in=logged_in)
 
 
 
@@ -214,6 +252,15 @@ def not_found(error=None):
     resp.status_code = 404
 
     return resp
+
+def format_date(date_time):
+
+    if date_time.date() == datetime.datetime.today().date():
+        return date_time.strftime('Today at ' + '%I:%M:%S %p')
+
+
+# apply this jinja2 template
+app.jinja_env.globals.update(format_date=format_date)
 
 
 if __name__ == "__main__":

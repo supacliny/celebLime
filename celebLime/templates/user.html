@@ -58,6 +58,17 @@
               window.open(url, '_blank');
               window.focus();
             }
+ 
+            function doPoll(){
+                $.post("/poll/{{ user.id }}", function(data) {
+                    $(".stream").html(data);
+                    setTimeout(doPoll,30000);
+                });
+            }
+            $(document).ready(function() {
+              doPoll();
+            });
+
             });
         </script>
     </head>
@@ -101,19 +112,27 @@
                                 {% endif %}
 
                                     {% for song in streaming %}
-                                    <div class="song" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
-                                        <div class="thumb" style="background-image: url('{{ song.artwork }}')"></div>
-                                        <div class="rowA">
-                                            <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
+                                        {% if loop.index == 1 %}
+                                        <div class="song" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
+                                            <div class="thumb" style="background-image: url('{{ song.artwork }}')"></div>
+                                            <div class="rowA">
+                                                <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
+                                            </div>
+                                            <div class="rowB">
+                                                <div class="stream">Updating</div>
+                                            </div>
                                         </div>
-                                        <div class="rowB">
-                                        {% if now %}
-                                            <highlight style="float: left">Now Playing</highlight>
                                         {% else %}
-                                            <div class="listen">Listened</div><div class="date">{{ format_date(song.played_at) }}</div>
-                                        {% endif %}
+                                        <div class="song" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
+                                            <div class="thumb" style="background-image: url('{{ song.artwork }}')"></div>
+                                            <div class="rowA">
+                                                <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
+                                            </div>
+                                            <div class="rowB">
+                                                <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
+                                            </div>
                                         </div>
-                                    </div>
+                                        {% endif %}
                                     {% endfor %}
 
                                 </div>

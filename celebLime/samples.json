@@ -1,0 +1,24 @@
+{'added_at': datetime.today(),'access_key': 'demo', 'access_secret': 'demo','contributors_enabled': False,'created_at': datetime.today(),'description': '','favourites_count': 0,'followers_count': 1000,'following': False,'friends_count': 2,'geo_enabled': False,'id': 100000000,'ip': '18.0.0.1','lang': 'en', 'last_logged_in': datetime.today(), 'location': '','name': 'LeBron James','notifications': False,'profile_background_color': 'C0DEED','profile_background_image_url': 'http://a0.twimg.com/images/themes/theme1/bg.png','profile_background_tile': False,'profile_image_url': 'http://www.nba.com/media/act_lebron_james.jpg','profile_link_color': '0084B4','profile_sidebar_border_color': 'C0DEED', 'profile_sidebar_fill_color': 'DDEEF6','profile_text_color': '333333','profile_use_background_image': True,'protected': False,'screen_name': 'KingJames','statuses_count': 3000,'time_zone': None, 'total_logins': 10,'url': None,'utc_offset': None,'verified': True}
+
+{"name": "Sunday Night Jams", "added_at": datetime.today(), "access_key": "demo", "access_secret": "demo","id": 100000000, "screen_name": "KingJames", "songs": [{"songid": 0},{"songid": 44}]}
+
+
+{"songid": 0, "title": "How We Feeling", "album": "Habits & Contradictions", "artist": "Schoolboy Q", "album_artist": "Schoolboy Q", "genre": "Hip Hop", "composer": "", "duration": 192, "track_number": 12, "track_count": 18, "disc_number": 1, "disc_count": 1, "artwork": "http://cdn.respect-mag.com/wp-content/uploads/2012/01/SCHOOLBOY-Q-575x575.jpg?9d7bd4", "lyrics": "", "compilation": 1, "release_date": datetime(2012,1,1), "bpm": 60, "comments": "", "url": "", "cloud": 0}
+
+{"songid": 21, "title": "As High As Wu-Tang Get", "album": "Wu-Tang Forever", "artist": "Wu-Tang Clan", "album_artist": "Wu-Tang Clan", "genre": "Hip Hop", "composer": "", "duration": 157, "track_number": 6, "track_count": 11, "disc_number": 1, "disc_count": 2, "artwork": "https://twimg0-a.akamaihd.net/profile_images/1163524012/wu.jpg", "lyrics": "", "compilation": 1, "release_date": datetime(1997,5,5), "bpm": 121, "comments": "", "url": "", "cloud": 0}
+
+{"songid": 50, "title": "Bandz A Make Her Dance", "album": "Bandz A Make Her Dance featuring Lil Wayne and 2 Chainz", "artist": "Juicy J", "album_artist": "Juicy J", "genre": "Hip Hop", "composer": "", "duration": 280, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://static.globalgrind.com/sites/default/files/imagecache/article_images_540/images/2012_november/wiz-khalifa-juicy-j_0.jpeg", "lyrics": "", "compilation": 1, "release_date": datetime(2012,10,10), "bpm": 111, "comments": "", "url": "", "cloud": 0}
+
+
+{"songid": 44, "title": "Bird on a Wire", "album": "Bird on a Wire", "artist": "Action Bronson ft. Riff Raff", "album_artist": "Action Bronson", "genre": "Hip Hop", "composer": "", "duration": 199, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://cdn.stereogum.com/files/2012/02/Action-Bronson-Riff-Raff-Bird-On-A-Wire-608x341.jpg", "lyrics": "", "compilation": 1, "release_date": datetime(2012,6,6), "bpm": 85, "comments": "", "url": "", "cloud": 0}
+
+
+
+
+{"access_key": "demo", "access_secret": "demo","id": 100000000, "songid": 44, "played_at": datetime.today(), "number": 0}
+
+{"access_key": "demo", "access_secret": "demo","id": 100000000, "songid": 0, "played_at": datetime.today(), "number": 4}
+
+{"access_key": "demo", "access_secret": "demo","id": 100000000, "songid": 21, "played_at": datetime.today(), "number": 2}
+
+{"access_key": "demo", "access_secret": "demo","id": 100000000, "songid": 50, "played_at": datetime.today(), "number": 10}

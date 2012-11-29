@@ -71,9 +71,7 @@ def verify():
         api = tweepy.API(auth)
         user = api.me()
 
-        current_time = datetime.datetime.utcnow()
-        current_time = current_time.replace(tzinfo=pytz.utc)
-        current_time = datetime.datetime.astimezone(current_time, pytz.timezone("EST"))
+        current_time = datetime.datetime.today()
 
         user_details = { "added_at": current_time,
                          "access_key": auth.access_token.key,
@@ -179,17 +177,6 @@ def user(userid):
 
         streaming.append(songinfo)
 
-    # determine if streaming now?
-    now = False
-
-    if streaming:
-        most_recent_song = streaming[0]
-        song_start = most_recent_song["played_at"]
-        song_duration = most_recent_song["duration"]
-
- #       if ((song_start + datetime.timedelta(seconds=song_duration)) >= datetime.datetime.utcnow()):
-        now = True
-
     top = []
 
     # sort in descending order by number of times played
@@ -203,9 +190,37 @@ def user(userid):
 
         top.append(songinfo)
 
-    return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, now=now, logged_in=logged_in)
+    return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, logged_in=logged_in)
 
 
+@app.route("/poll/<userid>", methods = ["POST"])
+def poll(userid):
+
+    userid = int(userid)
+
+    # sort in descending order by date and return most recent song
+    recent_songs_cursor = mongo.db.streaming.find({"id": userid}).limit(25).sort([("played_at", -1)])
+
+    if recent_songs_cursor.count() > 0:
+
+        most_recent_song = recent_songs_cursor[0]
+
+        songid = most_recent_song["songid"]
+
+        songinfo = mongo.db.songs.find_one({"songid": songid})
+
+        songinfo["played_at"] = most_recent_song["played_at"]
+
+        song_start = most_recent_song["played_at"]
+        song_duration = songinfo["duration"]
+
+        if ((song_start + datetime.timedelta(seconds=song_duration)) >= datetime.datetime.today().replace(tzinfo=pytz.utc)):
+            return '<now>Now Playing</now>'
+        else:
+            return '<div class="listen">Listened</div><div class="date">' + str(format_date(songinfo["played_at"])) + '</div>'
+
+    else:
+            return ''
 
 ## API
 
@@ -253,13 +268,24 @@ def not_found(error=None):
 
     return resp
 
+
+# format return string according to day
 def format_date(date_time):
 
     if date_time.date() == datetime.datetime.today().date():
+ 
         return date_time.strftime('Today at ' + '%I:%M:%S %p')
 
+    if date_time.date() + datetime.timedelta(1) == datetime.datetime.today().date():
 
-# apply this jinja2 template
+        return date_time.strftime('Yesterday at ' + '%I:%M:%S %p')
+
+    else:
+
+        return date_time.strftime('%a %d %b %Y at %I:%M:%S %p')
+
+
+# now apply this jinja2 template
 app.jinja_env.globals.update(format_date=format_date)
 
 

@@ -12,17 +12,19 @@ button
   border:none; 
   padding:10px;
 }
-highlight 
+now
 {
   opacity: 0.98;
   padding: 2px 4px;
   color: #d14;
-  font-size: 14px;
+  font-size: 12px;
   background-color: #2e2e2e;
   border: 1px solid #e1e1e8;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
+  margin-top: -6px;
+  float: left;
 }
 @font-face 
 {

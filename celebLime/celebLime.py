@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 mongo = PyMongo(app)
 
-
+# when home page loads
 @app.route("/")
 def home():
     try:
@@ -36,6 +36,7 @@ def home():
     return render_template("index.html", fans=fans, celebs=celebs, logged_in=logged_in)
 
 
+# first half of twitter oauth - go to twitter login page, then redirect to home page
 @app.route("/login")
 def login():
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET, CALLBACK_URL)
@@ -50,12 +51,14 @@ def login():
     return redirect(redirect_url)
 
 
+# when we logout - not sure this is needed with twitter oauth
 @app.route("/logout")
 def logout():
     session.pop("logged_in", None)
     return redirect(url_for("home"))
 
 
+# second half of twitter oauth - exchange request token for access token
 @app.route("/verify")
 def verify():
     verifier = request.args["oauth_verifier"]
@@ -132,6 +135,7 @@ def verify():
     return redirect(url_for("home"))
 
 
+# when we visit a user profile page
 @app.route("/user/<userid>", methods = ["GET"])
 def user(userid):
 
@@ -193,6 +197,7 @@ def user(userid):
     return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, logged_in=logged_in)
 
 
+# ajax query to determine if the more recent listened song is being played
 @app.route("/poll/<userid>", methods = ["POST"])
 def poll(userid):
 
@@ -222,8 +227,8 @@ def poll(userid):
     else:
             return ''
 
-## API
 
+## API
 @app.route("/create", methods = ["POST"])
 def api_create_playlist():
 

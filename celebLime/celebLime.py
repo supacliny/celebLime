@@ -228,7 +228,8 @@ def poll(userid):
             return ''
 
 
-## API
+## API ##
+# create a playlist from JSON object
 @app.route("/create", methods = ["POST"])
 def api_create_playlist():
 

@@ -51,6 +51,12 @@ now
   font-weight: 200;
   line-height: 1;
   color: #eeeddd;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .1), 0 0 30px rgba(255, 255, 255, .125);
+}
+.navbar .brand:hover 
+{
+  text-decoration: none;
+  text-shadow: 0 0 4px #cacaca;
 }
 .navbar .manage
 {
@@ -63,12 +69,13 @@ now
   font-size: 20px;
   font-weight: 200;
   line-height: 1;
-  color: black;
+  color: #EEEDDD;
   text-shadow: 0 1px 0 rgba(255, 255, 255, .1), 0 0 30px rgba(255, 255, 255, .125);
 }
 .navbar .manage:hover 
 {
   text-decoration: none;
+  text-shadow: 0 0 4px #cacaca;
 }
 .digital 
 {

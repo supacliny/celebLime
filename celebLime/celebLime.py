@@ -29,17 +29,20 @@ mongo = PyMongo(app)
 # when home page loads
 @app.route("/")
 def home():
+
     try:
         logged_in = session["logged_in"]
+        name = session["user"].name
     except KeyError:
         logged_in = False
+        name = ""
 
     fans = mongo.db.users.find({"verified": False})
     celebs = mongo.db.users.find({"verified": True})
 
     fans = fans[0:2]
     celebs = celebs[0:2]
-    return render_template("index.html", fans=fans, celebs=celebs, logged_in=logged_in, debug=DEBUG)
+    return render_template("index.html", fans=fans, celebs=celebs, logged_in=logged_in, name=name, debug=DEBUG)
 
 
 # first half of twitter oauth - go to twitter login page, then redirect to home page
@@ -79,6 +82,7 @@ def verify():
         session["logged_in"] = True
         api = tweepy.API(auth)
         user = api.me()
+        session["user"] = user
 
         current_time = datetime.datetime.today()
 
@@ -147,8 +151,10 @@ def user(userid):
 
     try:
         logged_in = session["logged_in"]
+        name = session["user"].name
     except KeyError:
         logged_in = False
+        name = ""
 
     # must cast unicode to int
     userid = int(userid)
@@ -200,7 +206,7 @@ def user(userid):
 
         top.append(songinfo)
 
-    return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, logged_in=logged_in, debug=DEBUG)
+    return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, logged_in=logged_in, name=name, debug=DEBUG)
 
 
 # ajax query to determine if the more recent listened song is being played

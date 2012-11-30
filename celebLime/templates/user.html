@@ -102,9 +102,11 @@
           <div class="navbar-inner">
             <div class="container">
             {% if not logged_in %}
+              <a class="brand" href="{{ url_for('home') }}">celebLime</a>
               <a class="manage" href="{{ url_for('login') }}">login</a>
             {% else %}
-              <a class="manage" href="{{ url_for('logout') }}">logout</a>
+              <a class="brand" href="{{ url_for('home') }}">celebLime</a>
+              <div class="manage">Welcome {{ name }}!</div>
             {% endif %}
             </div>
           </div>

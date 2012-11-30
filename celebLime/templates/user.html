@@ -73,13 +73,21 @@
               window.open(url, '_blank');
               window.focus();
             }
- 
+            {% if debug %} 
             function doPoll(){
                 $.post("/poll/{{ user.id }}", function(data) {
                     $(".stream").html(data);
                     setTimeout(doPoll,30000);
                 });
             }
+            {% else %}
+            function doPoll(){
+                $.post("/projects/celebLime/poll/{{ user.id }}", function(data) {
+                    $(".stream").html(data);
+                    setTimeout(doPoll,30000);
+                });
+            }
+            {% endif %}
             $(document).ready(function() {
               doPoll();
             });

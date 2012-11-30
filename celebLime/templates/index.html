@@ -5,10 +5,12 @@
     <meta charset="utf-8">
     <title>celebLime</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="A web application that publishes music playlists from a mobile application by celebrities.">
+    <meta name="keywords" content="fanlime athlete celebrity fan music playlist">
+    <meta name="author" content="cvstechnolgy">
 
-    <!-- Le styles -->
+{% if debug %}
+    <!-- styles -->
     <link href="/static/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
     <link href="/static/css/docs.css" rel="stylesheet">
     <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
@@ -16,10 +18,25 @@
     <link href="/static/css/prettify.css" rel="stylesheet">
     <link href="/static/css/index.css" rel="stylesheet">
 
-    <!-- Le javascript -->
+    <!-- javascript -->
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/bootstrap-tooltip.js"></script>
     <script src="/static/js/bootstrap-tab.js"></script>
+{% else %}
+    <!-- styles -->
+    <link href="/projects/celebLime/static/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+    <link href="/projects/celebLime/static/css/docs.css" rel="stylesheet">
+    <link href="/projects/celebLime/static/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/projects/celebLime/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/projects/celebLime/static/css/prettify.css" rel="stylesheet">
+    <link href="/projects/celebLime/static/css/index.css" rel="stylesheet">
+
+    <!-- javascript -->
+    <script src="/projects/celebLime/static/js/jquery.min.js"></script>
+    <script src="/projects/celebLime/static/js/bootstrap-tooltip.js"></script>
+    <script src="/projects/celebLime/static/js/bootstrap-tab.js"></script>
+{% endif %}
+
     <script>
         $(function() {
 
@@ -54,7 +71,7 @@
 
     <div class="container">
 
-      <!-- Main hero unit for a primary marketing message or call to action -->
+      <!-- Main banner -->
       <div class="hero-unit">
         <h1>Look. Listen. <span rel="tooltip" title="Lime (from Trinidad) [verb]: to hang out or party.">Lime.</span></h1>
         <p>Sync your music with the playlists of celebrities.</p>
@@ -112,7 +129,7 @@
                   <h2>{{f.name}}</h2>&nbsp
               </div>
               <div class="rowB">
-                  <highlight>Now Playing</highlight><img src="/static/img/icons/headphones.png" width="25" height="25" style="padding-bottom: 4px; padding-left:10px">
+                  <highlight>Now Playing</highlight>
               </div>
         </div>  
 

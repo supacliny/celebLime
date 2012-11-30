@@ -3955,7 +3955,7 @@ a.thumbnail:hover {
 .hero-unit {
   padding: 160px;
   margin-bottom: 20px;
-  background-image:url('/static/img/photos/banner.jpg');
+  background-image:url('../img/photos/banner.jpg');
   background-color: #eeeeee;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;

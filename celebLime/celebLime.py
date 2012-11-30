@@ -8,13 +8,19 @@ import datetime
 import pytz
 import jinja2
 
+DEBUG = True
+
 CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"
 CONSUMER_SECRET = "cXfqDfMFBQutTMf9KpZWGt2HWDhBVxTajAqVDuFH7U"
-CALLBACK_URL = "http://127.0.0.1:8000/verify"
+
+if DEBUG: 
+    CALLBACK_URL = "http://127.0.0.1:8000/verify"
+else:
+    CALLBACK_URL = "http://www.cvstechnology.ca/projects/celebLime/verify"
+
 session = dict()
 
-DEBUG = True
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -33,7 +39,7 @@ def home():
 
     fans = fans[0:2]
     celebs = celebs[0:2]
-    return render_template("index.html", fans=fans, celebs=celebs, logged_in=logged_in)
+    return render_template("index.html", fans=fans, celebs=celebs, logged_in=logged_in, debug=DEBUG)
 
 
 # first half of twitter oauth - go to twitter login page, then redirect to home page
@@ -194,7 +200,7 @@ def user(userid):
 
         top.append(songinfo)
 
-    return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, logged_in=logged_in)
+    return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, logged_in=logged_in, debug=DEBUG)
 
 
 # ajax query to determine if the more recent listened song is being played
@@ -296,5 +302,8 @@ app.jinja_env.globals.update(format_date=format_date)
 
 
 if __name__ == "__main__":
-    app.run(port=8000)
 
+    if DEBUG:
+        app.run(port=8000)
+    else:
+        app.run()

@@ -1,0 +1,40 @@
+{% if streaming %}
+<div class="playlist_container blackback">
+{% else %}
+<div class="playlist_container blackback">
+<h3 style="color: #9c9c9c; margin-left: 10px; margin-top: 5px; margin-bottom: -5px;">Listened to no songs recently but I will soon!</h3>
+{% endif %}
+<script>
+    $(function () {
+        $(".recent").click(function() {
+            window.open($(this).attr("rel"));
+        });    
+    });
+</script>
+{% for song in streaming %}
+    {% if loop.index == 1 %}
+    <div class="recent" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
+        <div class="thumb" style="background-image: url('{{ song.artwork }}')"></div>
+        <div class="rowA">
+            <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
+        </div>
+        <div class="rowB">
+        {% if now %}
+            <now>Now Playing</now>
+        {% else %}
+            <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
+        {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="recent" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
+        <div class="thumb" style="background-image: url('{{ song.artwork }}')"></div>
+        <div class="rowA">
+            <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
+        </div>
+        <div class="rowB">
+            <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}

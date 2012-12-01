@@ -2,6 +2,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, render_t
 from flask.ext.pymongo import PyMongo
 from pymongo import ASCENDING
 from pymongo.errors import DuplicateKeyError
+from bson import json_util
 import tweepy
 import json
 import datetime
@@ -210,7 +211,7 @@ def user(userid):
     return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, logged_in=logged_in, name=name, debug=DEBUG)
 
 
-# ajax query to determine if the more recent listened song is being played
+# ajax query to update the recently listened playlist
 @app.route("/poll/<userid>", methods = ["POST"])
 def poll(userid):
 
@@ -219,26 +220,28 @@ def poll(userid):
     # sort in descending order by date and return most recent song
     recent_songs_cursor = mongo.db.streaming.find({"id": userid}).limit(25).sort([("played_at", -1)])
 
-    if recent_songs_cursor.count() > 0:
+    recent_songs = []
 
-        most_recent_song = recent_songs_cursor[0]
+    for recent_song in recent_songs_cursor:
 
-        songid = most_recent_song["songid"]
+            songid = recent_song["songid"]
 
-        songinfo = mongo.db.songs.find_one({"songid": songid})
+            songinfo = mongo.db.songs.find_one({"songid": songid})
 
-        songinfo["played_at"] = most_recent_song["played_at"]
+            songinfo["played_at"] = recent_song["played_at"]
 
-        song_start = most_recent_song["played_at"]
-        song_duration = songinfo["duration"]
+            recent_songs.append(songinfo)
 
-        if ((song_start + datetime.timedelta(seconds=song_duration)) >= datetime.datetime.today().replace(tzinfo=pytz.utc)):
-            return '<now>Now Playing</now>'
-        else:
-            return '<div class="listen">Listened</div><div class="date">' + str(format_date(songinfo["played_at"])) + '</div>'
+    now = False
 
-    else:
-            return ''
+    if recent_songs:
+        most_recent_song_start = recent_songs[0]["played_at"]
+        most_recent_song_duration = recent_songs[0]["duration"]
+
+        if ((most_recent_song_start + datetime.timedelta(seconds=most_recent_song_duration)) >= datetime.datetime.today().replace(tzinfo=pytz.utc)):
+            now = True
+
+    return render_template("streaming.html", streaming=recent_songs, now=now)
 
 
 ## API ##

@@ -441,6 +441,22 @@ body .navbar .brand:hover {
   padding-right: 5px;
   color: #eeeaaa;
 }
+.album
+{
+  font-family: klavika-regular;
+  font-size: 18px;
+  float: left;
+  padding-right: 5px;
+  color: #dddbbb;
+}
+.release
+{
+  font-family: klavika-regular;
+  font-size: 18px;
+  float: left;
+  padding-right: 5px;
+  color: #dddbbb;
+}
 .by
 {
   font-family: klavika-regular;

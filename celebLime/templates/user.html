@@ -163,7 +163,7 @@
                                         <div class="name">{{ song.title | truncate(30) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
                                     </div>
                                     <div class="rowB">
-                                        <div class="listen">Listened</div><div class="date">{{ song.duration }}</div>
+                                        <div class="album">{{ song.album | truncate(30)}}</div><div class="release">{{ song.release_date }}</div>
                                     </div>
                                 </div>
                                 {% endfor %}

@@ -131,6 +131,13 @@ def logout():
     session.pop("name", None)
     return redirect(url_for("home"))
 
+# when we logout Twitter 
+@app.route("/twitterlogout")
+def twitterlogout():
+    session.pop("logged_in", None)
+    session.pop("name", None)
+    return redirect("http://twitter.com/logout")
+
 
 # second half of twitter oauth - exchange request token for access token
 @app.route("/verify")

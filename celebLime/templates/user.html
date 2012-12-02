@@ -19,6 +19,7 @@
 
         <!-- javascript -->
         <script src="/static/js/jquery.min.js"></script>
+        <script src="/static/js/bootstrap-dropdown.js"></script>
     {% else %}
         <!-- styles -->
         <link href="/projects/celebLime/static/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
@@ -30,6 +31,7 @@
 
         <!-- javascript -->
         <script src="/projects/celebLime/static/js/jquery.min.js"></script>
+        <script src="/projects/celebLime/static/js/bootstrap-dropdown.js"></script>
     {% endif %}
 
         <script>
@@ -105,7 +107,18 @@
               <a class="manage" href="{{ url_for('login') }}">login</a>
             {% else %}
               <a class="brand" href="{{ url_for('home') }}">celebLime</a>
-              <div class="manage">Welcome {{ name }}!</div>
+              <div class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">{{ name }}!</a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                  <li>
+                    <a href="{{ url_for('logout') }}" tabindex="-1">Sign out</a>
+                  </li>
+                  <li>
+                    <a href="http://twitter.com/logout" tabindex="-1">Sign out Twitter</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="manage">Welcome</div>
             {% endif %}
             </div>
           </div>
@@ -147,7 +160,7 @@
                                 <div class="song" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
                                     <div class="thumb" style="background-image: url('{{ song.artwork }}')"></div>
                                     <div class="rowA">
-                                        <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
+                                        <div class="name">{{ song.title | truncate(30) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
                                     </div>
                                     <div class="rowB">
                                         <div class="listen">Listened</div><div class="date">{{ song.duration }}</div>
@@ -194,7 +207,7 @@
                                     {% for song in top %}
                                     <div class="track">
                                         <div class="rowA">
-                                            <div class="number">{{ loop.index }}.</div><div class="trackname">{{ song.title | truncate(20) }}</div>
+                                            <div class="number">{{ loop.index }}.</div><div class="trackname">{{ song.title | truncate(30) }}</div>
                                         </div>
                                     </div>
                                     {% endfor %}
@@ -217,7 +230,7 @@
                                     {% for song in top %}
                                     <div class="track">
                                         <div class="rowA">
-                                            <div class="number">{{ loop.index }}.</div><div class="trackartist">{{ song.artist| truncate(20) }}</div>
+                                            <div class="number">{{ loop.index }}.</div><div class="trackartist">{{ song.artist| truncate(30) }}</div>
                                         </div>
                                     </div>
                                     {% endfor %}

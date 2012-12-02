@@ -16,7 +16,7 @@
     <div class="recent" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
         <div class="thumb" style="background-image: url('{{ song.artwork }}')"></div>
         <div class="rowA">
-            <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
+            <div class="name">{{ song.title | truncate(30) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
         </div>
         <div class="rowB">
         {% if now %}
@@ -30,7 +30,7 @@
     <div class="recent" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
         <div class="thumb" style="background-image: url('{{ song.artwork }}')"></div>
         <div class="rowA">
-            <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
+            <div class="name">{{ song.title | truncate(30) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
         </div>
         <div class="rowB">
             <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>

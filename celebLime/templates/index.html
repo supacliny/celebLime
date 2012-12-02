@@ -101,7 +101,15 @@
         <div rel="{{c.id}}" class="span4 celeb" style="background-image: url('{{c.profile_image_url}}'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
           <h1>{{c.name}}</h1>
           <div class="headphones">
-            <highlight>Now Playing</highlight><div class="name">Help is coming</div><div class="by">by</div><div class="artist">T.I.</div>
+          {% if now %}
+            <now>Now Playing</now><div class="name">{{ c.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ c.mr_song_artist | truncate(20) }}</div>
+          {% else %}
+            {% if c.mr_song_title %}
+            <last>Last Played</last><div class="name">{{ c.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ c.mr_song_artist | truncate(20) }}</div>
+            {% else %}
+            <empty>Nothing Played</empty>
+            {% endif %}
+          {% endif %}
           </div>
         </div>
 
@@ -131,7 +139,15 @@
                   <h2>{{f.name}}</h2>&nbsp
               </div>
               <div class="rowB">
-                  <highlight>Now Playing</highlight>
+              {% if now %}
+                <now>Now Playing</now><div class="name">{{ f.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ f.mr_song_artist | truncate(20) }}</div>
+              {% else %}
+                {% if f.mr_song_title %}
+                <last>Last Played</last><div class="name">{{ f.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ f.mr_song_artist | truncate(20) }}</div>
+                {% else %}
+                <empty>Nothing Played</empty>
+                {% endif %}
+              {% endif %}
               </div>
         </div>  
 

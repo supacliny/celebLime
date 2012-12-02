@@ -31,6 +31,7 @@ mongo = PyMongo(app)
 @app.route("/")
 def home():
 
+    # check for logged in session
     try:
         logged_in = session["logged_in"]
         name = session["user"].name
@@ -38,11 +39,73 @@ def home():
         logged_in = False
         name = ""
 
-    fans = mongo.db.users.find({"verified": False})
-    celebs = mongo.db.users.find({"verified": True})
+    # get list of celebs
+    celebs_cursor = mongo.db.users.find({"verified": True})
 
-    fans = fans[0:2]
-    celebs = celebs[0:2]
+    celebs = []
+
+    for celeb in celebs_cursor:
+
+        celebid = celeb["id"]
+        most_recent_songs = mongo.db.streaming.find({"id": celebid}).limit(25).sort([("played_at", -1)])
+
+        if most_recent_songs.count() > 0:
+            most_recent_song = most_recent_songs[0]
+            songid = most_recent_song["songid"]
+            songinfo = mongo.db.songs.find_one({"songid": songid})
+
+            if songinfo:
+                songinfo["played_at"] = most_recent_song["played_at"]
+
+                if ((songinfo["played_at"]+ datetime.timedelta(seconds=songinfo["duration"])) >= datetime.datetime.today().replace(tzinfo=pytz.utc)):
+                    celeb["now"] = True
+                else:
+                    celeb["now"] = False
+
+                celeb["mr_song_title"] = songinfo["title"] 
+                celeb["mr_song_artist"] = songinfo["artist"]
+
+                celebs.append(celeb)
+        else:
+            celeb["now"] = False
+            celeb["mr_song_title"] = ""
+            celeb["mr_song_artist"] = ""
+            celebs.append(celeb)
+
+
+    # get list of fans
+    fans_cursor = mongo.db.users.find({"verified": False})
+
+    fans = []
+
+    for fan in fans_cursor:
+
+        fanid = fan["id"]
+        most_recent_songs = mongo.db.streaming.find({"id": fanid}).limit(25).sort([("played_at", -1)])
+
+        if most_recent_songs.count() > 0:
+            most_recent_song = most_recent_songs[0]
+            songid = most_recent_song["songid"]
+            songinfo = mongo.db.songs.find_one({"songid": songid})
+
+            if songinfo:
+                songinfo["played_at"] = most_recent_song["played_at"]
+
+                if ((songinfo["played_at"]+ datetime.timedelta(seconds=songinfo["duration"])) >= datetime.datetime.today().replace(tzinfo=pytz.utc)):
+                    fan["now"] = True
+                else:
+                    fan["now"] = False
+
+                fan["mr_song_title"] = songinfo["title"] 
+                fan["mr_song_artist"] = songinfo["artist"]
+
+                fans.append(fan)
+        else:
+            fan["now"] = False
+            fan["mr_song_title"] = ""
+            fan["mr_song_artist"] = ""
+            fans.append(fan)
+
     return render_template("index.html", fans=fans, celebs=celebs, logged_in=logged_in, name=name, debug=DEBUG)
 
 

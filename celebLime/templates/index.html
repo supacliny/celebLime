@@ -43,7 +43,11 @@
         $(function() {
 
         $(".celeb").click(function() {
+          {% if debug %}
           document.location.href = "user/" + $(this).attr("rel");
+          {% else %}
+          document.location.href = "celebLime/user/" + $(this).attr("rel");
+          {% endif %}
         });
 
         });

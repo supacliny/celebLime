@@ -116,7 +116,6 @@ def login():
 
     try:
         redirect_url = auth.get_authorization_url(True)
-        print redirect_url
         session["request_token"] = (auth.request_token.key,auth.request_token.secret)
     except tweepy.TweepError:
         print "Access error! Failed to get request token."
@@ -124,19 +123,20 @@ def login():
     return redirect(redirect_url)
 
 
-# when we logout - not sure this is needed with twitter oauth
+# when we logout redirect to Twitter
 @app.route("/logout")
 def logout():
-    session.pop("logged_in", None)
-    session.pop("name", None)
-    return redirect(url_for("home"))
+    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET, CALLBACK_URL)
 
-# when we logout Twitter 
-@app.route("/twitterlogout")
-def twitterlogout():
+    try:
+        redirect_url = auth.get_authorization_url()
+        session["request_token"] = (auth.request_token.key,auth.request_token.secret)
+    except tweepy.TweepError:
+        print "Access error! Failed to get request token."
+
     session.pop("logged_in", None)
-    session.pop("name", None)
-    return redirect("http://twitter.com/logout")
+    session.pop("user", None)
+    return redirect(redirect_url)
 
 
 # second half of twitter oauth - exchange request token for access token

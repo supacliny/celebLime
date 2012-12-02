@@ -51,6 +51,41 @@ empty
   -moz-border-radius: 3px;
   border-radius: 3px;
   float: left;
+  margin-top: 3px;
+  margin-right: 5px;
+}
+nowfan
+{
+  opacity: 0.98;
+  color: #d14;
+  font-size: 14px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  float: left;
+  margin-top: -5px;
+  margin-right: 5px;
+}
+lastfan
+{
+  opacity: 0.98;
+  color: #ff6633;
+  font-size: 14px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  float: left;
+  margin-top: -5px;
+  margin-right: 5px;
+}
+emptyfan
+{
+  opacity: 0.98;
+  font-size: 14px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  float: left;
   margin-top: -5px;
   margin-right: 5px;
 }

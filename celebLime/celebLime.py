@@ -142,7 +142,15 @@ def twitterlogout():
 # second half of twitter oauth - exchange request token for access token
 @app.route("/verify")
 def verify():
+
+    # check to see if we were denied by twitter
+    denied = "denied"
+    if denied in request.args:
+        return redirect(url_for("home"))
+
+    # otherwise we are clear
     verifier = request.args["oauth_verifier"]
+
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 
     token = session["request_token"]

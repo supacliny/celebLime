@@ -9,12 +9,11 @@ import datetime
 import pytz
 import jinja2
 
-DEBUG = True
+DEBUG = False
 
 CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"
 CONSUMER_SECRET = "cXfqDfMFBQutTMf9KpZWGt2HWDhBVxTajAqVDuFH7U"
-
 
 if DEBUG: 
     CALLBACK_URL = "http://127.0.0.1:8000/verify"
@@ -122,21 +121,14 @@ def login():
     return redirect(redirect_url)
 
 
-# when we logout redirect to Twitter
+# when we logout remove all session keys
 @app.route("/logout")
 def logout():
-    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET, CALLBACK_URL)
-
-    try:
-        redirect_url = auth.get_authorization_url()
-        session["request_token"] = (auth.request_token.key,auth.request_token.secret)
-    except tweepy.TweepError:
-        print "Access error! Failed to get request token."
-
     session.pop("logged_in", None)
     session.pop("userid", None)
     session.pop("username", None)
-    return redirect(redirect_url)
+    session.pop("request_token", None)
+    return redirect(url_for("home"))
 
 
 # second half of twitter oauth - exchange request token for access token
@@ -155,6 +147,7 @@ def verify():
 
     token = session["request_token"]
     session.pop("request_token", None)
+
     auth.set_request_token(token[0], token[1])
 
     try:
@@ -338,10 +331,10 @@ def api_create_playlist():
 
     if request.headers["Content-Type"] == "application/json":
 
-        mongo.db.playlists.ensure_index([("access_key",ASCENDING),("access_secret",ASCENDING),("id",ASCENDING),("screen_name",ASCENDING)], unique=True, background=True)
+        #mongo.db.playlists.ensure_index([("access_key",ASCENDING),("access_secret",ASCENDING),("id",ASCENDING),("screen_name",ASCENDING)], unique=True, background=True)
 
         # found this user in mongo
-        already_user = mongo.db.playlists.find_one({"access_key": auth.access_token.key, "access_secret": auth.access_token.secret, "id": user.id})
+        #already_user = mongo.db.playlists.find_one({"access_key": auth.access_token.key, "access_secret": auth.access_token.secret, "id": user.id})
 
 
         print "JSON Message: " + json.dumps(request.json)

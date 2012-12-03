@@ -128,31 +128,36 @@
      </div> <!-- /celebrities -->
 
      <div class="tab-pane fade" id="fans">
+
       <div class="row">
-
       {% for f in fans %}
-
-        <div rel="{{f.screen_name}}" class="span4 song celeb" style="color: #eeeddd; padding: 10px">
-          <div class="thumb" style="background-image: url('{{f.profile_image_url}}')"></div>
-          <div class="rowA">
-              <h3>{{ f.name | truncate(30) }}</h3>&nbsp
-          </div>
-          <div class="rowB">
-          {% if now %}
-            <nowfan>Now Playing</nowfan><div class="name">{{ f.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ f.mr_song_artist | truncate(20) }}</div>
-          {% else %}
-            {% if f.mr_song_title %}
-            <lastfan>Last Played</lastfan><div class="name">{{ f.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ f.mr_song_artist | truncate(20) }}</div>
-            {% else %}
-            <emptyfan>Nothing Played</emptyfan>
-            {% endif %}
-          {% endif %}
-          </div>
-        </div>  
-
+              <div rel="{{f.screen_name}}" class="span4 song celeb" style="color: #eeeddd; padding: 10px">
+                <div class="thumb" style="background-image: url('{{f.profile_image_url}}')"></div>
+                <div class="rowA">
+                    <h3>{{ f.name | truncate(30) }}</h3>&nbsp
+                </div>
+                <div class="rowB">
+                {% if now %}
+                  <nowfan>Now Playing</nowfan><div class="name">{{ f.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ f.mr_song_artist | truncate(20) }}</div>
+                {% else %}
+                  {% if f.mr_song_title %}
+                  <lastfan>Last Played</lastfan><div class="name">{{ f.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ f.mr_song_artist | truncate(20) }}</div>
+                  {% else %}
+                  <emptyfan>Nothing Played</emptyfan>
+                  {% endif %}
+                {% endif %}
+                </div>
+              </div> 
+         {% if loop.last %}
+           </div>
+         {% else %}
+           {% if loop.index is divisibleby 3 %}
+             </div>
+             <div class="row">
+           {% endif %}
+         {% endif %}
       {% endfor %}
       
-      </div> <!-- /row -->
      </div> <!-- /tab-content -->
     </div> <!-- /container -->
 

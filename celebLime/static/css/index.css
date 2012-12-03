@@ -337,7 +337,7 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
     text-shadow: 0 0 4px #cacaca;
 }
 .tab-content {
-    
+    overflow: inherit;
 }
 .tooltip-inner 
 {

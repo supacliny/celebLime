@@ -101,20 +101,14 @@
 
     <div class="tab-content">
       <div class="tab-pane fade in active" id="celebrities">
-      {% for c in celebs %}
-
-      {% if loop.first  %}
        <div class="row">
-      {% else %}
-        {% if loop.index is divisibleby 3 %}
-          <div class="row">
-        {% endif %}
-      {% endif %}  
 
 
+      {% for c in celebs %}
+ 
       <!-- row of columns -->
         <div rel="{{c.id}}" class="span4 celeb" style="background-image: url('{{c.profile_image_url}}'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
-          <h1>{{c.name}}</h1>
+          <h2>{{c.name}}</h2>
           <div class="headphones">
           {% if now %}
             <now>Now Playing</now><div class="name">{{ c.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ c.mr_song_artist | truncate(20) }}</div>
@@ -128,51 +122,37 @@
           </div>
         </div>
 
-      {% if loop.index is divisibleby 3 %}
-      </div>
-      {% endif %}
-
       {% endfor %}
 
       </div> <!-- /row -->
      </div> <!-- /celebrities -->
 
      <div class="tab-pane fade" id="fans">
+      <div class="row">
+
       {% for f in fans %}
 
-      {% if loop.first  %}
-        <div class="row">
-      {% else %}
-        {% if loop.index is divisibleby 3 %}
-          <div class="row">
-        {% endif %}
-      {% endif %}  
-
         <div rel="{{f.id}}" class="span4 song celeb" style="color: #eeeddd; padding: 10px">
-              <div class="thumb" style="background-image: url('{{f.profile_image_url}}')"></div>
-              <div class="rowA">
-                  <h2>{{f.name}}</h2>&nbsp
-              </div>
-              <div class="rowB">
-              {% if now %}
-                <nowfan>Now Playing</nowfan><div class="name">{{ f.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ f.mr_song_artist | truncate(20) }}</div>
-              {% else %}
-                {% if f.mr_song_title %}
-                <lastfan>Last Played</lastfan><div class="name">{{ f.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ f.mr_song_artist | truncate(20) }}</div>
-                {% else %}
-                <emptyfan>Nothing Played</emptyfan>
-                {% endif %}
-              {% endif %}
-              </div>
+          <div class="thumb" style="background-image: url('{{f.profile_image_url}}')"></div>
+          <div class="rowA">
+              <h2>{{ f.name }}</h2>&nbsp
+          </div>
+          <div class="rowB">
+          {% if now %}
+            <nowfan>Now Playing</nowfan><div class="name">{{ f.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ f.mr_song_artist | truncate(20) }}</div>
+          {% else %}
+            {% if f.mr_song_title %}
+            <lastfan>Last Played</lastfan><div class="name">{{ f.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ f.mr_song_artist | truncate(20) }}</div>
+            {% else %}
+            <emptyfan>Nothing Played</emptyfan>
+            {% endif %}
+          {% endif %}
+          </div>
         </div>  
-
-      {% if loop.index is divisibleby 3 %}
-      </div>
-      {% endif %}
 
       {% endfor %}
       
-      </div> <!-- /fans -->
+      </div> <!-- /row -->
      </div> <!-- /tab-content -->
     </div> <!-- /container -->
 

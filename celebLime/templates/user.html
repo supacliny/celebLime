@@ -77,14 +77,14 @@
             }
             {% if debug %} 
             function doPoll(){
-                $.post("/poll/{{ user.id }}", function(data) {
+                $.post("/poll/{{ user.screen_name }}", function(data) {
                     $(".stream").html(data);
                     setTimeout(doPoll,30000);
                 });
             }
             {% else %}
             function doPoll(){
-                $.post("/projects/celebLime/poll/{{ user.id }}", function(data) {
+                $.post("/projects/celebLime/poll/{{ user.screen_name }}", function(data) {
                     $(".stream").html(data);
                     setTimeout(doPoll,30000);
                 });
@@ -150,7 +150,7 @@
                         {% for playlist in playlists %}
 
                         <div class="playlist">
-                            <h3 class="playlist_header outerclickable blackback">{{ playlist.name }}</h3>
+                            <h3 class="playlist_header outerclickable blackback">{{ playlist.name | truncate(64) }}</h3>
 
                             <div class="playlist_container innercollapsable blackback">
 

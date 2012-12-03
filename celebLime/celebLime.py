@@ -15,16 +15,15 @@ CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"
 CONSUMER_SECRET = "cXfqDfMFBQutTMf9KpZWGt2HWDhBVxTajAqVDuFH7U"
 
+
 if DEBUG: 
     CALLBACK_URL = "http://127.0.0.1:8000/verify"
 else:
     CALLBACK_URL = "http://www.cvstechnology.ca/projects/celebLime/verify"
 
-session = dict()
-
-
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.config['SECRET_KEY'] = "\x89\x06\xc4\xf0\xc8&\x91\x01\x01\x8d^:\xb4b$\xa5u\x0b\xa8\xd7\x15\xa3\xd0\xab"
 mongo = PyMongo(app)
 
 # when home page loads
@@ -33,8 +32,8 @@ def home():
 
     # check for logged in session
     try:
-        logged_in = session["logged_in"]
-        name = session["user"].name
+        logged_in = session.get("logged_in")
+        name = session.get("username")
     except KeyError:
         logged_in = False
         name = ""
@@ -135,7 +134,9 @@ def logout():
         print "Access error! Failed to get request token."
 
     session.pop("logged_in", None)
-    session.pop("user", None)
+    session.pop("userid", None)
+    session.pop("username", None)
+    session.pop("request_token", None)
     return redirect(redirect_url)
 
 
@@ -154,7 +155,7 @@ def verify():
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 
     token = session["request_token"]
-    del session["request_token"]
+    session.pop("request_token", None)
     auth.set_request_token(token[0], token[1])
 
     try:
@@ -162,7 +163,8 @@ def verify():
         session["logged_in"] = True
         api = tweepy.API(auth)
         user = api.me()
-        session["user"] = user
+        session["userid"] = user.id
+        session["username"] = user.name
 
         current_time = datetime.datetime.today()
 
@@ -226,19 +228,22 @@ def verify():
 
 
 # when we visit a user profile page
-@app.route("/user/<userid>", methods = ["GET"])
-def user(userid):
+@app.route("/user/<screen_name>", methods = ["GET"])
+def user(screen_name):
 
     try:
-        logged_in = session["logged_in"]
-        name = session["user"].name
+        logged_in = session.get("logged_in")
+        name = session.get("username")
     except KeyError:
         logged_in = False
         name = ""
 
-    # must cast unicode to int
-    userid = int(userid)
-    user = mongo.db.users.find_one({"id": userid})
+    # cast to string just in case
+    screen_name = str(screen_name)
+    user = mongo.db.users.find_one({"screen_name": screen_name})
+
+    # behind the scenes use twitter id
+    userid = user["id"]
 
     playlists = []
 
@@ -290,10 +295,15 @@ def user(userid):
 
 
 # ajax query to update the recently listened playlist
-@app.route("/poll/<userid>", methods = ["POST"])
-def poll(userid):
+@app.route("/poll/<screen_name>", methods = ["POST"])
+def poll(screen_name):
 
-    userid = int(userid)
+    # cast to string just in case
+    screen_name = str(screen_name)
+    user = mongo.db.users.find_one({"screen_name": screen_name})
+
+    # behind the scenes use twitter id
+    userid = user["id"]
 
     # sort in descending order by date and return most recent song
     recent_songs_cursor = mongo.db.streaming.find({"id": userid}).limit(25).sort([("played_at", -1)])

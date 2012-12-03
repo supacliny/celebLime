@@ -107,8 +107,8 @@
       {% for c in celebs %}
  
       <!-- row of columns -->
-        <div rel="{{c.id}}" class="span4 celeb" style="background-image: url('{{c.profile_image_url}}'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
-          <h2>{{c.name}}</h2>
+        <div rel="{{c.screen_name}}" class="span4 celeb" style="background-image: url('{{c.profile_image_url}}'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
+          <h2>{{c.name | truncate(30)}}</h2>
           <div class="headphones">
           {% if now %}
             <now>Now Playing</now><div class="name">{{ c.mr_song_title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ c.mr_song_artist | truncate(20) }}</div>
@@ -132,10 +132,10 @@
 
       {% for f in fans %}
 
-        <div rel="{{f.id}}" class="span4 song celeb" style="color: #eeeddd; padding: 10px">
+        <div rel="{{f.screen_name}}" class="span4 song celeb" style="color: #eeeddd; padding: 10px">
           <div class="thumb" style="background-image: url('{{f.profile_image_url}}')"></div>
           <div class="rowA">
-              <h2>{{ f.name }}</h2>&nbsp
+              <h3>{{ f.name | truncate(30) }}</h3>&nbsp
           </div>
           <div class="rowB">
           {% if now %}

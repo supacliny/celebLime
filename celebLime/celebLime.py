@@ -136,7 +136,6 @@ def logout():
     session.pop("logged_in", None)
     session.pop("userid", None)
     session.pop("username", None)
-    session.pop("request_token", None)
     return redirect(redirect_url)
 
 

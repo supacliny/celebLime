@@ -336,6 +336,9 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
     border-top-color: #eeeddd;
     text-shadow: 0 0 4px #cacaca;
 }
+.tab-content {
+    
+}
 .tooltip-inner 
 {
   max-width: 300px;

@@ -9,7 +9,7 @@ import datetime
 import pytz
 import jinja2
 
-DEBUG = False
+DEBUG = True
 
 CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"
@@ -25,6 +25,7 @@ app.config.from_object(__name__)
 app.config['SECRET_KEY'] = "\x89\x06\xc4\xf0\xc8&\x91\x01\x01\x8d^:\xb4b$\xa5u\x0b\xa8\xd7\x15\xa3\xd0\xab"
 mongo = PyMongo(app)
 
+
 # when home page loads
 @app.route("/")
 def home():
@@ -36,6 +37,13 @@ def home():
     except KeyError:
         logged_in = False
         name = ""
+
+    # check for active tab
+    active = session.get("tab")
+
+    # possibly new session, so set active    
+    if active == None:
+        active = True
 
     # get list of celebs
     celebs_cursor = mongo.db.users.find({"verified": True})
@@ -104,7 +112,7 @@ def home():
             fan["mr_song_artist"] = ""
             fans.append(fan)
 
-    return render_template("index.html", fans=fans, celebs=celebs, logged_in=logged_in, name=name, debug=DEBUG)
+    return render_template("index.html", fans=fans, celebs=celebs, logged_in=logged_in, name=name, active=active, debug=DEBUG)
 
 
 # first half of twitter oauth - go to twitter login page, then redirect to home page
@@ -145,8 +153,12 @@ def verify():
 
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 
-    token = session["request_token"]
+    token = session.get("request_token")
     session.pop("request_token", None)
+
+    # die gracefully
+    if token == None:
+        return redirect(url_for("home"))
 
     auth.set_request_token(token[0], token[1])
 
@@ -239,6 +251,7 @@ def user(screen_name):
 
     playlists = []
 
+    # get all playlists for this userid
     playlists_cursor = mongo.db.playlists.find({"id": userid})
 
     for playlist in playlists_cursor:
@@ -247,13 +260,10 @@ def user(screen_name):
         songids = playlist["songs"]
         
         for songid in songids:
-
             songinfo = mongo.db.songs.find_one(songid)
             songs.append(songinfo)
-
-        playlist["songs"] = songs
-
-        playlists.append(playlist)
+            playlist["songs"] = songs
+            playlists.append(playlist)
 
     streaming = []
 
@@ -261,13 +271,9 @@ def user(screen_name):
     streaming_cursor = mongo.db.streaming.find({"id": userid}).limit(25).sort([("played_at", -1)])
 
     for song in streaming_cursor:
-
         songid = song["songid"]
-
         songinfo = mongo.db.songs.find_one({"songid": songid})
-
         songinfo["played_at"] = song["played_at"]
-
         streaming.append(songinfo)
 
     top = []
@@ -276,11 +282,8 @@ def user(screen_name):
     top_cursor = mongo.db.streaming.find({"id": userid}).limit(10).sort([("number", -1)])
 
     for song in top_cursor:
-
         songid = song["songid"]
-
         songinfo = mongo.db.songs.find_one({"songid": songid})
-
         top.append(songinfo)
 
     return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, logged_in=logged_in, name=name, debug=DEBUG)
@@ -303,14 +306,10 @@ def poll(screen_name):
     recent_songs = []
 
     for recent_song in recent_songs_cursor:
-
-            songid = recent_song["songid"]
-
-            songinfo = mongo.db.songs.find_one({"songid": songid})
-
-            songinfo["played_at"] = recent_song["played_at"]
-
-            recent_songs.append(songinfo)
+        songid = recent_song["songid"]
+        songinfo = mongo.db.songs.find_one({"songid": songid})
+        songinfo["played_at"] = recent_song["played_at"]
+        recent_songs.append(songinfo)
 
     now = False
 
@@ -322,6 +321,23 @@ def poll(screen_name):
             now = True
 
     return render_template("streaming.html", streaming=recent_songs, now=now)
+
+
+# store preference to secure session
+@app.route("/store/<pref>", methods = ["POST"])
+def store(pref):
+
+    pref = str(pref)
+
+    # which active tab
+    if pref == "celeb":
+        session["tab"] = True
+    else:
+        session["tab"] = False
+
+    resp = Response(None, status=200, mimetype="application/json")
+
+    return resp
 
 
 ## API ##
@@ -375,15 +391,10 @@ def not_found(error=None):
 def format_date(date_time):
 
     if date_time.date() == datetime.datetime.today().date():
- 
         return date_time.strftime('Today at ' + '%I:%M:%S %p')
-
     if date_time.date() + datetime.timedelta(1) == datetime.datetime.today().date():
-
         return date_time.strftime('Yesterday at ' + '%I:%M:%S %p')
-
     else:
-
         return date_time.strftime('%a %d %b %Y at %I:%M:%S %p')
 
 
@@ -392,7 +403,6 @@ app.jinja_env.globals.update(format_date=format_date)
 
 
 if __name__ == "__main__":
-
     if DEBUG:
         app.run(port=8000)
     else:

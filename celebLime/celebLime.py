@@ -252,7 +252,7 @@ def user(screen_name):
     playlists = []
 
     # get all playlists for this userid
-    playlists_cursor = mongo.db.playlists.find({"id": userid})
+    playlists_cursor = mongo.db.playlists.find({"twitter_id": userid})
 
     for playlist in playlists_cursor:
 
@@ -263,7 +263,8 @@ def user(screen_name):
             songinfo = mongo.db.songs.find_one(songid)
             songs.append(songinfo)
             playlist["songs"] = songs
-            playlists.append(playlist)
+            
+        playlists.append(playlist)
 
     streaming = []
 
@@ -341,25 +342,32 @@ def store(pref):
 
 
 ## API ##
+
 # create a playlist from JSON object
 @app.route("/create", methods = ["POST"])
 def api_create_playlist():
 
     if request.headers["Content-Type"] == "application/json":
 
-        #mongo.db.playlists.ensure_index([("access_key",ASCENDING),("access_secret",ASCENDING),("id",ASCENDING),("screen_name",ASCENDING)], unique=True, background=True)
+        incoming = request.json
+        userid = incoming["twitter_id"]
+        key = incoming["access_key"]
+        secret = incoming["access_secret"]
 
-        # found this user in mongo
-        #already_user = mongo.db.playlists.find_one({"access_key": auth.access_token.key, "access_secret": auth.access_token.secret, "id": user.id})
+        # does this playlist exist already?
+        # authenticate user?
 
+        # insert into mongo
+        playlist_id = mongo.db.playlists.insert(incoming)
 
-        print "JSON Message: " + json.dumps(request.json)
-        data = {"playlist_id"  : 1}
-        js = json.dumps(data)
-        resp = Response(js, status=201, mimetype="application/json")
+        data = {"playlist_id": str(playlist_id)}
+
+        data = json.dumps(data)
+
+        resp = Response(data, status=201, mimetype="application/json")
         return resp
     else:
-        return not_found()
+        return not_json()
 
 
 @app.route("/add", methods = ["POST"])
@@ -380,6 +388,18 @@ def not_found(error=None):
     message = {
             "status": 404,
             "message": "Not Found: " + request.url,
+    }
+    resp = jsonify(message)
+    resp.status_code = 404
+
+    return resp
+
+
+@app.errorhandler(404)
+def not_json(error=None):
+    message = {
+            "status": 404,
+            "message": "Not JSON: " + request.url,
     }
     resp = jsonify(message)
     resp.status_code = 404

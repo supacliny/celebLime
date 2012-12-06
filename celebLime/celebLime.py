@@ -3,8 +3,11 @@ from flask.ext.pymongo import PyMongo
 from pymongo import ASCENDING
 from pymongo.errors import DuplicateKeyError
 from bson import json_util
+from time import time
+from time import mktime
 import tweepy
 import json
+import bson
 import datetime
 import pytz
 import jinja2
@@ -52,8 +55,8 @@ def home():
 
     for celeb in celebs_cursor:
 
-        celebid = celeb["id"]
-        most_recent_songs = mongo.db.streaming.find({"id": celebid}).limit(25).sort([("played_at", -1)])
+        celebid = celeb["twitter_id"]
+        most_recent_songs = mongo.db.streaming.find({"twitter_id": celebid}).limit(25).sort([("played_at", -1)])
 
         if most_recent_songs.count() > 0:
             most_recent_song = most_recent_songs[0]
@@ -63,7 +66,7 @@ def home():
             if songinfo:
                 songinfo["played_at"] = most_recent_song["played_at"]
 
-                if ((songinfo["played_at"]+ datetime.timedelta(seconds=songinfo["duration"])) >= datetime.datetime.today().replace(tzinfo=pytz.utc)):
+                if ((songinfo["played_at"]+ songinfo["duration"])) >= int(time()):
                     celeb["now"] = True
                 else:
                     celeb["now"] = False
@@ -86,8 +89,8 @@ def home():
 
     for fan in fans_cursor:
 
-        fanid = fan["id"]
-        most_recent_songs = mongo.db.streaming.find({"id": fanid}).limit(25).sort([("played_at", -1)])
+        fanid = fan["twitter_id"]
+        most_recent_songs = mongo.db.streaming.find({"twitter_id": fanid}).limit(25).sort([("played_at", -1)])
 
         if most_recent_songs.count() > 0:
             most_recent_song = most_recent_songs[0]
@@ -97,7 +100,7 @@ def home():
             if songinfo:
                 songinfo["played_at"] = most_recent_song["played_at"]
 
-                if ((songinfo["played_at"]+ datetime.timedelta(seconds=songinfo["duration"])) >= datetime.datetime.today().replace(tzinfo=pytz.utc)):
+                if ((songinfo["played_at"] + songinfo["duration"]) >= int(time())):
                     fan["now"] = True
                 else:
                     fan["now"] = False
@@ -170,20 +173,22 @@ def verify():
         session["userid"] = user.id
         session["username"] = user.name
 
-        current_time = datetime.datetime.today()
+        # work in unix time
+        current_time = int(time())
+        created_at = int(mktime(user.created_at.timetuple()))
 
         user_details = { "added_at": current_time,
                          "access_key": auth.access_token.key,
                          "access_secret": auth.access_token.secret,
                          "contributors_enabled": user.contributors_enabled,
-                         "created_at": user.created_at,
+                         "created_at": created_at,
                          "description": user.description,
                          "favourites_count": user.favourites_count,
                          "followers_count": user.followers_count,
                          "following": user.following,
                          "friends_count": user.friends_count,
                          "geo_enabled": user.geo_enabled,
-                         "id": user.id,
+                         "twitter_id": user.id,
                          "ip": request.access_route[0],
                          "lang": user.lang,
                          "location": user.location,
@@ -209,21 +214,24 @@ def verify():
                          "verified": user.verified }
 
         # if index not there, add a compound index
-        mongo.db.users.ensure_index([("access_key",ASCENDING),("access_secret",ASCENDING),("id",ASCENDING),("screen_name",ASCENDING)], unique=True, background=True)
+        mongo.db.users.ensure_index([("access_key",ASCENDING),("access_secret",ASCENDING),("twitter_id",ASCENDING),("screen_name",ASCENDING)], unique=True, background=True)
 
         # found this user in mongo
-        already_user = mongo.db.users.find_one({"access_key": auth.access_token.key, "access_secret": auth.access_token.secret, "id": user.id})
+        already_user = mongo.db.users.find_one({"access_key": auth.access_token.key, "access_secret": auth.access_token.secret, "twitter_id": user.id})
 
         # maintain the original added_at field
         if already_user:
             user_details["added_at"] = already_user["added_at"]
             user_details["total_logins"] = already_user["total_logins"] + 1
 
-        # now update that user
-        try:
-            mongo.db.users.update({"access_key": auth.access_token.key, "access_secret": auth.access_token.secret, "id": user.id}, user_details, upsert=True)
-        except DuplicateKeyError:
-            print "Duplicate error! User inserted already."
+            # now update that user
+            try:
+                mongo.db.users.update({"access_key": auth.access_token.key, "access_secret": auth.access_token.secret, "twitter_id": user.id}, user_details, upsert=True)
+            except DuplicateKeyError:
+                print "User error! User can not be updated."
+
+        else:
+            print "User error! User not found."
 
     except tweepy.TweepError:
         print "Access error! Failed to get access token."
@@ -247,7 +255,7 @@ def user(screen_name):
     user = mongo.db.users.find_one({"screen_name": screen_name})
 
     # behind the scenes use twitter id
-    userid = user["id"]
+    userid = user["twitter_id"]
 
     playlists = []
 
@@ -269,7 +277,7 @@ def user(screen_name):
     streaming = []
 
     # sort in descending order by date
-    streaming_cursor = mongo.db.streaming.find({"id": userid}).limit(25).sort([("played_at", -1)])
+    streaming_cursor = mongo.db.streaming.find({"twitter_id": userid}).limit(25).sort([("played_at", -1)])
 
     for song in streaming_cursor:
         songid = song["songid"]
@@ -279,13 +287,14 @@ def user(screen_name):
 
     top = []
 
+    # todo mongodb groupby?
     # sort in descending order by number of times played
-    top_cursor = mongo.db.streaming.find({"id": userid}).limit(10).sort([("number", -1)])
+    # top_cursor = mongo.db.streaming.find({"twitter_id": userid}).limit(10).sort([("number", -1)])
 
-    for song in top_cursor:
-        songid = song["songid"]
-        songinfo = mongo.db.songs.find_one({"songid": songid})
-        top.append(songinfo)
+    # for song in top_cursor:
+    #     songid = song["songid"]
+    #     songinfo = mongo.db.songs.find_one({"songid": songid})
+    #     top.append(songinfo)
 
     return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, logged_in=logged_in, name=name, debug=DEBUG)
 
@@ -299,10 +308,10 @@ def poll(screen_name):
     user = mongo.db.users.find_one({"screen_name": screen_name})
 
     # behind the scenes use twitter id
-    userid = user["id"]
+    userid = user["twitter_id"]
 
     # sort in descending order by date and return most recent song
-    recent_songs_cursor = mongo.db.streaming.find({"id": userid}).limit(25).sort([("played_at", -1)])
+    recent_songs_cursor = mongo.db.streaming.find({"twitter_id": userid}).limit(25).sort([("played_at", -1)])
 
     recent_songs = []
 
@@ -318,7 +327,7 @@ def poll(screen_name):
         most_recent_song_start = recent_songs[0]["played_at"]
         most_recent_song_duration = recent_songs[0]["duration"]
 
-        if ((most_recent_song_start + datetime.timedelta(seconds=most_recent_song_duration)) >= datetime.datetime.today().replace(tzinfo=pytz.utc)):
+        if ((most_recent_song_start + most_recent_song_duration) >= int(time())):
             now = True
 
     return render_template("streaming.html", streaming=recent_songs, now=now)
@@ -353,6 +362,8 @@ def api_create_playlist():
         userid = incoming["twitter_id"]
         key = incoming["access_key"]
         secret = incoming["access_secret"]
+        incoming["added_at"] = int(time())
+        incoming["updated_at"] = int(time())
 
         # does this playlist exist already?
         # authenticate user?
@@ -365,6 +376,122 @@ def api_create_playlist():
         data = json.dumps(data)
 
         resp = Response(data, status=201, mimetype="application/json")
+        return resp
+    else:
+        return not_json()
+
+
+# delete a playlist
+@app.route("/delete", methods = ["DELETE"])
+def api_delete_playlist():
+
+    if request.headers["Content-Type"] == "application/json":
+
+        incoming = request.json
+        userid = incoming["twitter_id"]
+        key = incoming["access_key"]
+        secret = incoming["access_secret"]
+        playlist_id = incoming["playlist_id"]
+
+        # incoming playlist_id is a string, convert to ObjectID
+        playlist_oid = bson.objectid.ObjectId(playlist_id)
+
+        # authenticate user?
+
+        # remove from mongo
+        mongo.db.playlists.remove({"_id": playlist_oid})
+
+        data = {}
+
+        data = json.dumps(data)
+
+        resp = Response(data, status=204, mimetype="application/json")
+        return resp
+    else:
+        return not_json()
+
+
+# update a playlist
+@app.route("/update", methods = ["PATCH"])
+def api_update_playlist():
+
+    if request.headers["Content-Type"] == "application/json":
+
+        incoming = request.json
+        userid = incoming["twitter_id"]
+        key = incoming["access_key"]
+        secret = incoming["access_secret"]
+        playlist_id = incoming["playlist_id"]
+
+        # incoming playlist_id is a string, convert to ObjectID
+        playlist_oid = bson.objectid.ObjectId(playlist_id)
+
+        # authenticate user?
+
+        # find the playlist in mongo
+        playlist = mongo.db.playlists.find_one({"_id": playlist_oid})
+
+        # maintain the original added_at field but update the updated_at field
+        if playlist:
+            incoming["added_at"] = playlist["added_at"]
+            incoming["updated_at"] = int(time())
+
+            # now update that playlist
+            try:
+                mongo.db.playlists.update({"_id": playlist_oid}, incoming, upsert=True)
+            except DuplicateKeyError:
+                print "Playlist error! Playlist can not be updated."
+
+        else:
+            print "Playlist error! Playlist not found."
+
+        data = {}
+
+        data = json.dumps(data)
+
+        resp = Response(data, status=204, mimetype="application/json")
+        return resp
+    else:
+        return not_json()
+
+
+# stream a song
+@app.route("/stream", methods = ["PUT"])
+def api_stream_song():
+
+    if request.headers["Content-Type"] == "application/json":
+
+        incoming = request.json
+        user_id = incoming["twitter_id"]
+        key = incoming["access_key"]
+        secret = incoming["access_secret"]
+        song_id = incoming["songid"]
+
+        # incoming playlist_id is a string, convert to ObjectID
+        # playlist_oid = bson.objectid.ObjectId(playlist_id)
+
+        # authenticate user?
+
+        # find the song in mongo streamed by that user
+        song = mongo.db.streaming.find_one({"twitter_id": user_id, "songid": song_id})
+
+        # update the number of times played, if this key does not exist then song never streamed before
+        try:
+            incoming["played_count"] = song["played_count"] + 1
+        except TypeError:
+            incoming["played_count"] = 1
+
+        # now update
+        try:
+            mongo.db.streaming.update({"twitter_id": user_id, "songid": song_id}, incoming, upsert=True)
+        except DuplicateKeyError:
+            print "Streaming error! Streaming song can not be updated."
+
+        data = {}
+
+        data = json.dumps(data)
+
+        resp = Response(data, status=204, mimetype="application/json")
         return resp
     else:
         return not_json()
@@ -395,7 +522,6 @@ def not_found(error=None):
     return resp
 
 
-@app.errorhandler(404)
 def not_json(error=None):
     message = {
             "status": 404,
@@ -408,15 +534,16 @@ def not_json(error=None):
 
 
 # format return string according to day
-def format_date(date_time):
+def format_date(time):
 
+    # convert from unix time to datetime
+    date_time = datetime.datetime.fromtimestamp(time)
     if date_time.date() == datetime.datetime.today().date():
         return date_time.strftime('Today at ' + '%I:%M:%S %p')
     if date_time.date() + datetime.timedelta(1) == datetime.datetime.today().date():
         return date_time.strftime('Yesterday at ' + '%I:%M:%S %p')
     else:
         return date_time.strftime('%a %d %b %Y at %I:%M:%S %p')
-
 
 # now apply this jinja2 template
 app.jinja_env.globals.update(format_date=format_date)

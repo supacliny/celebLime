@@ -1,8 +1,15 @@
-Users:
-{'added_at': datetime.today(),'access_key': 'demo', 'access_secret': 'demo','contributors_enabled': False,'created_at': datetime.today(),'description': '','favourites_count': 0,'followers_count': 1000,'following': False,'friends_count': 2,'geo_enabled': False,'id': 100000000,'ip': '18.0.0.1','lang': 'en', 'last_logged_in': datetime.today(), 'location': '','name': 'LeBron James','notifications': False,'profile_background_color': 'C0DEED','profile_background_image_url': 'http://a0.twimg.com/images/themes/theme1/bg.png','profile_background_tile': False,'profile_image_url': 'http://www.nba.com/media/act_lebron_james.jpg','profile_link_color': '0084B4','profile_sidebar_border_color': 'C0DEED', 'profile_sidebar_fill_color': 'DDEEF6','profile_text_color': '333333','profile_use_background_image': True,'protected': False,'screen_name': 'KingJames','statuses_count': 3000,'time_zone': None, 'total_logins': 10,'url': None,'utc_offset': None,'verified': True}
+Verified Users:
+{'added_at': 1354738434,'access_key': 'demo', 'access_secret': 'demo','contributors_enabled': False,'created_at': 1354738434,'description': '','favourites_count': 200,'followers_count': 1000,'following': False,'friends_count': 5444567,'geo_enabled': False,'twitter_id': 100000000,'ip': '18.0.0.1','lang': 'en', 'last_logged_in': 1354738434, 'location': '','name': 'LeBron James','notifications': False,'profile_background_color': 'C0DEED','profile_background_image_url': 'http://a0.twimg.com/images/themes/theme1/bg.png','profile_background_tile': False,'profile_image_url': 'http://www.nba.com/media/act_lebron_james.jpg','profile_link_color': '0084B4','profile_sidebar_border_color': 'C0DEED', 'profile_sidebar_fill_color': 'DDEEF6','profile_text_color': '333333','profile_use_background_image': True,'protected': False,'screen_name': 'KingJames','statuses_count': 3000,'time_zone': None, 'total_logins': 10,'url': None,'utc_offset': None,'verified': True}
+
+{'added_at': 1354738660,'access_key': 'demo', 'access_secret': 'demo','contributors_enabled': False,'created_at': 1354738660,'description': '','favourites_count': 60000,'followers_count': 400,'following': False,'friends_count': 22,'geo_enabled': False,'twitter_id': 111111111,'ip': '18.0.0.1','lang': 'en', 'last_logged_in': 1354738434, 'location': '','name': 'Cristiano Ronaldo','notifications': False,'profile_background_color': 'C0DEED','profile_background_image_url': 'http://a0.twimg.com/images/themes/theme1/bg.png','profile_background_tile': False,'profile_image_url': 'http://static.guim.co.uk/sys-images/Guardian/About/General/2012/6/20/1340186915475/Cristiano-Ronaldo-008.jpg','profile_link_color': '0084B4','profile_sidebar_border_color': 'C0DEED', 'profile_sidebar_fill_color': 'DDEEF6','profile_text_color': '333333','profile_use_background_image': True,'protected': False,'screen_name': 'Cristiano','statuses_count': 3000,'time_zone': None, 'total_logins': 22,'url': None,'utc_offset': None,'verified': True}
+
+{'added_at': ,'access_key': 'demo', 'access_secret': 'demo','contributors_enabled': False,'created_at': datetime.today(),'description': '','favourites_count': 0,'followers_count': 6442212,'following': False,'friends_count': 22,'geo_enabled': False,'twitter_id': 111110000,'ip': '18.0.0.1','lang': 'en', 'last_logged_in': datetime.today(), 'location': '','name': 'SHAQ','notifications': False,'profile_background_color': 'C0DEED','profile_background_image_url': 'http://a0.twimg.com/images/themes/theme1/bg.png','profile_background_tile': False,'profile_image_url': 'http://www.biography.com/imported/images/Biography/Images/Profiles/O/Shaquille-ONeal-9542515-1-402.jpg','profile_link_color': '0084B4','profile_sidebar_border_color': 'C0DEED', 'profile_sidebar_fill_color': 'DDEEF6','profile_text_color': '333333','profile_use_background_image': True,'protected': False,'screen_name': 'SHAQ','statuses_count': 5204,'time_zone': None, 'total_logins': 5,'url': None,'utc_offset': None,'verified': True}
+
 
 Playlists:
-{"name": "Sunday Night Jams", "added_at": datetime.today(), "access_key": "demo", "access_secret": "demo","id": 100000000, "screen_name": "KingJames", "songs": [{"songid": 0},{"songid": 44}]}
+{"name": "Sunday Night Jams", "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"songid": 0},{"songid": 44}]}
+
+{"name": "Big Jammin' Chunes", "added_at": 1354741823, "access_key": "demo", "access_secret": "demo","twitter_id": 169194713, "screen_name": "SupaCliny", "songs": [{"songid": 21},{"songid": 50},{"songid": 13}]}
 
 Songs:
 {"songid": 0, "title": "How We Feeling", "album": "Habits & Contradictions", "artist": "Schoolboy Q", "album_artist": "Schoolboy Q", "genre": "Hip Hop", "composer": "", "duration": 192, "track_number": 12, "track_count": 18, "disc_number": 1, "disc_count": 1, "artwork": "http://cdn.respect-mag.com/wp-content/uploads/2012/01/SCHOOLBOY-Q-575x575.jpg?9d7bd4", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 60, "comments": "", "url": "", "cloud": 0}
@@ -19,12 +26,33 @@ Songs:
 
 
 Streaming:
-{"access_key": "demo", "access_secret": "demo","id": 100000000, "songid": 44, "played_at": datetime.today(), "number": 0}
+{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 44, "played_at": 1354751955}
 
-{"access_key": "demo", "access_secret": "demo","id": 100000000, "songid": 0, "played_at": datetime.today(), "number": 4}
+{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 0, "played_at": 1354751955}
 
-{"access_key": "demo", "access_secret": "demo","id": 100000000, "songid": 21, "played_at": datetime.today(), "number": 2}
+{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 21, "played_at": datetime.today(), "number": 2}
 
-{"access_key": "demo", "access_secret": "demo","id": 100000000, "songid": 50, "played_at": datetime.today(), "number": 10}
+{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 50, "played_at": datetime.today(), "number": 10}
 
-{"access_key": "demo", "access_secret": "demo","id": 100000000, "songid": 13, "played_at": datetime.today(), "number": 5}
+{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 13, "played_at": datetime.today(), "number": 5}
+
+
+API:
+curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://www.cvstechnology.ca/projects/celebLime/create -d '{"name": "Sunday Night Jams", "added_at": 20081122, "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"songid": 0},{"songid": 44}]}'
+
+curl -k -u cliny:Pag82% -H "Content-type: application/json" -X POST https://www.cvstechnology.ca/projects/celebLime/create -d '{"name": "Sunday Night Jams", "created_at": 1354592075, "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"songid": 0},{"songid": 44}]}'
+
+curl -k -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/create -d '{"name": "Big Jammin Chunes", "added_at": 1354741823, "access_key": "demo", "access_secret": "demo","twitter_id": 169194713, "screen_name": "SupaCliny", "songs": [{"songid": 21},{"songid": 50},{"songid": 13}]}'
+
+
+curl -k -u cliny:Pag82% -H "Content-type: application/json" -X DELETE http://127.0.0.1:8000/delete -d '{"access_key": "demo", "access_secret": "demo", "twitter_id": 169194713, "screen_name": "SupaCliny", "playlist_id": "50be6b0234e9e216d8f8c406"}'
+
+curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/create -d '{"name": "Sunday Night Jams", "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"songid": 0},{"songid": 44}]}'
+
+curl -u cliny:Pag82% -H "Content-type: application/json" -X PATCH http://127.0.0.1:8000/update -d '{"name": "Sunday Night Jams", "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "playlist_id": "50bfcf5534e9e2200b686964", "songs": [{"songid": 21},{"songid": 50}]}'
+
+
+curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1:8000/stream -d '{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 44, "played_at": 1354752286}'
+
+curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1:8000/stream -d '{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 21, "played_at": 1354752140}'
+

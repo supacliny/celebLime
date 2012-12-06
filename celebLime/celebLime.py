@@ -224,14 +224,11 @@ def verify():
             user_details["added_at"] = already_user["added_at"]
             user_details["total_logins"] = already_user["total_logins"] + 1
 
-            # now update that user
-            try:
-                mongo.db.users.update({"access_key": auth.access_token.key, "access_secret": auth.access_token.secret, "twitter_id": user.id}, user_details, upsert=True)
-            except DuplicateKeyError:
-                print "User error! User can not be updated."
-
-        else:
-            print "User error! User not found."
+        # now update that user
+        try:
+            mongo.db.users.update({"access_key": auth.access_token.key, "access_secret": auth.access_token.secret, "twitter_id": user.id}, user_details, upsert=True)
+        except DuplicateKeyError:
+            print "User error! User can not be updated."
 
     except tweepy.TweepError:
         print "Access error! Failed to get access token."

@@ -494,17 +494,36 @@ def api_stream_song():
         return not_json()
 
 
+# add a song
 @app.route("/add", methods = ["POST"])
 def api_add_song():
 
     if request.headers["Content-Type"] == "application/json":
-        print "JSON Message: " + json.dumps(request.json)
-        data = {"playlist_id"  : 1}
-        js = json.dumps(data)
-        resp = Response(js, status=201, mimetype="application/json")
+
+        incoming = request.json
+
+        # authenticate user?
+
+        # if index not there, add a compound index
+        mongo.db.songs.ensure_index([("title",ASCENDING),("artist",ASCENDING)], unique=True, background=True)
+
+        # does this song already exist in the db?
+        song = mongo.db.songs.find_one({"title": incoming["title"], "artist": incoming["artist"]})
+
+        # then return that id else return a new id after inserting
+        if song:
+            song_id = song["_id"]
+            data = {"song_id": str(song_id)}
+        else:
+            song_id = mongo.db.songs.insert(incoming)
+            data = {"song_id": str(song_id)}
+
+        data = json.dumps(data)
+
+        resp = Response(data, status=201, mimetype="application/json")
         return resp
     else:
-        return not_found()
+        return not_json()
 
 
 @app.errorhandler(404)

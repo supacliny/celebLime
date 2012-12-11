@@ -5,11 +5,72 @@
 <h3 style="color: #9c9c9c; margin-left: 10px; margin-top: 5px; margin-bottom: -5px;">Listened to no songs recently but I will soon!</h3>
 {% endif %}
 <script>
-    $(function () {
-        $(".recent").click(function() {
-            window.open($(this).attr("rel"));
-        });    
+    // $(function () {
+    //     $(".recent").click(function() {
+    //         window.open($(this).attr("rel"));
+    //     });    
+    // });
+
+    $(document).ready(function(){   
+
+        // $(".youtube").toggle(
+        //     function () {
+        //         $("#playwindow").css("visibility", "visible");
+        //     },
+        //     function () {
+        //         $("#playwindow").css("visibility", "hidden");
+        //     }
+        // );
+
+        $(".youtube").click(function() {
+            $("#playwindow").empty();
+            $(".tunein_container").show()
+            var ytid = $(this).attr("rel");
+            var embedhtml = '<iframe id="playwindow" type="text/html" width="279" height="189" src="http://www.youtube.com/embed/' + ytid + '?autoplay=1&origin=http://example.com" frameborder="0"/>';
+            $("#playwindow").append(embedhtml);
+        });
+
+
+        $(".spotify").click(function() {
+            $("#playwindow").empty();
+            $(".tunein_container").show();
+            var spid = $(this).attr("rel");
+            var embedhtml = '<iframe src="https://embed.spotify.com/?uri=' + spid + '" width="279" height="186" frameborder="0" allowtransparency="true"></iframe>';
+            $("#playwindow").append(embedhtml);
+        });
+
     });
+    
+    // // Load the IFrame Player API code asynchronously.
+    // var tag = document.createElement('script');
+    // tag.src = "https://www.youtube.com/player_api";
+    // var firstScriptTag = document.getElementsByTagName('script')[0];
+    // firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // // Replace the 'ytplayer' element with an <iframe> and
+    // // YouTube player after the API code downloads.
+    // var player;
+    // function onYouTubePlayerAPIReady() {
+    //     player = new YT.Player('playwindow', {
+    //       height: '183',
+    //       width: '273',
+    //       videoId: '7ohbKidZLiA',
+    //       autoplay: 1
+    //     });
+    // }
+
+
+
+    // $(document).ready(function(){   
+    //     $(".recent").toggle(
+    //         function () {
+    //             $(".recent").animate({height: "200px"}, 1000, "easeInOutQuad")
+    //         },
+    //         function () {
+    //             $(".recent").animate({height: "70px"}, 1000, "easeInOutQuad")
+    //         }
+    //     );
+    // });
 </script>
 {% for song in streaming %}
     {% if loop.index == 1 %}
@@ -21,10 +82,17 @@
         <div class="rowB">
         {% if now %}
             <now>Now Playing</now>
+            <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/static/img/icons/youtube.png" width="25" height="25"/></div>            
+            <div class="spotify" rel="{{ song.spotify.href }}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
+            <div class="itunes" rel=""><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
         {% else %}
             <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
+            <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/static/img/icons/youtube.png" width="25" height="25"/></div>
+            <div class="spotify" rel="{{ song.spotify.href }}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
+            <div class="itunes" rel=""><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
         {% endif %}
         </div>
+
     </div>
     {% else %}
     <div class="recent" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
@@ -34,6 +102,9 @@
         </div>
         <div class="rowB">
             <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
+            <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/static/img/icons/youtube.png" width="25" height="25"/></div> 
+            <div class="spotify" rel="{{ song.spotify.href }}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
+            <div class="itunes" rel=""><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
         </div>
     </div>
     {% endif %}

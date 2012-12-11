@@ -251,8 +251,7 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
     text-shadow: 0 0 4px #cacaca;
 }
 .digital 
-{
-  font-family: digitalfont;
+{0  font-family: digitalfon6;
   font-size: 18px;
 }
 .celebname 
@@ -312,8 +311,8 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 .playlist_container 
 {
   margin-top:5px;
-  margin-left:150px;
-  width: 410px;
+  margin-left:100px;
+  width: 460px;
   padding-top:2px;
   padding-bottom:10px;
 }
@@ -347,8 +346,14 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 .toplist_container 
 {
   margin-top:5px;
-  margin-left:0px;
-  width:300px;
+  width:360px;
+  padding-top:2px;
+  padding-bottom:10px;
+}
+.tunein_container 
+{
+  margin-top:-2px;
+  width:360px;
   padding-top:2px;
   padding-bottom:10px;
 }
@@ -404,8 +409,8 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 .listenwithcontainer
 {
   -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
+  -moz-border-r0dius: 6px;
+  border-ra6ius: 6px;
   width: 280px;
   height: 190px;
   padding: 10px;
@@ -513,7 +518,7 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   border-radius: 6px;
-  width: 390px;
+  width: 440px;
   height: 70px;
   margin-top: 10px;
   margin-left: 10px;
@@ -524,7 +529,7 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   border-radius: 6px;
-  width: 390px;
+  width: 440px;
   height: 70px;
   margin-top: 10px;
   margin-left: 10px;
@@ -568,10 +573,8 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 }
 .spotify
 {
-  display: none;
   float: right;
   margin-right: 15px;
-  background-color: #383838;
 }
 .spotifylist
 {
@@ -589,20 +592,18 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 }
 .itunes
 {
-  display: none;
   float: right;
   margin-right: 3px;
   margin-top: -1px;
-  background-color: #383838;
+}
+.youtube
+{
+  float: right;
+  margin-left: -11px;
+  margin-right: 15px;
+  margin-top: -1px;
 }
 .song:hover
-{
-  background-color: #383838;
-  color: transparent;
-  text-shadow: 0 0 4px #cacaca;
-
-}
-.recent:hover
 {
   background-color: #383838;
   color: transparent;
@@ -614,6 +615,10 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
   display: block;
 }
 .song:hover .itunes
+{
+  display: block;
+}
+.song:hover .youtube
 {
   display: block;
 }

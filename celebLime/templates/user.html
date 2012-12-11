@@ -19,6 +19,7 @@
 
         <!-- javascript -->
         <script src="/static/js/jquery.min.js"></script>
+        <script src="/static/js/jquery-ui.min.js"></script>
         <script src="/static/js/bootstrap-dropdown.js"></script>
     {% else %}
         <!-- styles -->
@@ -31,6 +32,7 @@
 
         <!-- javascript -->
         <script src="/projects/celebLime/static/js/jquery.min.js"></script>
+        <script src="/projects/celebLime/static/js/jquery-ui.min.js"></script>
         <script src="/projects/celebLime/static/js/bootstrap-dropdown.js"></script>
     {% endif %}
 
@@ -145,14 +147,19 @@
 
                     <div class="playlists realplaylist">
                     <h2 class="playlists_header outerclickable blackback">Playlists:</h2>
-
+                    
                     <div class="playlists_container innercollapsable">
-                        {% for playlist in playlists %}
+                    {% for playlist in playlists %}
 
                         <div class="playlist">
                             <h3 class="playlist_header outerclickable blackback">{{ playlist.name | truncate(64) }}</h3>
 
-                            <div class="playlist_container innercollapsable blackback">
+                                {% if playlist.songs %}
+                                <div class="playlist_container innercollapsable blackback">
+                                {% else %}
+                                <div class="playlist_container innercollapsable blackback">
+                                <h3 style="color: #9c9c9c; margin-left: 10px; margin-top: 5px; margin-bottom: -5px;">No songs in this playlist yet!</h3>
+                                {% endif %}
 
                                 {% for song in playlist.songs %}
                                 <div class="song" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
@@ -169,10 +176,9 @@
                             </div>
 
                         </div>
-
-                        {% endfor %}
-
+                    {% endfor %}
                     </div>
+
                 </div>
 
                 </div>
@@ -181,14 +187,18 @@
 
                     <div class="toplists">
 
-                        <h2 class="toplists_header outerclickable blackback">Listens with:</h2>
+                        <h2 class="toplists_header outerclickable blackback">Tune in:</h2>
 
-                        <div class="toplists_container innercollapsable default">
+                        <div class="tunein_container innercollapsable">
 
                             <div class="toplist">
 
                                 <div class="listenwithcontainer blackback">
-                                        <div class="listenwiththumb"><img src="/static/img/icons/beats.jpg" width="100%" height="100%"/></div>
+                                    <div class="listenwiththumb">
+
+                                        <div id="playwindow"></div>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>

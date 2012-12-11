@@ -5,12 +5,17 @@ from pymongo.errors import DuplicateKeyError
 from bson import json_util
 from time import time
 from time import mktime
+from celery import Celery
+import itunes
 import tweepy
 import json
 import bson
 import datetime
 import pytz
 import jinja2
+import urllib2
+import urlparse
+import requests
 
 DEBUG = True
 
@@ -28,6 +33,79 @@ app.config.from_object(__name__)
 app.config['SECRET_KEY'] = "\x89\x06\xc4\xf0\xc8&\x91\x01\x01\x8d^:\xb4b$\xa5u\x0b\xa8\xd7\x15\xa3\xd0\xab"
 mongo = PyMongo(app)
 
+celery = Celery('celebLime', backend='mongodb://localhost', broker='mongodb://localhost')
+
+celery.config_from_object('celeryconfig')
+
+## CELERY TASKS ##
+
+@celery.task
+def getiTunesTrack(song_id, search):
+    with app.test_request_context():
+
+        results = itunes.search_track(query=search, limit=1)
+        # convert the string song_id to a bson ObjectID for mongo
+        song_oid = bson.objectid.ObjectId(song_id)
+
+        if results:
+            # assume the first result is the best match
+            data = results[0].json
+        else:
+            data = json.loads("{}")
+
+        # update original song_id record to keep all data in one place
+        mongo.db.songs.update({"_id": song_oid },{"$set": {"itunes": data}})
+
+
+@celery.task
+def getSpotifyTrack(song_id, search):
+    with app.test_request_context():
+
+        # preprocess search terms, replace space with + for a direct API call
+        search = search.replace(' ','+')
+        url ="http://ws.spotify.com/search/1/track.json?q=%s" % (search)
+        results = urllib2.urlopen(url).read()
+        results = json.loads(results)
+        # convert the string song_id to a bson ObjectID for mongo
+        song_oid = bson.objectid.ObjectId(song_id)
+
+        if results["tracks"]:
+            # assume ths first result is the best match
+            data = results["tracks"][0]
+        else:
+            data = json.loads("{}")
+
+        # update original song_id record to keep all data in one place
+        mongo.db.songs.update({"_id": song_oid },{"$set": {"spotify": data}})
+
+    
+@celery.task
+def getYouTubeVideo(song_id, search):
+    with app.test_request_context():
+
+        query_url = "https://gdata.youtube.com/feeds/api/videos"
+        query_params = {'alt': 'json', 'max-results': '1', 'orderby': 'relevance', 'q': search, 'v': '2'}
+        # convert the string song_id to a bson ObjectID for mongo
+        song_oid = bson.objectid.ObjectId(song_id)
+
+        results = requests.get(query_url, params=query_params).json
+        # assume the first result is the best match
+
+        data = {}
+
+        if results:
+            video = results.get('feed').get('entry')[0]
+            data["title"] = video.get('title').get('$t')
+            data["link"] = video.get('link')[0].get('href')
+            data["videoid"] = find_between(data["link"], "=", "&")
+        else:
+            data = json.loads("{}")
+
+        # update original song_id record to keep all data in one place
+        mongo.db.songs.update({"_id": song_oid },{"$set": {"youtube": data}})
+
+
+## CELEBLIME APP ##
 
 # when home page loads
 @app.route("/")
@@ -74,7 +152,7 @@ def home():
                 celeb["mr_song_title"] = songinfo["title"] 
                 celeb["mr_song_artist"] = songinfo["artist"]
 
-                celebs.append(celeb)
+            celebs.append(celeb)
         else:
             celeb["now"] = False
             celeb["mr_song_title"] = ""
@@ -266,9 +344,14 @@ def user(screen_name):
         
         for songid in songids:
             songinfo = mongo.db.songs.find_one(songid)
-            songs.append(songinfo)
+            if songinfo:
+                songs.append(songinfo)
+                playlist["songs"] = songs
+
+        # corner case fix: there are song_ids but no mapped songs!
+        if not songs:
             playlist["songs"] = songs
-            
+
         playlists.append(playlist)
 
     streaming = []
@@ -279,8 +362,9 @@ def user(screen_name):
     for song in streaming_cursor:
         songid = song["songid"]
         songinfo = mongo.db.songs.find_one({"songid": songid})
-        songinfo["played_at"] = song["played_at"]
-        streaming.append(songinfo)
+        if songinfo:
+            songinfo["played_at"] = song["played_at"]
+            streaming.append(songinfo)
 
     top = []
 
@@ -315,11 +399,13 @@ def poll(screen_name):
     for recent_song in recent_songs_cursor:
         songid = recent_song["songid"]
         songinfo = mongo.db.songs.find_one({"songid": songid})
-        songinfo["played_at"] = recent_song["played_at"]
-        recent_songs.append(songinfo)
+        if songinfo:
+            songinfo["played_at"] = recent_song["played_at"]
+            recent_songs.append(songinfo)
 
     now = False
 
+    # compute if a song is streaming now!
     if recent_songs:
         most_recent_song_start = recent_songs[0]["played_at"]
         most_recent_song_duration = recent_songs[0]["duration"]
@@ -518,6 +604,12 @@ def api_add_song():
             song_id = mongo.db.songs.insert(incoming)
             data = {"song_id": str(song_id)}
 
+            # dispatch to celery to update in the background!
+            search = incoming["title"] + " " + incoming["artist"]
+            asynciTunes = getiTunesTrack.delay(str(song_id), search)
+            asyncSpotify = getSpotifyTrack.delay(str(song_id), search)
+            asyncYouTube = getYouTubeVideo.delay(str(song_id), search)
+
         data = json.dumps(data)
 
         resp = Response(data, status=201, mimetype="application/json")
@@ -537,6 +629,7 @@ def not_found(error=None):
 
     return resp
 
+## HELPER FUNCTIONS ##
 
 def not_json(error=None):
     message = {
@@ -549,17 +642,27 @@ def not_json(error=None):
     return resp
 
 
+# used to extract the youtube video ID
+def find_between( s, first, last ):
+    try:
+        start = s.index( first ) + len( first )
+        end = s.index( last, start )
+        return s[start:end]
+    except ValueError:
+        return ""
+
+
 # format return string according to day
 def format_date(time):
 
     # convert from unix time to datetime
     date_time = datetime.datetime.fromtimestamp(time)
     if date_time.date() == datetime.datetime.today().date():
-        return date_time.strftime('Today at ' + '%I:%M:%S %p')
+        return date_time.strftime('Today at ' + '%H:%M:%S')
     if date_time.date() + datetime.timedelta(1) == datetime.datetime.today().date():
-        return date_time.strftime('Yesterday at ' + '%I:%M:%S %p')
+        return date_time.strftime('Yesterday at ' + '%H:%M:%S')
     else:
-        return date_time.strftime('%a %d %b %Y at %I:%M:%S %p')
+        return date_time.strftime('%a %d %b %Y at %H:%M:%S')
 
 # now apply this jinja2 template
 app.jinja_env.globals.update(format_date=format_date)

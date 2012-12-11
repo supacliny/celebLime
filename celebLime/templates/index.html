@@ -156,10 +156,10 @@
             </div>
             <div class="rowB">
             {% if f.now %}
-              <nowfan>Now Playing</nowfan><div class="name" rel="tooltip" title="{{ f.mr_song_title }} by {{ f.mr_song_artist }}">{{ f.mr_song_title | truncate(20) }}</div>
+              <nowfan>Now Playing</nowfan><div class="namefan" rel="tooltip" title="{{ f.mr_song_title }} by {{ f.mr_song_artist }}">{{ f.mr_song_title | truncate(20) }}</div>
             {% else %}
               {% if f.mr_song_title %}
-              <lastfan>Last Played</lastfan><div class="name" rel="tooltip" title="{{ f.mr_song_title }} by {{ f.mr_song_artist }}">{{ f.mr_song_title | truncate(20) }}</div>
+              <lastfan>Last Played</lastfan><div class="namefan" rel="tooltip" title="{{ f.mr_song_title }} by {{ f.mr_song_artist }}">{{ f.mr_song_title | truncate(20) }}</div>
               {% else %}
               <emptyfan>Nothing Played</emptyfan>
               {% endif %}

@@ -85,15 +85,16 @@ def getYouTubeVideo(song_id, search):
 
         query_url = "https://gdata.youtube.com/feeds/api/videos"
         query_params = {'alt': 'json', 'max-results': '1', 'orderby': 'relevance', 'q': search, 'v': '2'}
-        # convert the string song_id to a bson ObjectID for mongo
-        song_oid = bson.objectid.ObjectId(song_id)
-
         results = requests.get(query_url, params=query_params).json
-        # assume the first result is the best match
 
+        # convert the string song_id to a bson ObjectID for mongo
+        song_oid = bson.objectid.ObjectId(song_id)        
         data = {}
 
-        if results:
+        print results
+
+        if (results.get('feed').get('entry')) != None:
+            # assume the first result is the best match
             video = results.get('feed').get('entry')[0]
             data["title"] = video.get('title').get('$t')
             data["link"] = video.get('link')[0].get('href')
@@ -112,17 +113,17 @@ def getYouTubeVideo(song_id, search):
 def home():
 
     # check for logged in session
-    try:
-        logged_in = session.get("logged_in")
-        name = session.get("username")
-    except KeyError:
+    logged_in = session.get("logged_in")
+    name = session.get("username")
+    active = session.get("tab")
+    
+    if logged_in == None:
         logged_in = False
+
+    if name == None:
         name = ""
 
-    # check for active tab
-    active = session.get("tab")
-
-    # possibly new session, so set active    
+    # possibly new session, so set active to Celebrities tab  
     if active == None:
         active = True
 
@@ -138,13 +139,13 @@ def home():
 
         if most_recent_songs.count() > 0:
             most_recent_song = most_recent_songs[0]
-            songid = most_recent_song["songid"]
-            songinfo = mongo.db.songs.find_one({"songid": songid})
+            song_id = most_recent_song["song_id"]
+            songinfo = mongo.db.songs.find_one({"song_id": song_id})
 
             if songinfo:
                 songinfo["played_at"] = most_recent_song["played_at"]
 
-                if ((songinfo["played_at"]+ songinfo["duration"])) >= int(time()):
+                if ((songinfo["played_at"] + songinfo["duration"])) >= int(time()):
                     celeb["now"] = True
                 else:
                     celeb["now"] = False
@@ -172,8 +173,8 @@ def home():
 
         if most_recent_songs.count() > 0:
             most_recent_song = most_recent_songs[0]
-            songid = most_recent_song["songid"]
-            songinfo = mongo.db.songs.find_one({"songid": songid})
+            song_id = most_recent_song["song_id"]
+            songinfo = mongo.db.songs.find_one({"song_id": song_id})
 
             if songinfo:
                 songinfo["played_at"] = most_recent_song["played_at"]
@@ -186,7 +187,7 @@ def home():
                 fan["mr_song_title"] = songinfo["title"] 
                 fan["mr_song_artist"] = songinfo["artist"]
 
-                fans.append(fan)
+            fans.append(fan)
         else:
             fan["now"] = False
             fan["mr_song_title"] = ""
@@ -318,11 +319,14 @@ def verify():
 @app.route("/user/<screen_name>", methods = ["GET"])
 def user(screen_name):
 
-    try:
-        logged_in = session.get("logged_in")
-        name = session.get("username")
-    except KeyError:
+    # check for logged in session
+    logged_in = session.get("logged_in")
+    name = session.get("username")
+    
+    if logged_in == None:
         logged_in = False
+
+    if name == None:
         name = ""
 
     # cast to string just in case
@@ -330,20 +334,20 @@ def user(screen_name):
     user = mongo.db.users.find_one({"screen_name": screen_name})
 
     # behind the scenes use twitter id
-    userid = user["twitter_id"]
+    user_id = user["twitter_id"]
 
     playlists = []
 
     # get all playlists for this userid
-    playlists_cursor = mongo.db.playlists.find({"twitter_id": userid})
+    playlists_cursor = mongo.db.playlists.find({"twitter_id": user_id})
 
     for playlist in playlists_cursor:
 
         songs = []
-        songids = playlist["songs"]
+        song_ids = playlist["songs"]
         
-        for songid in songids:
-            songinfo = mongo.db.songs.find_one(songid)
+        for song_id in song_ids:
+            songinfo = mongo.db.songs.find_one(song_id)
             if songinfo:
                 songs.append(songinfo)
                 playlist["songs"] = songs
@@ -356,12 +360,12 @@ def user(screen_name):
 
     streaming = []
 
-    # sort in descending order by date
-    streaming_cursor = mongo.db.streaming.find({"twitter_id": userid}).limit(25).sort([("played_at", -1)])
+    # sort recently played songs in descending order by date
+    streaming_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(25).sort([("played_at", -1)])
 
     for song in streaming_cursor:
-        songid = song["songid"]
-        songinfo = mongo.db.songs.find_one({"songid": songid})
+        song_id = song["song_id"]
+        songinfo = mongo.db.songs.find_one({"song_id": song_id})
         if songinfo:
             songinfo["played_at"] = song["played_at"]
             streaming.append(songinfo)
@@ -373,8 +377,8 @@ def user(screen_name):
     # top_cursor = mongo.db.streaming.find({"twitter_id": userid}).limit(10).sort([("number", -1)])
 
     # for song in top_cursor:
-    #     songid = song["songid"]
-    #     songinfo = mongo.db.songs.find_one({"songid": songid})
+    #     song_id = song["song_id"]
+    #     songinfo = mongo.db.songs.find_one({"song_id": song_id})
     #     top.append(songinfo)
 
     return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, logged_in=logged_in, name=name, debug=DEBUG)
@@ -389,16 +393,16 @@ def poll(screen_name):
     user = mongo.db.users.find_one({"screen_name": screen_name})
 
     # behind the scenes use twitter id
-    userid = user["twitter_id"]
+    user_id = user["twitter_id"]
 
     # sort in descending order by date and return most recent song
-    recent_songs_cursor = mongo.db.streaming.find({"twitter_id": userid}).limit(25).sort([("played_at", -1)])
+    recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(25).sort([("played_at", -1)])
 
     recent_songs = []
 
     for recent_song in recent_songs_cursor:
-        songid = recent_song["songid"]
-        songinfo = mongo.db.songs.find_one({"songid": songid})
+        song_id = recent_song["song_id"]
+        songinfo = mongo.db.songs.find_one({"song_id": song_id})
         if songinfo:
             songinfo["played_at"] = recent_song["played_at"]
             recent_songs.append(songinfo)
@@ -416,7 +420,7 @@ def poll(screen_name):
     return render_template("streaming.html", streaming=recent_songs, now=now)
 
 
-# store preference to secure session
+# store session preferences - right place or use g?
 @app.route("/store/<pref>", methods = ["POST"])
 def store(pref):
 
@@ -442,14 +446,21 @@ def api_create_playlist():
     if request.headers["Content-Type"] == "application/json":
 
         incoming = request.json
-        userid = incoming["twitter_id"]
-        key = incoming["access_key"]
-        secret = incoming["access_secret"]
+
+        # partially validate JSON fields
+        try:
+            user_id = incoming["twitter_id"]
+            token = incoming["token"]
+        except KeyError:
+            return bad_request()
+
+        # check for authorization
+        if not is_authorized(token):
+            return not_authorized()
+
+        # add timestamps
         incoming["added_at"] = int(time())
         incoming["updated_at"] = int(time())
-
-        # does this playlist exist already?
-        # authenticate user?
 
         # insert into mongo
         playlist_id = mongo.db.playlists.insert(incoming)
@@ -471,15 +482,21 @@ def api_delete_playlist():
     if request.headers["Content-Type"] == "application/json":
 
         incoming = request.json
-        userid = incoming["twitter_id"]
-        key = incoming["access_key"]
-        secret = incoming["access_secret"]
-        playlist_id = incoming["playlist_id"]
+
+        # partially validate JSON fields
+        try:
+            user_id = incoming["twitter_id"]
+            token = incoming["token"]
+            playlist_id = incoming["playlist_id"]
+        except KeyError:
+            return bad_request()
+
+        # check for authorization
+        if not is_authorized(token):
+            return not_authorized()
 
         # incoming playlist_id is a string, convert to ObjectID
         playlist_oid = bson.objectid.ObjectId(playlist_id)
-
-        # authenticate user?
 
         # remove from mongo
         mongo.db.playlists.remove({"_id": playlist_oid})
@@ -501,15 +518,21 @@ def api_update_playlist():
     if request.headers["Content-Type"] == "application/json":
 
         incoming = request.json
-        userid = incoming["twitter_id"]
-        key = incoming["access_key"]
-        secret = incoming["access_secret"]
-        playlist_id = incoming["playlist_id"]
+
+        # partially validate JSON fields
+        try:
+            user_id = incoming["twitter_id"]
+            token = incoming["token"]
+            playlist_id = incoming["playlist_id"]
+        except KeyError:
+            return bad_request()
+
+        # check for authorization
+        if not is_authorized(token):
+            return not_authorized()
 
         # incoming playlist_id is a string, convert to ObjectID
         playlist_oid = bson.objectid.ObjectId(playlist_id)
-
-        # authenticate user?
 
         # find the playlist in mongo
         playlist = mongo.db.playlists.find_one({"_id": playlist_oid})
@@ -545,18 +568,22 @@ def api_stream_song():
     if request.headers["Content-Type"] == "application/json":
 
         incoming = request.json
-        user_id = incoming["twitter_id"]
-        key = incoming["access_key"]
-        secret = incoming["access_secret"]
-        song_id = incoming["songid"]
 
-        # incoming playlist_id is a string, convert to ObjectID
-        # playlist_oid = bson.objectid.ObjectId(playlist_id)
+        # partially validate JSON fields
+        try:
+            user_id = incoming["twitter_id"]
+            token = incoming["token"]
+            song_id = incoming["song_id"]
+            played_at = incoming["played_at"]
+        except KeyError:
+            return bad_request()
 
-        # authenticate user?
+        # check for authorization
+        if not is_authorized(token):
+            return not_authorized()
 
         # find the song in mongo streamed by that user
-        song = mongo.db.streaming.find_one({"twitter_id": user_id, "songid": song_id})
+        song = mongo.db.streaming.find_one({"twitter_id": user_id, "song_id": song_id})
 
         # update the number of times played, if this key does not exist then song never streamed before
         try:
@@ -566,7 +593,7 @@ def api_stream_song():
 
         # now update
         try:
-            mongo.db.streaming.update({"twitter_id": user_id, "songid": song_id}, incoming, upsert=True)
+            mongo.db.streaming.update({"twitter_id": user_id, "song_id": song_id}, incoming, upsert=True)
         except DuplicateKeyError:
             print "Streaming error! Streaming song can not be updated."
 
@@ -586,15 +613,21 @@ def api_add_song():
 
     if request.headers["Content-Type"] == "application/json":
 
-        incoming = request.json
+        incoming = request.json    
 
-        # authenticate user?
+        # partially validate JSON fields
+        try:
+            title = incoming["title"]
+            artist = incoming["artist"]
+            album = incoming["album"]
+        except KeyError:
+            return bad_request()
 
         # if index not there, add a compound index
-        mongo.db.songs.ensure_index([("title",ASCENDING),("artist",ASCENDING)], unique=True, background=True)
+        mongo.db.songs.ensure_index([("title",ASCENDING),("artist",ASCENDING), ("album", ASCENDING)], unique=True, background=True)
 
         # does this song already exist in the db?
-        song = mongo.db.songs.find_one({"title": incoming["title"], "artist": incoming["artist"]})
+        song = mongo.db.songs.find_one({"title": title, "artist": artist, "album": album})
 
         # then return that id else return a new id after inserting
         if song:
@@ -633,23 +666,56 @@ def not_found(error=None):
 
 def not_json(error=None):
     message = {
-            "status": 404,
-            "message": "Not JSON: " + request.url,
+            "status": 400,
+            "message": "Bad Request (not JSON): " + request.url,
     }
     resp = jsonify(message)
-    resp.status_code = 404
+    resp.status_code = 400
+
+    return resp
+
+
+def not_authorized(error=None):
+    message = {
+            "status": 401,
+            "message": "Not Authorized: " + request.url,
+    }
+    resp = jsonify(message)
+    resp.status_code = 401
+
+    return resp
+
+
+def bad_request(error=None):
+    message = {
+            "status": 400,
+            "message": "Bad Request (missing required JSON fields): " + request.url,
+    }
+    resp = jsonify(message)
+    resp.status_code = 400
 
     return resp
 
 
 # used to extract the youtube video ID
-def find_between( s, first, last ):
+def find_between(s, first, last):
     try:
         start = s.index( first ) + len( first )
         end = s.index( last, start )
         return s[start:end]
     except ValueError:
         return ""
+
+
+# for now, simply check that the access token is present in mongodb
+# later on we would use it in conjunction with the secret to sign a request for twitter
+def is_authorized(access_token):
+
+    result = mongo.db.users.find_one({"access_key": access_token})
+    if result:
+        return True
+    else:
+        return False
 
 
 # format return string according to day
@@ -663,6 +729,7 @@ def format_date(time):
         return date_time.strftime('Yesterday at ' + '%H:%M:%S')
     else:
         return date_time.strftime('%a %d %b %Y at %H:%M:%S')
+
 
 # now apply this jinja2 template
 app.jinja_env.globals.update(format_date=format_date)

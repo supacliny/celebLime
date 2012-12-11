@@ -7,65 +7,69 @@ Verified Users:
 
 
 Playlists:
-{"name": "Sunday Night Jams", "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"songid": 0},{"songid": 44}]}
+{"name": "Sunday Night Jams", "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"song_id": 0},{"song_id": 44}]}
 
-{"name": "Big Jammin' Chunes", "added_at": 1354741823, "access_key": "demo", "access_secret": "demo","twitter_id": 169194713, "screen_name": "SupaCliny", "songs": [{"songid": 21},{"songid": 50},{"songid": 13}]}
+{"name": "Big Jammin' Chunes", "added_at": 1354741823, "access_key": "demo", "access_secret": "demo","twitter_id": 169194713, "screen_name": "SupaCliny", "songs": [{"song_id": 21},{"song_id": 50},{"song_id": 13}]}
 
 Songs:
-{"songid": 0, "title": "How We Feeling", "album": "Habits & Contradictions", "artist": "Schoolboy Q", "album_artist": "Schoolboy Q", "genre": "Hip Hop", "composer": "", "duration": 192, "track_number": 12, "track_count": 18, "disc_number": 1, "disc_count": 1, "artwork": "http://cdn.respect-mag.com/wp-content/uploads/2012/01/SCHOOLBOY-Q-575x575.jpg?9d7bd4", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 60, "comments": "", "url": "", "cloud": 0}
+{"song_id": 0, "title": "How We Feeling", "album": "Habits & Contradictions", "artist": "Schoolboy Q", "album_artist": "Schoolboy Q", "genre": "Hip Hop", "composer": "", "duration": 192, "track_number": 12, "track_count": 18, "disc_number": 1, "disc_count": 1, "artwork": "http://cdn.respect-mag.com/wp-content/uploads/2012/01/SCHOOLBOY-Q-575x575.jpg?9d7bd4", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 60, "comments": "", "url": "", "cloud": 0}
 
-{"songid": 21, "title": "As High As Wu-Tang Get", "album": "Wu-Tang Forever", "artist": "Wu-Tang Clan", "album_artist": "Wu-Tang Clan", "genre": "Hip Hop", "composer": "", "duration": 157, "track_number": 6, "track_count": 11, "disc_number": 1, "disc_count": 2, "artwork": "https://twimg0-a.akamaihd.net/profile_images/1163524012/wu.jpg", "lyrics": "", "compilation": 1, "release_date": 1997, "bpm": 121, "comments": "", "url": "", "cloud": 0}
+{"song_id": 21, "title": "As High As Wu-Tang Get", "album": "Wu-Tang Forever", "artist": "Wu-Tang Clan", "album_artist": "Wu-Tang Clan", "genre": "Hip Hop", "composer": "", "duration": 157, "track_number": 6, "track_count": 11, "disc_number": 1, "disc_count": 2, "artwork": "https://twimg0-a.akamaihd.net/profile_images/1163524012/wu.jpg", "lyrics": "", "compilation": 1, "release_date": 1997, "bpm": 121, "comments": "", "url": "", "cloud": 0}
 
-{"songid": 50, "title": "Bandz A Make Her Dance", "album": "Bandz A Make Her Dance featuring Lil Wayne and 2 Chainz", "artist": "Juicy J", "album_artist": "Juicy J", "genre": "Hip Hop", "composer": "", "duration": 280, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://static.globalgrind.com/sites/default/files/imagecache/article_images_540/images/2012_november/wiz-khalifa-juicy-j_0.jpeg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 111, "comments": "", "url": "", "cloud": 0}
-
-
-{"songid": 44, "title": "Bird on a Wire", "album": "Bird on a Wire", "artist": "Action Bronson ft. Riff Raff", "album_artist": "Action Bronson", "genre": "Hip Hop", "composer": "", "duration": 199, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://cdn.stereogum.com/files/2012/02/Action-Bronson-Riff-Raff-Bird-On-A-Wire-608x341.jpg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 85, "comments": "", "url": "", "cloud": 0}
+{"song_id": 50, "title": "Bandz A Make Her Dance", "album": "Bandz A Make Her Dance featuring Lil Wayne and 2 Chainz", "artist": "Juicy J", "album_artist": "Juicy J", "genre": "Hip Hop", "composer": "", "duration": 280, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://static.globalgrind.com/sites/default/files/imagecache/article_images_540/images/2012_november/wiz-khalifa-juicy-j_0.jpeg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 111, "comments": "", "url": "", "cloud": 0}
 
 
-{"songid": 13, "title": "Cycle", "album": "Setbacks", "artist": "Schoolboy Q", "album_artist": "Schoolboy Q", "genre": "Hip Hop", "composer": "", "duration": 249, "track_number": 7, "track_count": 15, "disc_number": 1, "disc_count": 1, "artwork": "http://kendricklamar.org/wp-content/uploads/2011/10/schoolboy-q-large.png", "lyrics": "", "compilation": 1, "release_date": 2011, "bpm": 155, "comments": "", "url": "", "cloud": 1}
+{"song_id": 44, "title": "Bird on a Wire", "album": "Bird on a Wire", "artist": "Action Bronson ft. Riff Raff", "album_artist": "Action Bronson", "genre": "Hip Hop", "composer": "", "duration": 199, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://cdn.stereogum.com/files/2012/02/Action-Bronson-Riff-Raff-Bird-On-A-Wire-608x341.jpg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 85, "comments": "", "url": "", "cloud": 0}
+
+
+{"song_id": 13, "title": "Cycle", "album": "Setbacks", "artist": "Schoolboy Q", "album_artist": "Schoolboy Q", "genre": "Hip Hop", "composer": "", "duration": 249, "track_number": 7, "track_count": 15, "disc_number": 1, "disc_count": 1, "artwork": "http://kendricklamar.org/wp-content/uploads/2011/10/schoolboy-q-large.png", "lyrics": "", "compilation": 1, "release_date": 2011, "bpm": 155, "comments": "", "url": "", "cloud": 1}
 
 
 Streaming:
-{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 44, "played_at": 1354751955}
+{"token": "169194713-T8JnqqMIFqIdDZu8bzEdAYBQ9lewerTUrdWPQkxO", "twitter_id": 169194713, "song_id": 50, "played_at": 1355257165}
 
-{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 0, "played_at": 1354751955}
+{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "song_id": 0, "played_at": 1355257165}
 
-{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 21, "played_at": datetime.today(), "number": 2}
+{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "song_id": 21, "played_at": datetime.today(), "number": 2}
 
-{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 50, "played_at": datetime.today(), "number": 10}
+{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "song_id": 50, "played_at": datetime.today(), "number": 10}
 
-{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 13, "played_at": datetime.today(), "number": 5}
+{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "song_id": 13, "played_at": datetime.today(), "number": 5}
 
 
 API:
-curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://www.cvstechnology.ca/projects/celebLime/create -d '{"name": "Sunday Night Jams", "added_at": 20081122, "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"songid": 0},{"songid": 44}]}'
+curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://www.cvstechnology.ca/projects/celebLime/create -d '{"name": "Sunday Night Jams", "added_at": 20081122, "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"song_id": 0},{"song_id": 44}]}'
 
-curl -k -u cliny:Pag82% -H "Content-type: application/json" -X POST https://www.cvstechnology.ca/projects/celebLime/create -d '{"name": "Sunday Night Jams", "created_at": 1354592075, "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"songid": 0},{"songid": 44}]}'
+curl -k -u cliny:Pag82% -H "Content-type: application/json" -X POST https://www.cvstechnology.ca/projects/celebLime/create -d '{"name": "Sunday Night Jams", "created_at": 1354592075, "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"song_id": 0},{"song_id": 44}]}'
 
-curl -k -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/create -d '{"name": "Big Jammin Chunes", "added_at": 1354741823, "access_key": "demo", "access_secret": "demo","twitter_id": 169194713, "screen_name": "SupaCliny", "songs": [{"songid": 21},{"songid": 50},{"songid": 13}]}'
+curl -k -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/create -d '{"name": "Big Jammin Chunes", "token": "1694713-T8JnqqMIFqIdDZu8bzEdAYBQ9lewerTUrdWPQkxO", "twitter_id": 169194713, "screen_name": "SupaCliny", "songs": [{"song_id": 21},{"song_id": 50},{"song_id": 13}]}'
 
+curl -k -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/create -d '{"name": "Big Jammin Chunes", "token": "169194713-T8JnqqMIFqIdDZu8bzEdAYBQ9lewerTUrdWPQkxO", "twitter_id": 169194713, "screen_name": "SupaCliny", "songs": [{"song_id": 21},{"song_id": 50},{"song_id": 13}]}'
 
 curl -k -u cliny:Pag82% -H "Content-type: application/json" -X DELETE http://127.0.0.1:8000/delete -d '{"access_key": "demo", "access_secret": "demo", "twitter_id": 169194713, "screen_name": "SupaCliny", "playlist_id": "50be6b0234e9e216d8f8c406"}'
 
-curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/create -d '{"name": "Sunday Night Jams", "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"songid": 0},{"songid": 44}]}'
+curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/create -d '{"name": "Sunday Night Jams", "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "songs": [{"song_id": 0},{"song_id": 44}]}'
 
-curl -u cliny:Pag82% -H "Content-type: application/json" -X PATCH http://127.0.0.1:8000/update -d '{"name": "Sunday Night Jams", "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "playlist_id": "50bfcf5534e9e2200b686964", "songs": [{"songid": 21},{"songid": 50}]}'
-
-
-curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1:8000/stream -d '{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 44, "played_at": 1354752286}'
-
-curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1:8000/stream -d '{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "songid": 21, "played_at": 1354752140}'
+curl -u cliny:Pag82% -H "Content-type: application/json" -X PATCH http://127.0.0.1:8000/update -d '{"name": "Sunday Night Jams", "access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "screen_name": "KingJames", "playlist_id": "50bfcf5534e9e2200b686964", "songs": [{"song_id": 21},{"song_id": 50}]}'
 
 
-curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"songid": 37, "title": "Jody Highroller (Chop Not Slop)", "album": "Birth of an Icon (Official Chop Not Slop Remix)", "artist": "Riff Raff", "album_artist": "Riff Raff", "genre": "Hip Hop", "composer": "", "duration": 276, "track_number": 2, "track_count": 25, "disc_number": 1, "disc_count": 1, "artwork": "http://blog.ourstage.com/wp-content/uploads/2012/08/riff-raff-1.jpg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 103, "comments": "", "url": "", "cloud": 1}'
+curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1:8000/stream -d '{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "song_id": 44, "played_at": 1354752286}'
+
+curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1:8000/stream -d '{"access_key": "demo", "access_secret": "demo","twitter_id": 100000000, "song_id": 21, "played_at": 1354752140}'
 
 
-curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"songid": 62, "title": "Peso", "album": "Peso", "artist": "A$AP Rocky", "album_artist": "A$AP Rocky", "genre": "Hip Hop", "composer": "", "duration": 171, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://www.asapmob.com/wp-content/uploads/2011/10/LIVE-LOVE-AAP.jpg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 88, "comments": "", "url": "", "cloud": 0}'
+curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"song_id": 37, "title": "Jody Highroller (Chop Not Slop)", "album": "Birth of an Icon (Official Chop Not Slop Remix)", "artist": "Riff Raff", "album_artist": "Riff Raff", "genre": "Hip Hop", "composer": "", "duration": 276, "track_number": 2, "track_count": 25, "disc_number": 1, "disc_count": 1, "artwork": "http://blog.ourstage.com/wp-content/uploads/2012/08/riff-raff-1.jpg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 103, "comments": "", "url": "", "cloud": 1}'
 
-curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"songid": 44, "title": "Bird on a Wire", "album": "Bird on a Wire", "artist": "Action Bronson ft. Riff Raff", "album_artist": "Action Bronson", "genre": "Hip Hop", "composer": "", "duration": 199, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://cdn.stereogum.com/files/2012/02/Action-Bronson-Riff-Raff-Bird-On-A-Wire-608x341.jpg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 85, "comments": "", "url": "", "cloud": 0}'
 
-curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"songid": 0, "title": "How We Feeling", "album": "Habits & Contradictions", "artist": "Schoolboy Q", "album_artist": "Schoolboy Q", "genre": "Hip Hop", "composer": "", "duration": 192, "track_number": 12, "track_count": 18, "disc_number": 1, "disc_count": 1, "artwork": "http://cdn.respect-mag.com/wp-content/uploads/2012/01/SCHOOLBOY-Q-575x575.jpg?9d7bd4", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 60, "comments": "", "url": "", "cloud": 0}'
+curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"song_id": 62, "title": "Peso", "album": "Peso", "artist": "A$AP Rocky", "album_artist": "A$AP Rocky", "genre": "Hip Hop", "composer": "", "duration": 171, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://www.asapmob.com/wp-content/uploads/2011/10/LIVE-LOVE-AAP.jpg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 88, "comments": "", "url": "", "cloud": 0}'
 
-curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"songid": 21, "title": "As High As Wu-Tang Get", "album": "Wu-Tang Forever", "artist": "Wu-Tang Clan", "album_artist": "Wu-Tang Clan", "genre": "Hip Hop", "composer": "", "duration": 157, "track_number": 6, "track_count": 11, "disc_number": 1, "disc_count": 2, "artwork": "https://twimg0-a.akamaihd.net/profile_images/1163524012/wu.jpg", "lyrics": "", "compilation": 1, "release_date": 1997, "bpm": 121, "comments": "", "url": "", "cloud": 0}'
+curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"song_id": 44, "title": "Bird on a Wire", "album": "Bird on a Wire", "artist": "Action Bronson ft. Riff Raff", "album_artist": "Action Bronson", "genre": "Hip Hop", "composer": "", "duration": 199, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://cdn.stereogum.com/files/2012/02/Action-Bronson-Riff-Raff-Bird-On-A-Wire-608x341.jpg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 85, "comments": "", "url": "", "cloud": 0}'
 
-curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"songid": 50, "title": "Bandz A Make Her Dance", "album": "Bandz A Make Her Dance featuring Lil Wayne and 2 Chainz", "artist": "Juicy J", "album_artist": "Juicy J", "genre": "Hip Hop", "composer": "", "duration": 280, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://static.globalgrind.com/sites/default/files/imagecache/article_images_540/images/2012_november/wiz-khalifa-juicy-j_0.jpeg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 111, "comments": "", "url": "", "cloud": 0}'
+curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"song_id": 0, "title": "How We Feeling", "album": "Habits & Contradictions", "artist": "Schoolboy Q", "album_artist": "Schoolboy Q", "genre": "Hip Hop", "composer": "", "duration": 192, "track_number": 12, "track_count": 18, "disc_number": 1, "disc_count": 1, "artwork": "http://cdn.respect-mag.com/wp-content/uploads/2012/01/SCHOOLBOY-Q-575x575.jpg?9d7bd4", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 60, "comments": "", "url": "", "cloud": 0}'
+
+curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"song_id": 21, "title": "As High As Wu-Tang Get", "album": "Wu-Tang Forever", "artist": "Wu-Tang Clan", "album_artist": "Wu-Tang Clan", "genre": "Hip Hop", "composer": "", "duration": 157, "track_number": 6, "track_count": 11, "disc_number": 1, "disc_count": 2, "artwork": "https://twimg0-a.akamaihd.net/profile_images/1163524012/wu.jpg", "lyrics": "", "compilation": 1, "release_date": 1997, "bpm": 121, "comments": "", "url": "", "cloud": 0}'
+
+curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"song_id": 50, "title": "Bandz A Make Her Dance", "album": "Bandz A Make Her Dance featuring Lil Wayne and 2 Chainz", "artist": "Juicy J", "album_artist": "Juicy J", "genre": "Hip Hop", "composer": "", "duration": 280, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://static.globalgrind.com/sites/default/files/imagecache/article_images_540/images/2012_november/wiz-khalifa-juicy-j_0.jpeg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 111, "comments": "", "url": "", "cloud": 0}'
+
+curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1:8000/stream -d '{"token": "169194713-T8JnqqMIFqIdDZu8bzEdAYBQ9lewerTUrdWPQkxO", "twitter_id": 169194713, "song_id": 0, "played_at": 1355263113}'
+

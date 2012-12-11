@@ -24,7 +24,7 @@
 
         $(".youtube").click(function() {
             $("#playwindow").empty();
-            $(".tunein_container").show()
+            $(".tunein_container").show(1500);
             var ytid = $(this).attr("rel");
             var embedhtml = '<iframe id="playwindow" type="text/html" width="279" height="189" src="http://www.youtube.com/embed/' + ytid + '?autoplay=1&origin=http://example.com" frameborder="0"/>';
             $("#playwindow").append(embedhtml);
@@ -33,9 +33,9 @@
 
         $(".spotify").click(function() {
             $("#playwindow").empty();
-            $(".tunein_container").show();
+            $(".tunein_container").show(1500);
             var spid = $(this).attr("rel");
-            var embedhtml = '<iframe src="https://embed.spotify.com/?uri=' + spid + '" width="279" height="186" frameborder="0" allowtransparency="true"></iframe>';
+            var embedhtml = '<iframe src="https://embed.spotify.com/?uri=' + spid + '" width="279" height="86" frameborder="0" allowtransparency="true"></iframe>';
             $("#playwindow").append(embedhtml);
         });
 

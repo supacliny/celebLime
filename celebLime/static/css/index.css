@@ -63,7 +63,7 @@ nowfan
   -moz-border-radius: 3px;
   border-radius: 3px;
   float: left;
-  margin-top: -5px;
+  margin-top: -4px;
   margin-right: 5px;
 }
 lastfan
@@ -75,7 +75,7 @@ lastfan
   -moz-border-radius: 3px;
   border-radius: 3px;
   float: left;
-  margin-top: -5px;
+  margin-top: -4px;
   margin-right: 5px;
 }
 emptyfan
@@ -86,7 +86,7 @@ emptyfan
   -moz-border-radius: 3px;
   border-radius: 3px;
   float: left;
-  margin-top: -5px;
+  margin-top: -4px;
   margin-right: 5px;
 }
 @font-face 
@@ -360,6 +360,16 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
   padding-right: 5px;
   padding-left: 5px;
   padding-bottom: 8px;
+}
+.namefan
+{
+  font-family: digitalfont;
+  font-size: 16px;
+  opacity: 0.90;
+  color: #eeeddd;
+  float: left;
+  padding-left: 5px;
+  margin-top: -6px;
 }
 .artist
 {

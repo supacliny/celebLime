@@ -42,26 +42,7 @@
             $(".song").click(function() {
                 openWindow($(this).attr("rel"));
             });    
-
-            $(".spotify").click(function() {
-                var spid = $(this).attr("rel").split('/').pop();
-                document.location.href = "spotify:track:" + spid;
-            });
-
-            $(".spotifylist").click(function(event) {
-                event.stopPropagation();
-                var spid = $(this).attr("rel").split('/').pop();
-                var userid = $(this).attr("rel").split('/');
-                var href = "spotify:user:" + userid[4] + ":playlist:" + spid;
-                document.location.href = href;
-            });
-
-            $(".itunes").click(function() {
-                var iid = $(this).attr("rel").split('/').pop();
-                document.location.href = "itms://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewArtist?id=" + iid;
-            });
-
-         
+      
             $(".innercollapsable").hide();
 
             $(".default").show();

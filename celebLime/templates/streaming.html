@@ -5,22 +5,12 @@
 <h3 style="color: #9c9c9c; margin-left: 10px; margin-top: 5px; margin-bottom: -5px;">Listened to no songs recently but I will soon!</h3>
 {% endif %}
 <script>
-    // $(function () {
-    //     $(".recent").click(function() {
-    //         window.open($(this).attr("rel"));
-    //     });    
-    // });
+    function shorten(string, limit)
+    {
+       return string = string.length > limit ? string.substring(0,limit) + "...": string;
+    }
 
     $(document).ready(function(){   
-
-        // $(".youtube").toggle(
-        //     function () {
-        //         $("#playwindow").css("visibility", "visible");
-        //     },
-        //     function () {
-        //         $("#playwindow").css("visibility", "hidden");
-        //     }
-        // );
 
         $(".youtube").click(function() {
             $("#playwindow").empty();
@@ -39,28 +29,22 @@
             $("#playwindow").append(embedhtml);
         });
 
+        $(".itunes").click(function() {
+            $("#playwindow").empty();
+            $(".tunein_container").show(1500);
+            var itida = shorten($(this).attr("rela"), 25);
+            var itidb = shorten($(this).attr("relb"), 25);
+            var itidc = shorten($(this).attr("relc"), 25);
+            var itidd = $(this).attr("reld");
+            var itide = $(this).attr("rele");
+            var itidf = $(this).attr("relf");
+            var itidg = $(this).attr("relg");
+            var itidh = $(this).attr("relh");
+            var embedhtml = '<div class="itthumb" style="background-image: url(' + itidg + ')"></div><div class="itinfo"><div class="itname">' + itidb + '</div><br><div class="itname">' + itida + '</div><br><div class="itname">' + itidc + '</div><br><div class="itname">Track ' + itidd + ' of ' + itide + '</div><br><div><div class="itname">USD$' + itidf + '</div><a class="itbuy" href="' + itidh + '" target="_blank">ITUNES BUY</a></div></div>';
+            $("#playwindow").append(embedhtml);
+        });
     });
     
-    // // Load the IFrame Player API code asynchronously.
-    // var tag = document.createElement('script');
-    // tag.src = "https://www.youtube.com/player_api";
-    // var firstScriptTag = document.getElementsByTagName('script')[0];
-    // firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    // // Replace the 'ytplayer' element with an <iframe> and
-    // // YouTube player after the API code downloads.
-    // var player;
-    // function onYouTubePlayerAPIReady() {
-    //     player = new YT.Player('playwindow', {
-    //       height: '183',
-    //       width: '273',
-    //       videoId: '7ohbKidZLiA',
-    //       autoplay: 1
-    //     });
-    // }
-
-
-
     // $(document).ready(function(){   
     //     $(".recent").toggle(
     //         function () {
@@ -84,12 +68,12 @@
             <now>Now Playing</now>
             <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/static/img/icons/youtube.png" width="25" height="25"/></div>            
             <div class="spotify" rel="{{ song.spotify.href }}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
-            <div class="itunes" rel=""><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
         {% else %}
             <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
             <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/static/img/icons/youtube.png" width="25" height="25"/></div>
             <div class="spotify" rel="{{ song.spotify.href }}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
-            <div class="itunes" rel=""><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
         {% endif %}
         </div>
 
@@ -104,7 +88,7 @@
             <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
             <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/static/img/icons/youtube.png" width="25" height="25"/></div> 
             <div class="spotify" rel="{{ song.spotify.href }}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
-            <div class="itunes" rel=""><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
         </div>
     </div>
     {% endif %}

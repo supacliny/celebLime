@@ -48,9 +48,15 @@
             $(".default").show();
 
             $(".outerclickable").click(
-            function() {
-            z=$(this);
-            $(this).siblings(".innercollapsable").slideToggle();
+                function() {
+                z=$(this);
+                $(this).siblings(".innercollapsable").slideToggle();
+            });
+
+            $(".toggler").click(
+                function() {
+                z=$(this);
+                $(this).siblings(".tunein_container").slideToggle();
             });
 
             function openWindow( url )
@@ -168,20 +174,12 @@
 
                     <div class="toplists">
 
-                        <h2 class="toplists_header outerclickable blackback">Tune in:</h2>
+                        <h2 class="toplists_header blackback toggler">Tune in:</h2>
 
-                        <div class="tunein_container innercollapsable">
+                        <div class="tunein_container blackback">
 
-                            <div class="toplist">
+                            <div id="playwindow"></div>
 
-                                <div class="listenwithcontainer blackback">
-                                    <div class="listenwiththumb">
-
-                                        <div id="playwindow"></div>
-
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
           

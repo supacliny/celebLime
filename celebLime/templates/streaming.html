@@ -4,6 +4,7 @@
 <div class="playlist_container blackback">
 <h3 style="color: #9c9c9c; margin-left: 10px; margin-top: 5px; margin-bottom: -5px;">Listened to no songs recently but I will soon!</h3>
 {% endif %}
+
 <script>
     function shorten(string, limit)
     {
@@ -14,24 +15,24 @@
 
         $(".youtube").click(function() {
             $("#playwindow").empty();
-            $(".tunein_container").show(1500);
+            $(".tunein_container").animate({height: "210px"}, 1000, "easeInOutQuad");
             var ytid = $(this).attr("rel");
-            var embedhtml = '<iframe id="playwindow" type="text/html" width="279" height="189" src="http://www.youtube.com/embed/' + ytid + '?autoplay=1&origin=http://example.com" frameborder="0"/>';
+            var embedhtml = '<div class="youtubeframe"><iframe id="playwindow" type="text/html" width="279" height="189" src="http://www.youtube.com/embed/' + ytid + '?autoplay=1&origin=http://example.com" frameborder="0"/></div>';
             $("#playwindow").append(embedhtml);
         });
 
 
         $(".spotify").click(function() {
             $("#playwindow").empty();
-            $(".tunein_container").show(1500);
+            $(".tunein_container").animate({height: "100px"}, 1000, "easeInOutQuad");
             var spid = $(this).attr("rel");
-            var embedhtml = '<iframe src="https://embed.spotify.com/?uri=' + spid + '" width="279" height="86" frameborder="0" allowtransparency="true"></iframe>';
+            var embedhtml = '<div class="spotifyframe"><iframe src="https://embed.spotify.com/?uri=' + spid + '" width="279" height="86" frameborder="0" allowtransparency="true"></iframe></div>';
             $("#playwindow").append(embedhtml);
-        });
-
+            });
+     
         $(".itunes").click(function() {
             $("#playwindow").empty();
-            $(".tunein_container").show(1500);
+            $(".tunein_container").animate({height: "120px"}, 1000, "easeInOutQuad");
             var itida = shorten($(this).attr("rela"), 25);
             var itidb = shorten($(this).attr("relb"), 25);
             var itidc = shorten($(this).attr("relc"), 25);
@@ -44,18 +45,8 @@
             $("#playwindow").append(embedhtml);
         });
     });
-    
-    // $(document).ready(function(){   
-    //     $(".recent").toggle(
-    //         function () {
-    //             $(".recent").animate({height: "200px"}, 1000, "easeInOutQuad")
-    //         },
-    //         function () {
-    //             $(".recent").animate({height: "70px"}, 1000, "easeInOutQuad")
-    //         }
-    //     );
-    // });
 </script>
+
 {% for song in streaming %}
     {% if loop.index == 1 %}
     <div class="recent" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">

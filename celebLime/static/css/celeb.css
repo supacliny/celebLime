@@ -80,17 +80,17 @@ now
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
 .navbar-fixed-top .navbar-inner, .navbar-static-top .navbar-inner {
-    border-width: 0 0 0px;
+  border-width: 0 0 0px;
 }
 body > .navbar .brand {
-    color: #eeeddd;
-    float: left;
-    font-weight: normal;
-    margin-left: 5px;
-    padding-left: 0;
-    padding-right: 0;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.125);
-    transition: all 0.2s linear 0s;
+  color: #eeeddd;
+  float: left;
+  font-weight: normal;
+  margin-left: 5px;
+  padding-left: 0;
+  padding-right: 0;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.125);
+  transition: all 0.2s linear 0s;
 }
 .navbar .brand 
 {
@@ -156,17 +156,17 @@ body > .navbar .brand {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
 .navbar-fixed-top .navbar-inner, .navbar-static-top .navbar-inner {
-    border-width: 0 0 0px;
+  border-width: 0 0 0px;
 }
 body .navbar .brand {
-    color: #eeeddd;
-    float: left;
-    font-weight: normal;
-    margin-left: 5px;
-    padding-left: 0;
-    padding-right: 0;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.125);
-    transition: all 0.2s linear 0s;
+  color: #eeeddd;
+  float: left;
+  font-weight: normal;
+  margin-left: 5px;
+  padding-left: 0;
+  padding-right: 0;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.125);
+  transition: all 0.2s linear 0s;
 }
 body .navbar .brand:hover {
   text-decoration: none;
@@ -197,38 +197,38 @@ body .navbar .brand:hover {
   float: right;
 }
 .navbar .dropdown-menu {
-    background-image: linear-gradient(#5C5F62, #383839);
-    background-image: -moz-linear-gradient(top, #5C5F62, #383839);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#383839));
-    background-image: -webkit-linear-gradient(top, #5C5F62, #383839);
-    background-image: -o-linear-gradient(top, #5C5F62, #383839);
-    background-image: linear-gradient(to bottom, #5C5F62, #383839);
-    font-color: #eeeddd;
+  background-image: linear-gradient(#5C5F62, #383839);
+  background-image: -moz-linear-gradient(top, #5C5F62, #383839);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#383839));
+  background-image: -webkit-linear-gradient(top, #5C5F62, #383839);
+  background-image: -o-linear-gradient(top, #5C5F62, #383839);
+  background-image: linear-gradient(to bottom, #5C5F62, #383839);
+  font-color: #eeeddd;
 }
 .navbar .dropdown-menu li > a {
-    clear: both;
-    color: #eeeddd;
-    display: block;
-    font-weight: normal;
-    font-size: 14px;
-    font-family: klavika-bold;
-    line-height: 20px;
-    padding: 3px 20px;
-    white-space: nowrap;
+  clear: both;
+  color: #eeeddd;
+  display: block;
+  font-weight: normal;
+  font-size: 14px;
+  font-family: klavika-bold;
+  line-height: 20px;
+  padding: 3px 20px;
+  white-space: nowrap;
 }
 .dropdown-menu li > a:hover, .dropdown-menu li > a:focus, .dropdown-submenu:hover > a{
-    text-decoration: none;
-    text-shadow: 0 0 4px #cacaca;
-    background-image: linear-gradient(#5C5F62, #383839);
-    background-image: -moz-linear-gradient(top, #5C5F62, #383839);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#383839));
-    background-image: -webkit-linear-gradient(top, #5C5F62, #383839);
-    background-image: -o-linear-gradient(top, #5C5F62, #383839);
-    background-image: linear-gradient(to bottom, #5C5F62, #383839);
+  text-decoration: none;
+  text-shadow: 0 0 4px #cacaca;
+  background-image: linear-gradient(#5C5F62, #383839);
+  background-image: -moz-linear-gradient(top, #5C5F62, #383839);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#383839));
+  background-image: -webkit-linear-gradient(top, #5C5F62, #383839);
+  background-image: -o-linear-gradient(top, #5C5F62, #383839);
+  background-image: linear-gradient(to bottom, #5C5F62, #383839);
 }
 .navbar .dropdown-menu:hover {
-   text-decoration: none;
-   text-shadow: 0 0 4px #cacaca;
+ text-decoration: none;
+ text-shadow: 0 0 4px #cacaca;
 }
 .caret {
   display: inline-block;
@@ -246,12 +246,13 @@ body .navbar .brand:hover {
   margin-left: 5px;
 }
 html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
-    border-bottom-color: #eeeddd;
-    border-top-color: #eeeddd;
-    text-shadow: 0 0 4px #cacaca;
+  border-bottom-color: #eeeddd;
+  border-top-color: #eeeddd;
+  text-shadow: 0 0 4px #cacaca;
 }
 .digital 
-{0  font-family: digitalfon6;
+{ 
+  font-family: digitalfont;
   font-size: 18px;
 }
 .celebname 
@@ -352,10 +353,10 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 }
 .tunein_container 
 {
-  margin-top:-2px;
-  width:360px;
-  padding-top:2px;
-  padding-bottom:10px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  width: 300px;
 }
 .toplist
 {
@@ -409,8 +410,8 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 .listenwithcontainer
 {
   -webkit-border-radius: 6px;
-  -moz-border-r0dius: 6px;
-  border-ra6ius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
   width: 280px;
   height: 190px;
   padding: 10px;
@@ -550,8 +551,7 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
   width: 100px;
   height: 100px;
   float: left;
-  padding-right: 0px;
-  margin: 0px 10px 5px 0px;
+  margin: 10px 10px 5px 10px;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -565,6 +565,7 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 }
 .itinfo
 {
+  margin-top: 10px;
   float: left;
 }
 .itbuy
@@ -581,13 +582,21 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
   padding-left: 5px;
   padding-right: 5px;
   padding-bottom: 2px;
-  display: hidden;
 }
 .itbuy:hover 
 {
   text-decoration: none;
   color: #eeeaaa;
-  display: block;
+}
+.spotifyframe
+{
+  padding-top: 10px;
+  padding-left: 10px;
+}
+.youtubeframe
+{
+  padding-top: 10px;
+  padding-left: 10px;
 }
 .headthumb
 {

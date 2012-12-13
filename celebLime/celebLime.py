@@ -374,7 +374,7 @@ def user(screen_name):
     top_songs = []
 
     # sort in descending order by number of times played
-    top_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(10).sort([("number", -1)])
+    top_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(10).sort([("played_count", -1)])
 
     for song in top_songs_cursor:
         song_id = song["song_id"]
@@ -427,6 +427,7 @@ def poll(screen_name):
         songinfo = mongo.db.songs.find_one({"song_id": song_id})
         if songinfo:
             songinfo["played_at"] = recent_song["played_at"]
+            songinfo["played_count"] = recent_song["played_count"]
             recent_songs.append(songinfo)
 
     now = False

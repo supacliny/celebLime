@@ -512,6 +512,15 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
   color: #eeeddd;
   float: left;
 }
+.times
+{
+  font-family: klavika-regular;
+  font-size: 14px;
+  opacity: 0.90;
+  color: #eeeddd;
+  float: left;
+  margin-left: 10px;
+}
 .song
 {
   background-color: #585858;

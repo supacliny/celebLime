@@ -127,7 +127,6 @@ body > .navbar .brand {
 .navbar .manage:hover
 {
   text-decoration: none;
-  text-shadow: 0 0 4px #cacaca;
 }
 .navbar {
   *position: relative;

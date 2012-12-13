@@ -6,6 +6,7 @@ from bson import json_util
 from time import time
 from time import mktime
 from celery import Celery
+from collections import defaultdict
 import itunes
 import tweepy
 import json
@@ -370,18 +371,39 @@ def user(screen_name):
             songinfo["played_at"] = song["played_at"]
             streaming.append(songinfo)
 
-    top = []
+    top_songs = []
 
-    # todo mongodb groupby?
     # sort in descending order by number of times played
-    # top_cursor = mongo.db.streaming.find({"twitter_id": userid}).limit(10).sort([("number", -1)])
+    top_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(10).sort([("number", -1)])
 
-    # for song in top_cursor:
-    #     song_id = song["song_id"]
-    #     songinfo = mongo.db.songs.find_one({"song_id": song_id})
-    #     top.append(songinfo)
+    for song in top_songs_cursor:
+        song_id = song["song_id"]
+        songinfo = mongo.db.songs.find_one({"song_id": song_id})
+        top_songs.append(songinfo)
 
-    return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top=top, logged_in=logged_in, name=name, debug=DEBUG)
+    artists = []
+
+    # get all streamed songs of this user
+    top_artists_cursor = mongo.db.streaming.find({"twitter_id": user_id})
+
+    # now get the song info for each song_id
+    for song in top_artists_cursor:
+        song_id = song["song_id"]
+        songinfo = mongo.db.songs.find_one({"song_id": song_id})
+        if songinfo:
+            artists.append(songinfo)
+
+    # default dict to the rescue!
+    counter = defaultdict(int)
+
+    for song in artists:
+        artist = song["artist"]
+        counter[artist] += 1
+
+    # now reverse sort
+    top_artists = sorted(counter, key=counter.get, reverse=False)
+
+    return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top_songs=top_songs, top_artists=top_artists, logged_in=logged_in, name=name, debug=DEBUG)
 
 
 # ajax query to update the recently listened playlist

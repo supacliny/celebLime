@@ -71,5 +71,10 @@ curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.
 
 curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"song_id": 50, "title": "Bandz A Make Her Dance", "album": "Bandz A Make Her Dance featuring Lil Wayne and 2 Chainz", "artist": "Juicy J", "album_artist": "Juicy J", "genre": "Hip Hop", "composer": "", "duration": 280, "track_number": 1, "track_count": 1, "disc_number": 1, "disc_count": 1, "artwork": "http://static.globalgrind.com/sites/default/files/imagecache/article_images_540/images/2012_november/wiz-khalifa-juicy-j_0.jpeg", "lyrics": "", "compilation": 1, "release_date": 2012, "bpm": 111, "comments": "", "url": "", "cloud": 0}'
 
+curl -u cliny:Pag82% -H "Content-type: application/json" -X POST http://127.0.0.1:8000/add -d '{"song_id": 75, "title": "Clan In Da Front", "album": "Enter The Wu-Tang (36 Chambers)", "artist": "Wu-Tang Clan", "album_artist": "Wu-Tang Clan", "genre": "Hip Hop", "composer": "", "duration": 273, "track_number": 4, "track_count": 10, "disc_number": 1, "disc_count": 1, "artwork": "http://www.hiphopsite.com/wp-content/uploads/2012/08/Wu_Tang_Clan_Logo_500x500.jpeg", "lyrics": "", "compilation": 1, "release_date": 2001, "bpm": 200, "comments": "", "url": "", "cloud": 0}'
+
 curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1:8000/stream -d '{"token": "169194713-T8JnqqMIFqIdDZu8bzEdAYBQ9lewerTUrdWPQkxO", "twitter_id": 169194713, "song_id": 0, "played_at": 1355263113}'
 
+curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1:8000/stream -d '{"token": "demo", "twitter_id": 100000000, "song_id": 75, "played_at": 1355356552}'
+
+'

@@ -29,6 +29,7 @@ now
   padding: 2px 4px;
   color: #d14;
   font-size: 12px;
+  font-weight: bolder;
   background-color: #2e2e2e;
   border: 1px solid #e1e1e8;
   -webkit-border-radius: 3px;
@@ -347,7 +348,6 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 .toplist_container 
 {
   margin-top:5px;
-  width:360px;
   padding-top:2px;
   padding-bottom:10px;
 }
@@ -506,9 +506,8 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 }
 .date
 {
-  font-family: arial;
+  font-family: klavika-regular;
   font-size: 14px;
-  font-weight: bold;
   opacity: 0.90;
   color: #eeeddd;
   float: left;
@@ -661,7 +660,12 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
   background-color: #383838;
   color: transparent;
   text-shadow: 0 0 4px #cacaca;
-
+}
+.recent:hover
+{
+  background-color: #383838;
+  color: transparent;
+  text-shadow: 0 0 4px #cacaca;
 }
 .song:hover .spotify
 {

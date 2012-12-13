@@ -167,11 +167,11 @@
           
                     <div class="toplists">
                         <h2 class="toplists_header outerclickable blackback">Top Tracks:</h2>
-                        {% if top %} 
+                        {% if top_songs %} 
                         <div class="toplists_container innercollapsable">                       
                             <div class="toplist">
                                 <div class="toplist_container blackback">
-                                    {% for song in top %}
+                                    {% for song in top_songs %}
                                     <div class="track">
                                         <div class="rowA">
                                             <div class="number">{{ loop.index }}.</div><div class="trackname">{{ song.title | truncate(30) }}</div>
@@ -188,14 +188,14 @@
 
                     <div class="toplists">
                         <h2 class="toplists_header outerclickable blackback">Favorite Artists:</h2>
-                        {% if top %}
+                        {% if top_artists %}
                         <div class="toplists_container innercollapsable">
                             <div class="toplist">
                                 <div class="toplist_container blackback">
-                                    {% for song in top %}
+                                    {% for artist in top_artists %}
                                     <div class="track">
                                         <div class="rowA">
-                                            <div class="number">{{ loop.index }}.</div><div class="trackartist">{{ song.artist| truncate(30) }}</div>
+                                            <div class="number">{{ loop.index }}.</div><div class="trackartist">{{ artist| truncate(30) }}</div>
                                         </div>
                                     </div>
                                     {% endfor %}

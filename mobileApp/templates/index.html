@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>celebLime</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A web application that publishes music playlists from a mobile application by celebrities.">
+    <meta name="keywords" content="fanlime athlete celebrity fan music playlist">
+    <meta name="author" content="cvstechnolgy">
+
+{% if debug %}
+    <!-- styles -->
+    <link href="/static/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+    <link href="/static/css/docs.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/prettify.css" rel="stylesheet">
+    <link href="/static/css/index.css" rel="stylesheet">
+
+    <!-- javascript -->
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap-tooltip.js"></script>
+    <script src="/static/js/bootstrap-tab.js"></script>
+    <script src="/static/js/bootstrap-dropdown.js"></script>
+{% else %}
+    <!-- styles -->
+    <link href="/projects/celebLime/static/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+    <link href="/projects/celebLime/static/css/docs.css" rel="stylesheet">
+    <link href="/projects/celebLime/static/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/projects/celebLime/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/projects/celebLime/static/css/prettify.css" rel="stylesheet">
+    <link href="/projects/celebLime/static/css/index.css" rel="stylesheet">
+
+    <!-- javascript -->
+    <script src="/projects/celebLime/static/js/jquery.min.js"></script>
+    <script src="/projects/celebLime/static/js/bootstrap-tooltip.js"></script>
+    <script src="/projects/celebLime/static/js/bootstrap-tab.js"></script>
+    <script src="/projects/celebLime/static/js/bootstrap-dropdown.js"></script>
+{% endif %}
+
+    <script>
+        $(function() {
+
+        $(".celeb").click(function() {
+          {% if debug %}
+          document.location.href = "user/" + $(this).attr("rel");
+          {% else %}
+          document.location.href = "/projects/celebLime/user/" + $(this).attr("rel");
+          {% endif %}
+        });
+
+        });
+
+        $(document).ready(function () {
+          $("[rel=tooltip]").tooltip();
+        });
+
+        $(function () {
+          $('.tabs a:last').tab('show')
+        });
+
+        function store(name){
+            $.post("/store/"+name, function() {
+                $('.tabs a:last').tab('show')  
+            });
+        }
+
+    </script>
+ </head>
+
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+        {% if not logged_in %}
+          <a class="brand" href="{{ url_for('home') }}">celebLime</a>
+          <a class="manage" href="{{ url_for('login') }}">login</a>
+        {% else %}
+          <a class="brand" href="{{ url_for('home') }}">celebLime</a>
+          <div class="dropdown">
+            <b class="caret"></b>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">{{ name }}</a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+              <li>
+                <a href="{{ url_for('logout') }}" tabindex="-1">Sign out celebLime</a>
+              </li>
+            </ul>
+          </div>
+          <div class="manage">Welcome</div>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <!-- Main banner -->
+      <div class="hero-unit">
+        <h1>Look. Listen. <span rel="tooltip" title="Lime (from Trinidad) [verb]: to hang out or party.">Lime.</span></h1>
+        <p>Sync your music with the playlists of celebrities.</p>
+      </div>
+
+    <ul class="nav nav-tabs">
+    {% if active %}
+      <li class="active"><a href="#celebrities" data-toggle="tab" onclick="store('celeb')">Celebrities</a></li>
+      <li><a href="#fans" data-toggle="tab" onclick="store('fan')">Fans</a></li>
+    {% else %}
+      <li><a href="#celebrities" data-toggle="tab" onclick="store('celeb')">Celebrities</a></li>
+      <li class="active"><a href="#fans" data-toggle="tab" onclick="store('fan')">Fans</a></li>
+    {% endif %}
+    </ul>
+
+    <div class="tab-content">
+    {% if active %}      
+      <div class="tab-pane fade in active" id="celebrities">
+    {% else %}
+      <div class="tab-pane fade" id="celebrities">
+    {% endif %}
+       <div class="row">
+
+
+      {% for c in celebs %}
+ 
+      <!-- row of columns -->
+        <div rel="{{c.screen_name}}" class="span4 celeb" style="background-image: url('{{c.profile_image_url}}'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
+          <h2>{{c.name | truncate(30)}}</h2>
+          <div class="headphones">
+          {% if c.now %}
+            <now>Now Playing</now><div class="name" rel="tooltip" title="{{ c.mr_song_title }} by {{ c.mr_song_artist }}">{{ c.mr_song_title | truncate(20) }}</div>
+          {% else %}
+            {% if c.mr_song_title %}
+            <last>Last Played</last><div class="name" rel="tooltip" title="{{ c.mr_song_title }} by {{ c.mr_song_artist }}">{{ c.mr_song_title | truncate(20) }}</div>
+            {% else %}
+            <empty>Nothing Played</empty>
+            {% endif %}
+          {% endif %}
+          </div>
+        </div>
+
+      {% endfor %}
+
+      </div> <!-- /row -->
+     </div> <!-- /celebrities -->
+
+    {% if active %}
+     <div class="tab-pane fade" id="fans">
+    {% else %}
+     <div class="tab-pane fade in active" id="fans">
+    {% endif %}    
+      <div class="row">
+      {% for f in fans %}
+          <div rel="{{f.screen_name}}" class="span4 song celeb" style="color: #eeeddd; padding: 10px">
+            <div class="thumb" style="background-image: url('{{f.profile_image_url}}')"></div>
+            <div class="rowA">
+                <h3>{{ f.name | truncate(30) }}</h3>&nbsp
+            </div>
+            <div class="rowB">
+            {% if f.now %}
+              <nowfan>Now Playing</nowfan><div class="namefan" rel="tooltip" title="{{ f.mr_song_title }} by {{ f.mr_song_artist }}">{{ f.mr_song_title | truncate(20) }}</div>
+            {% else %}
+              {% if f.mr_song_title %}
+              <lastfan>Last Played</lastfan><div class="namefan" rel="tooltip" title="{{ f.mr_song_title }} by {{ f.mr_song_artist }}">{{ f.mr_song_title | truncate(20) }}</div>
+              {% else %}
+              <emptyfan>Nothing Played</emptyfan>
+              {% endif %}
+            {% endif %}
+            </div>
+          </div> 
+         {% if loop.last %}
+           </div>
+         {% else %}
+           {% if loop.index is divisibleby 3 %}
+             </div>
+             <div class="row">
+           {% endif %}
+         {% endif %}
+      {% endfor %}
+      
+     </div> <!-- /tab-content -->
+    </div> <!-- /container -->
+
+  </body>
+</html>

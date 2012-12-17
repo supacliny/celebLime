@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>celebLime</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- Le styles -->
+        <link href="/static/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+        <link href="/static/css/docs.css" rel="stylesheet">
+        <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="/static/css/bootstrap.css" rel="stylesheet">
+        <link href="/static/css/prettify.css" rel="stylesheet">
+        <link href="/static/css/celeb.css" rel="stylesheet">
+             
+        <!-- Le javascript -->
+        <script src="/static/js/jquery.min.js"></script>
+        <script>
+            $(function () {
+
+            $(".spotify").click(function() {
+                var spid = $(this).attr("rel").split('/').pop();
+                document.location.href = "spotify:track:" + spid;
+            });
+
+            $(".spotifyartist").click(function() {
+                var spid = $(this).attr("rel").split('/').pop();
+                document.location.href = "spotify:artist:" + spid;
+            });
+
+
+            $(".spotifylist").click(function(event) {
+                event.stopPropagation();
+                var spid = $(this).attr("rel").split('/').pop();
+                var userid = $(this).attr("rel").split('/');
+                var href = "spotify:user:" + userid[4] + ":playlist:" + spid;
+                document.location.href = href;
+            });
+
+
+            $(".itunes").click(function() {
+                var iid = $(this).attr("rel").split('/').pop();
+                document.location.href = "itms://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewArtist?id=" + iid;
+            });
+
+         
+            $(".innercollapsable").hide();
+
+            $(".default").show();
+
+            $(".outerclickable").click(
+            function() {
+            z=$(this);
+            $(this).siblings(".innercollapsable").slideToggle();
+            });
+
+            });
+        </script>
+    </head>
+
+    <!-- Le html -->
+    <body style="background-image:url('/static/img/photos/basketball1.jpg');">
+        <div id="fb-root"></div><div id="user-info"></div>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="brand" href="/celebLime/">celebLime</a>
+                    {% if auth %}
+                    <button class="manage" id="fb-auth">login</button>
+                    {% else %}
+                    <a class="manage" href="/celebLime/manage">manage</a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+
+            <div class="celebname">
+                <div class="headthumb" style="background-image: url('/static/img/thumbnails/lebronjames.jpg')"></div><h1>LeBron James<a class="followbutton" href="#">LISTEN</a><div class="followers">listeners</div><div class="numfollowers">2,875,345</div></h1>
+            </div>
+
+          <div class="wrap">
+           <div class="leftcol">
+            <div class="playlists">
+
+                <h2 class="playlists_header outerclickable blackback">Recently listened:</h2>
+
+                <div class="playlists_container innercollapsable default">
+
+                    <div class="playlist">
+
+                        <div class="playlist_container blackback">
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/ti.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">Help is coming</div><div class="by">by</div><div class="artist">T.I.</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date"><highlight>Now</highlight></div><div class="spotify" rel="http://open.spotify.com/track/6ErXaL6jE58IMWznWCvQei"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/6ErXaL6jE58IMWznWCvQei"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/jake.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">Big Homie Style</div><div class="by">by</div><div class="artist">Jake One</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">9:46am March 14th</div><div class="spotify" rel="http://open.spotify.com/track/3LE3VaXap48FbGcRCbuTZr"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/3LE3VaXap48FbGcRCbuTZr"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/luda.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">MVP</div><div class="by">by</div><div class="artist">Ludacris</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">9:40am March 14th</div><div class="spotify" rel="http://open.spotify.com/track/5u4pmLoinCNvHsJvIgMpAB"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/5u4pmLoinCNvHsJvIgMpAB"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/gunit.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">Get down</div><div class="by">by</div><div class="artist">G-Unit</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">9:35am March 14th</div><div class="spotify" rel="http://open.spotify.com/track/51K7nvR0HFUc2CdNdF6q5f"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/51K7nvR0HFUc2CdNdF6q5f"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/wutang.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">C.R.E.A.M.</div><div class="by">by</div><div class="artist">Wu-Tang Clan</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">9:30am March 14th</div><div class="spotify" rel="http://open.spotify.com/track/119c93MHjrDLJTApCVGpvx"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/119c93MHjrDLJTApCVGpvx"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="playlists">
+                <h2 class="playlists_header outerclickable blackback">Playlists:</h2>
+
+                <div class="playlists_container innercollapsable">
+                    <div class="playlist">
+                        <h3 class="playlist_header outerclickable blackback">Miami Heats Pre-Game Tracklist<div class="spotifylist" rel="http://open.spotify.com/user/1221481107/playlist/30ZAn7ygmTf1tUlmFTO39d"><img src="/static/img/icons/spotify-logo.png" width="22" height="20" style="vertical-align: top"/></div></h3>
+
+                        <div class="playlist_container innercollapsable blackback">
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/jayz.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">American Dreamin'</div><div class="by">by</div><div class="artist">Jay-Z</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">10:35pm March 13th</div><div class="spotify" rel="http://open.spotify.com/track/0Hz2xVFOvDSIHxpPluK4ts"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/0Hz2xVFOvDSIHxpPluK4ts"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/lupe.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">Superstar</div><div class="by">by</div><div class="artist">Lupe Fiasco</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">10:15pm March 13th</div><div class="spotify" rel="http://open.spotify.com/track/4xyNF6ga7XnFHxOCimcF6b"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/4xyNF6ga7XnFHxOCimcF6b"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/game.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">Let's Ride</div><div class="by">by</div><div class="artist">The Game</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">10:00pm March 13th</div><div class="spotify" rel="http://open.spotify.com/track/1leLsQMjBo5bILYjyqPcjI"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/1leLsQMjBo5bILYjyqPcjI"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/eminem.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">You don't know</div><div class="by">by</div><div class="artist">Eminem</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">8:30pm March 13th</div><div class="spotify" rel="http://open.spotify.com/track/09HTROJwpBgv8FSHpckLjD"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/09HTROJwpBgv8FSHpckLjD"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/kanye.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">Champion</div><div class="by">by</div><div class="artist">Kanye West</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">8:30pm March 13th</div><div class="spotify" rel="http://open.spotify.com/track/0ErMK31Mr9j6tPA1F58rT9"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/0ErMK31Mr9j6tPA1F58rT9"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="playlist">
+                        <h3 class="playlist_header outerclickable blackback">Sunday Evening Easy Listening<div class="spotifylist" rel="http://open.spotify.com/user/1221481107/playlist/6HaCfNZMBmdf2XQStikJMB"><img src="/static/img/icons/spotify-logo.png" width="22" height="20" style="vertical-align: top"/></div></h3>
+
+                        <div class="playlist_container innercollapsable blackback">
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/seanpaul.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">Temperature</div><div class="by">by</div><div class="artist">Sean Paul</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">3:03pm March 12th</div><div class="spotify" rel="http://open.spotify.com/track/0k2GOhqsrxDTAbFFSdNJjT"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/0k2GOhqsrxDTAbFFSdNJjT"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/rihanna.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">Rude Boy</div><div class="by">by</div><div class="artist">Rihanna</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">2:40pm March 12th</div><div class="spotify" rel="http://open.spotify.com/track/4pvLiHkcQ3CSNFKT7HGSGM"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/4pvLiHkcQ3CSNFKT7HGSGM"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/beyonce.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">Single Ladies</div><div class="by">by</div><div class="artist">Beyonce</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">2:20pm March 12th</div><div class="spotify" rel="http://open.spotify.com/track/5R9a4t5t5O0IsznsrKPVro"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/5R9a4t5t5O0IsznsrKPVro"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/nicki.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">Your Love</div><div class="by">by</div><div class="artist">Nicki Minaj</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">1:32pm March 12th</div><div class="spotify" rel="http://open.spotify.com/track/2HCqDoYfX8BcOnEugAN4XY"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/2HCqDoYfX8BcOnEugAN4XY"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                            <div class="song">
+                                <div class="thumb" style="background-image: url('/static/img/thumbnails/marley.jpg')"></div>
+                                <div class="rowA">
+                                    <div class="name">Khaki Suit</div><div class="by">by</div><div class="artist">Damian Marley</div>&nbsp
+                                </div>
+                                <div class="rowB">
+                                    <div class="listen">Listened</div><div class="date">12:31pm March 12th</div><div class="spotify" rel="http://open.spotify.com/track/7aBQEiuhETzcJm1Lu0H9uY"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div><div class="itunes" rel="http://open.spotify.com/track/7aBQEiuhETzcJm1Lu0H9uY"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+           </div> <!-- /leftcol -->
+
+               <div class="rightcol">  
+
+                    <div class="toplists">
+
+                        <h2 class="toplists_header outerclickable blackback">Listens with:</h2>
+
+                        <div class="toplists_container innercollapsable default">
+
+                            <div class="toplist">
+
+                                <div class="listenwithcontainer blackback">
+                                        <div class="listenwiththumb"><img src="/static/img/icons/beats.jpg" width="100%" height="100%"/></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+          
+                    <div class="toplists">
+
+                        <h2 class="toplists_header outerclickable blackback">Top Tracks:</h2>
+
+                        <div class="toplists_container innercollapsable">
+
+                            <div class="toplist">
+
+                                <div class="toplist_container blackback">
+
+                            
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">1.</div><div class="trackname">Help is coming</div><div style="padding-top: 8px"><div class="spotify" rel="http://open.spotify.com/track/6ErXaL6jE58IMWznWCvQei"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="http://open.spotify.com/track/6ErXaL6jE58IMWznWCvQei"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">2.</div><div class="trackname">Khaki Suit</div><div style="padding-top: 8px"><div class="spotify" rel="http://open.spotify.com/track/7aBQEiuhETzcJm1Lu0H9uY"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="http://open.spotify.com/track/7aBQEiuhETzcJm1Lu0H9uY"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">3.</div><div class="trackname">American Dreamin'</div><div style="padding-top: 8px"><div class="spotify" rel="http://open.spotify.com/track/0Hz2xVFOvDSIHxpPluK4ts"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="http://open.spotify.com/track/0Hz2xVFOvDSIHxpPluK4ts"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+        
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">4.</div><div class="trackname">Temperature</div><div style="padding-top: 8px"><div class="spotify" rel="http://open.spotify.com/track/0k2GOhqsrxDTAbFFSdNJjT"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="http://open.spotify.com/track/0k2GOhqsrxDTAbFFSdNJjT"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+        
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">5.</div><div class="trackname">Champion</div><div style="padding-top: 8px"><div class="spotify" rel="http://open.spotify.com/track/0ErMK31Mr9j6tPA1F58rT9"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="http://open.spotify.com/track/0ErMK31Mr9j6tPA1F58rT9"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+        
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="toplists">
+
+                        <h2 class="toplists_header outerclickable blackback">Favorite Artists:</h2>
+
+                        <div class="toplists_container innercollapsable">
+
+                            <div class="toplist">
+
+                                <div class="toplist_container blackback">
+
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">1.</div><div class="trackartist">T.I.</div><div style="padding-top: 8px"><div class="spotifyartist" rel="http://open.spotify.com/artist/4OBJLual30L7gRl5UkeRcT"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="http://open.spotify.com/artist/4OBJLual30L7gRl5UkeRcT"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+
+                                   <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">2.</div><div class="trackartist">Sean Paul</div><div style="padding-top: 8px"><div class="spotifyartist" rel="http://open.spotify.com/artist/3Isy6kedDrgPYoTS1dazA9"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="http://open.spotify.com/artist/3Isy6kedDrgPYoTS1dazA9"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">3.</div><div class="trackartist">Jay-Z</div><div style="padding-top: 8px"><div class="spotifyartist" rel="http://open.spotify.com/artist/3nFkdlSjzX9mRTtwJOzDYB"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="http://open.spotify.com/artist/3nFkdlSjzX9mRTtwJOzDYB"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">4.</div><div class="trackartist">Rihanna</div><div style="padding-top: 8px"><div class="spotifyartist" rel="http://open.spotify.com/artist/5pKCCKE2ajJHZ9KAiaK11H"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="http://open.spotify.com/artist/5pKCCKE2ajJHZ9KAiaK11H"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+
+                                   <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">5.</div><div class="trackartist">Kanye West</div><div style="padding-top: 8px"><div class="spotifyartist" rel="http://open.spotify.com/artist/5K4W6rqBFWDnAN6FQUkS6x"><img src="/static/img/icons/spotify-logo.png" width="18" height="18"/></div><div class="itunes" rel="http://open.spotify.com/artist/5K4W6rqBFWDnAN6FQUkS6x"><img src="/static/img/icons/itunes.png" width="20" height="20"/></div></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+ 
+                </div> <!-- /rightcol -->
+
+          </div> <!-- /wrap -->
+        </div> <!-- /container -->
+
+      <script type="text/javascript" src="/static/js/cookies.js"></script>
+      <script type="text/javascript" src="/static/js/login.js"></script>
+
+    </body>
+</html>

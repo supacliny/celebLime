@@ -1,0 +1,15 @@
+<script>
+$(document).ready(function () {
+  $(".delete").click(function(){
+    var id = $(this).attr("rel");
+    $.post("/delete/"+id, function(data) {
+        $(".list").hide().html(data).fadeIn('fast'); 
+    });
+  });
+});   
+</script>
+<ol>
+    {% for song in tracks %}
+    <li><div class="track">{{ song.title }} by {{ song.artist }} in {{ song.album}}</div><div class="delete" rel="{{ song.id }}">[DELETE]</div><div class="stream" rel="{{ song.id }}">[STREAM]</div></li>
+    {% endfor %}
+</ol>

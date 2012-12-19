@@ -37,12 +37,7 @@
     {% endif %}
 
         <script>
-            $(function () {
-
-                $(".song").click(function() {
-                    openWindow($(this).attr("rel"));
-                });    
-          
+            $(function () {  
                 $(".innercollapsable").hide();
 
                 $(".default").show();
@@ -77,6 +72,49 @@
 
                 doPoll();
 
+            });
+
+            function shorten(string, limit)
+            {
+               return string = string.length > limit ? string.substring(0,limit) + "...": string;
+            }
+
+            $(document).ready(function(){   
+
+                $(".youtube").click(function() {
+                    $(window).scrollTop($(".playwindow").offset().top);
+                    $(".playwindow").empty();
+                    $(".tunein_container").animate({height: "210px"}, 1000, "easeInOutQuad");
+                    var ytid = $(this).attr("rel");
+                    var embedhtml = '<div class="youtubeframe"><iframe id="playwindow" type="text/html" width="279" height="189" src="http://www.youtube.com/embed/' + ytid + '?autoplay=1&origin=http://example.com" frameborder="0"/></div>';
+                    $(".playwindow").append(embedhtml);
+                });
+
+
+                $(".spotify").click(function() {
+                    $(window).scrollTop($(".playwindow").offset().top);
+                    $(".playwindow").empty();
+                    $(".tunein_container").animate({height: "100px"}, 1000, "easeInOutQuad");
+                    var spid = $(this).attr("rel");
+                    var embedhtml = '<div class="spotifyframe"><iframe src="https://embed.spotify.com/?uri=' + spid + '" width="279" height="86" frameborder="0" allowtransparency="true"></iframe></div>';
+                    $(".playwindow").append(embedhtml);
+                    });
+             
+                $(".itunes").click(function() {
+                    $(window).scrollTop($(".playwindow").offset().top);
+                    $(".playwindow").empty();
+                    $(".tunein_container").animate({height: "120px"}, 1000, "easeInOutQuad");
+                    var itida = shorten($(this).attr("rela"), 25);
+                    var itidb = shorten($(this).attr("relb"), 25);
+                    var itidc = shorten($(this).attr("relc"), 25);
+                    var itidd = $(this).attr("reld");
+                    var itide = $(this).attr("rele");
+                    var itidf = $(this).attr("relf");
+                    var itidg = $(this).attr("relg");
+                    var itidh = $(this).attr("relh");
+                    var embedhtml = '<div class="itthumb" style="background-image: url(' + itidg + ')"></div><div class="itinfo"><div class="itname">' + itidb + '</div><br><div class="itname">' + itida + '</div><br><div class="itname">' + itidc + '</div><br><div class="itname">Track ' + itidd + ' of ' + itide + '</div><br><div><div class="itname">USD$' + itidf + '</div><a class="itbuy" href="' + itidh + '" target="_blank">ITUNES BUY</a></div></div>';
+                    $(".playwindow").append(embedhtml);
+                });
             });
         </script>
     </head>
@@ -137,24 +175,27 @@
                                 {% else %}
                                 <div class="playlist_container innercollapsable blackback">
                                     <h3 style="color: #9c9c9c; margin-left: 10px; margin-top: 5px; margin-bottom: -5px;">No songs in this playlist yet!</h3>
-                                </div>   
                                 {% endif %}
                                     {% for song in playlist.songs %}
-                                    <div class="song" rel="http://www.youtube.com/results?search_query={{ song.title }}+{{ song.artist }}">
-                                        <div class="thumb" style="background-image: url('{{ song.artwork }}')"></div>
+                                    <div class="song">
+                                        <div class="thumb" style="background-image: url('{{ song.itunes.artworkUrl100 }}')"></div>
                                         <div class="rowA">
                                             <div class="name">{{ song.title | truncate(30) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
                                         </div>
                                         <div class="rowB">
-                                            <div class="album">{{ song.album | truncate(30)}}</div><div class="release">{{ song.release_date }}</div>
+                                            <div class="album">{{ song.album | truncate(30) }}</div>
+                                            <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/static/img/icons/youtube.png" width="25" height="25"/></div> 
+                                            <div class="spotify" rel="{{ song.spotify.href }}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
+                                            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
                                         </div>
-                                    </div>
+                                    </div>  
                                     {% endfor %}
                                 </div>
-                                {% endfor %}
                             </div>
+                            {% endfor %}
                         </div>
                     </div>
+                </div>
 
                 <div class="rightcol">  
 

@@ -92,8 +92,6 @@ def getYouTubeVideo(song_id, search):
         song_oid = bson.objectid.ObjectId(song_id)        
         data = {}
 
-        print results
-
         if (results.get('feed').get('entry')) != None:
             # assume the first result is the best match
             video = results.get('feed').get('entry')[0]
@@ -348,6 +346,9 @@ def user(screen_name):
         song_ids = playlist["songs"]
         
         for song_id in song_ids:
+            # song_id is a dict string, convert to ObjectID
+            song_id = song_id["song_id"]
+            song_id = bson.objectid.ObjectId(song_id)
             songinfo = mongo.db.songs.find_one(song_id)
             if songinfo:
                 songs.append(songinfo)
@@ -481,14 +482,26 @@ def api_create_playlist():
         if not is_authorized(token):
             return not_authorized()
 
-        # add timestamps
+        songs = incoming["songs"]
+        tracks = []
+
+        # get celebLime ids for these songs
+        for song in songs:
+            tracks.append(add_song(song))
+
+        # add timestamps and replace songs/local ids with all celebLime ids
         incoming["added_at"] = int(time())
         incoming["updated_at"] = int(time())
+        incoming["songs"] = tracks
 
-        # insert into mongo
-        playlist_id = mongo.db.playlists.insert(incoming)
+        #  then insert
+        mongo.db.playlists.ensure_index([("name",ASCENDING),("twitter_id",ASCENDING)], unique=True, background=True)
+        try:
+            playlist_id = mongo.db.playlists.insert(incoming)
+        except DuplicateKeyError:
+            return already_exists()
 
-        data = {"playlist_id": str(playlist_id)}
+        data = {"twitter_id": user_id, "playlist_id": str(playlist_id), "songs": tracks}
 
         data = json.dumps(data)
 
@@ -630,7 +643,7 @@ def api_stream_song():
         return not_json()
 
 
-# add a song
+# add a song via the api and return a celebLime id
 @app.route("/add", methods = ["POST"])
 def api_add_song():
 
@@ -638,40 +651,46 @@ def api_add_song():
 
         incoming = request.json    
 
-        # partially validate JSON fields
-        try:
-            title = incoming["title"]
-            artist = incoming["artist"]
-            album = incoming["album"]
-        except KeyError:
-            return bad_request()
-
-        # if index not there, add a compound index
-        mongo.db.songs.ensure_index([("title",ASCENDING),("artist",ASCENDING), ("album", ASCENDING)], unique=True, background=True)
-
-        # does this song already exist in the db?
-        song = mongo.db.songs.find_one({"title": title, "artist": artist, "album": album})
-
-        # then return that id else return a new id after inserting
-        if song:
-            song_id = song["_id"]
-            data = {"song_id": str(song_id)}
-        else:
-            song_id = mongo.db.songs.insert(incoming)
-            data = {"song_id": str(song_id)}
-
-            # dispatch to celery to update in the background!
-            search = incoming["title"] + " " + incoming["artist"]
-            asynciTunes = getiTunesTrack.delay(str(song_id), search)
-            asyncSpotify = getSpotifyTrack.delay(str(song_id), search)
-            asyncYouTube = getYouTubeVideo.delay(str(song_id), search)
-
-        data = json.dumps(data)
+        data = json.dumps(add_song(incoming))
 
         resp = Response(data, status=201, mimetype="application/json")
         return resp
     else:
         return not_json()
+
+
+def add_song(song):
+
+    # determine if full song or just id
+    # if just id, then this song is already in our database with a proper celebLime id
+    try:
+        title = song["title"]
+        artist = song["artist"]
+        album = song["album"]
+    except KeyError:
+        return {"song_id": song["id"]}
+
+    # if index not there, add a compound index
+    mongo.db.songs.ensure_index([("title",ASCENDING),("artist",ASCENDING), ("album", ASCENDING)], unique=True, background=True)
+
+    # does this song already exist in the db?
+    already_song = mongo.db.songs.find_one({"title": title, "artist": artist, "album": album})
+
+    # then return that id else return a new id after inserting
+    if already_song:
+        song_id = already_song["_id"]
+        data = {"song_id": str(song_id)}
+    else:
+        song_id = mongo.db.songs.insert(song)
+        data = {"song_id": str(song_id)}
+
+        # dispatch to celery to update in the background!
+        search = title + " " + artist
+        asynciTunes = getiTunesTrack.delay(str(song_id), search)
+        asyncSpotify = getSpotifyTrack.delay(str(song_id), search)
+        asyncYouTube = getYouTubeVideo.delay(str(song_id), search)
+
+    return data
 
 
 @app.errorhandler(404)
@@ -713,6 +732,17 @@ def bad_request(error=None):
     message = {
             "status": 400,
             "message": "Bad Request (missing required JSON fields): " + request.url,
+    }
+    resp = jsonify(message)
+    resp.status_code = 400
+
+    return resp
+
+
+def already_exists(error=None):
+    message = {
+            "status": 400,
+            "message": "Bad Request (resource already exists): " + request.url,
     }
     resp = jsonify(message)
     resp.status_code = 400

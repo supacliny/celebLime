@@ -61,7 +61,7 @@ def home():
 
     name = session.get("username")
 
-    userid = session.get("userid")
+    user_id = session.get("userid")
 
     if logged_in == None:
         logged_in = False
@@ -69,38 +69,40 @@ def home():
     if name == None:
         name = ""
 
-    if userid == None:
-        userid = 0
+    if user_id == None:
+        user_id = 0
 
     if request.method == "POST":
         title = request.form['title']
         artist = request.form['artist']
-        album = request.form['album']
 
-        if title and artist and album:
+        if title and artist:
             search = title + " " + artist
             track = getiTunesTrack(search)
 
-            print track
             song_title = track.get("trackName")
             song_artist = track.get("artistName")
             song_album = track.get("collectionName")
 
             if song_title != None and song_artist != None and song_album != None:
-                cur = g.db.execute('select song_id, song_title, song_artist, song_album, twitter_id from songs where song_title = ? and song_artist = ? and song_album = ? and twitter_id = ?', [song_title, song_artist, song_album, userid])
+
+                # celebLime id is 0 for now, gets updated when playlist created
+                song_id = "0"
+
+                cur = g.db.execute('select id, song_id, song_title, song_artist, song_album, twitter_id from songs where song_id = ? and song_title = ? and song_artist = ? and song_album = ? and twitter_id = ?', [song_id, song_title, song_artist, song_album, user_id])
 
                 results = cur.fetchall()
 
                 # song is already in there!
                 if results:
-                    song_id = results[0][0]
+                    local_song_id = results[0][0]
                 else:
                     # has not been inserted
-                    g.db.execute('insert into songs (song_title, song_artist, song_album, twitter_id) values (?, ?, ?, ?)', [song_title, song_artist, song_album, userid])
+                    g.db.execute('insert into songs (song_id, song_title, song_artist, song_album, twitter_id) values (?, ?, ?, ?, ?)', [song_id, song_title, song_artist, song_album, user_id])
                     g.db.commit()
 
 
-    cur = g.db.execute('select song_id, song_title, song_artist, song_album from songs where twitter_id = ?', [userid])
+    cur = g.db.execute('select id, song_title, song_artist, song_album from songs where twitter_id = ?', [user_id])
     tracks = [dict(id=row[0], title=row[1], artist=row[2], album=row[3]) for row in cur.fetchall()]
 
     return render_template("mobile.html", logged_in=logged_in, name=name, tracks=tracks, debug=DEBUG)
@@ -140,6 +142,7 @@ def logout():
     session.pop("logged_in", None)
     session.pop("userid", None)
     session.pop("username", None)
+    session.pop("token", None)
     session.pop("request_token", None)
     return redirect(url_for("home"))
 
@@ -174,6 +177,7 @@ def verify():
         user = api.me()
         session["userid"] = user.id
         session["username"] = user.name
+        session["token"] = auth.access_token.key
 
         twitter_id = user.id
         token = auth.access_token.key
@@ -210,6 +214,97 @@ def store(id):
     tracks = [dict(id=row[0], title=row[1], artist=row[2], album=row[3]) for row in cur.fetchall()]
 
     return render_template("streaming.html", tracks=tracks)
+
+
+# create playlist
+@app.route("/create/<jdata>", methods = ["POST"])
+def create(jdata):
+
+    jdata = json.loads(jdata)
+    user_id = session.get("userid")
+    token = session.get("token")
+
+    name = jdata["name"]
+    songs = jdata["songs"]
+
+    tracks = []
+
+    for local_song_id in songs:
+        local_song_id = int(local_song_id)
+        cur = g.db.execute('select id, song_title, song_artist, song_album from songs where id = ? and twitter_id = ?', [local_song_id, user_id])
+        for row in cur.fetchall():
+            tracks.append(dict(id=row[0], title=row[1], artist=row[2], album=row[3]))
+
+    data = {"twitter_id": user_id, "token": token, "name": name, "songs": tracks}
+    headers = {"Content-type": "application/json", "Accept": "text/plain"}
+    url = "http://127.0.0.1:8000/create"
+    response = requests.post(url, data=json.dumps(data), headers=headers)
+    results = response.json
+
+    # check response
+    try:
+        song_ids = results["songs"]
+        playlist_id = results["playlist_id"]
+    except KeyError:
+        print "Key Error! Values returned at fault."
+        return ""
+
+    # make a local playlist
+    try:
+        g.db.execute('insert into playlists (playlist_id, twitter_id, playlist_name) values (?, ?, ?)', [playlist_id, user_id, name])
+        g.db.commit()
+    except sqlite3.IntegrityError, m:
+        print "Duplicate Error! Playlist already exists."
+
+
+    # from the results, let's update the local songs with the global celebLime id.
+    # and map playlists to songs
+    for index, val in enumerate(song_ids):
+
+        celebLime_id = (song_ids[index])["song_id"]
+        local_id = int(songs[index])
+
+        g.db.execute('update songs set song_id = ? where id = ? and twitter_id = ?', [celebLime_id, local_id, user_id])
+        g.db.execute('insert into playlistsongs (playlist_id, song_id, rank) values (?, ?, ?)', [playlist_id, local_id, index])
+
+        g.db.commit()
+
+    return ""
+
+
+# show playlists
+@app.route("/show")
+def showPlaylists():
+
+    user_id = session.get("userid")
+
+    # now lets shuttle data back to the front end
+    data = []
+
+    cur = g.db.execute('select playlist_id, twitter_id, playlist_name from playlists where twitter_id = ?', [user_id])
+    playlists = [dict(playlist_id=row[0], twitter_id=row[1], playlist_name=row[2]) for row in cur.fetchall()]
+
+    for playlist in playlists:
+
+        song_data = []
+        playlist_id = playlist["playlist_id"]
+        playlist_name = playlist["playlist_name"]
+
+        cur = g.db.execute('select song_id from playlistsongs where playlist_id = ? order by rank asc', [playlist_id])
+        songs = [dict(song_id=row[0]) for row in cur.fetchall()]
+
+        for song in songs:
+
+            local_song_id = song["song_id"]
+            cur = g.db.execute('select id, song_title, song_artist, song_album from songs where id = ? and twitter_id = ?', [local_song_id, user_id])
+            for row in cur.fetchall():
+                song_data.append(dict(id=row[0], title=row[1], artist=row[2], album=row[3]))
+
+        data.append({"playlist_id": playlist_id, "playlist_name": playlist_name, "songs": song_data})
+
+    data = json.dumps(data)
+
+    return data
 
 
 @app.errorhandler(404)

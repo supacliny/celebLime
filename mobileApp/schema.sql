@@ -10,7 +10,8 @@ create table users (
 
 drop table if exists playlists;
 create table playlists (
-  playlist_id integer primary key autoincrement,
+  id integer primary key autoincrement,
+  playlist_id string not null,
   twitter_id integer not null,
   playlist_name string not null
 );
@@ -24,7 +25,8 @@ create table playlistsongs (
 
 drop table if exists songs;
 create table songs (
-  song_id integer primary key autoincrement,
+  id integer primary key autoincrement,
+  song_id string not null,
   song_title string not null,
   song_artist string not null,
   song_album string not null,

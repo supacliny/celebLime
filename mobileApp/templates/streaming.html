@@ -1,15 +1,39 @@
 <script>
 $(document).ready(function () {
-  $(".delete").click(function(){
-    var id = $(this).attr("rel");
-    $.post("/delete/"+id, function(data) {
-        $(".list").hide().html(data).fadeIn('fast'); 
+
+    var clicked = [];
+
+    $(".delete").click(function(){
+        var id = $(this).attr("rel");
+        $.post("/delete/"+id, function(data) {
+            $(".list").hide().html(data).fadeIn('fast'); 
+        });
     });
-  });
+    $(".track").click(function(){
+    var id = $(this).attr("rel");
+    if (jQuery.inArray(id, clicked) < 0){
+      $(this).closest(".track").css("color", "#ddd000");
+      clicked.push(id);
+    }
+    else {
+      $(this).closest(".track").css("color", "#eeeddd");
+      clicked.pop(id);
+    }
+    });
+
+    $(".create").click(function(){
+    var jdata = JSON.stringify(clicked);
+    $.post("/create/"+jdata, function(data) {
+        //$(".list").hide().html(data).fadeIn('fast'); 
+    });
+    });
 });   
 </script>
 <ol>
     {% for song in tracks %}
-    <li><div class="track">{{ song.title }} by {{ song.artist }} in {{ song.album}}</div><div class="delete" rel="{{ song.id }}">[DELETE]</div><div class="stream" rel="{{ song.id }}">[STREAM]</div></li>
+    <li><div class="track" rel="{{ song.id }}">{{ song.title }} by {{ song.artist }} in {{ song.album}}</div><div class="delete" rel="{{ song.id }}">[DELETE]</div><div class="stream" rel="{{ song.id }}">[STREAM]</div></li>
     {% endfor %}
 </ol>
+{% if tracks %}
+<div class="create">[CREATE PLAYLIST]</div>
+{% endif %}

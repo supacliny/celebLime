@@ -18,7 +18,7 @@ create table playlists (
 
 drop table if exists playlistsongs;
 create table playlistsongs (
-  playlist_id integer not null,
+  playlist_id string not null,
   song_id integer not null,
   rank integer not null
 );

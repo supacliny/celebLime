@@ -161,21 +161,38 @@ def verify():
     return redirect(url_for("home"))
 
 
-# delete added track
+# delete song or playlist
 @app.route("/delete/<id>", methods = ["POST"])
-def store(id):
+def delete(id):
 
-    song_id = int(id)
+    iid = str(id)
+
     user_id = session.get("userid")
+    token = session.get("token")
 
-    # delete song - it must exist
-    g.db.execute('delete from songs where song_id = ? and twitter_id = ?', [song_id, user_id])
-    g.db.commit()
- 
-    cur = g.db.execute('select song_id, song_title, song_artist, song_album from songs where twitter_id = ?', [user_id])
-    tracks = [dict(id=row[0], title=row[1], artist=row[2], album=row[3]) for row in cur.fetchall()]
+    if is_number(iid):
+        # is a song id
+        g.db.execute('delete from songs where id = ? and twitter_id = ?', [iid, user_id])
+        g.db.execute('delete from playlistsongs where song_id = ?', [iid])
+        g.db.commit()
 
-    return render_template("streaming.html", tracks=tracks)
+        return json.dumps({"deleted": 0})
+
+    else:    
+        # is a playlist id
+
+        # delete from celebLime
+        data = {"twitter_id": user_id, "token": token, "playlist_id": iid}
+        headers = {"Content-type": "application/json", "Accept": "text/plain"}
+        url = "http://127.0.0.1:8000/delete"
+        response = requests.delete(url, data=json.dumps(data), headers=headers)
+
+        # now delete from app
+        g.db.execute('delete from playlists where playlist_id = ? and twitter_id = ?', [iid, user_id])
+        g.db.execute('delete from playlistsongs where playlist_id = ?', [iid])
+        g.db.commit()
+
+        return json.dumps({"deleted": 1})
 
 
 # create playlist
@@ -261,7 +278,7 @@ def search():
             # celebLime id is 0 for now, gets updated when playlist created
             song_id = "0"
 
-            cur = g.db.execute('select id, song_id, song_title, song_artist, song_album, twitter_id from songs where song_id = ? and song_title = ? and song_artist = ? and song_album = ? and twitter_id = ?', [song_id, song_title, song_artist, song_album, user_id])
+            cur = g.db.execute('select id, song_id, song_title, song_artist, song_album, twitter_id from songs where song_title = ? and song_artist = ? and song_album = ? and twitter_id = ?', [song_title, song_artist, song_album, user_id])
 
             results = cur.fetchall()
 
@@ -381,6 +398,15 @@ def bad_request(error=None):
     resp.status_code = 400
 
     return resp
+
+
+# determine if string is all numbers (local song id) or playlist id (global celebLime id)
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 
 # used to extract the youtube video ID

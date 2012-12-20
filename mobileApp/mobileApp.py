@@ -195,6 +195,32 @@ def delete(id):
         return json.dumps({"deleted": 1})
 
 
+# stream song
+@app.route("/play/<id>", methods = ["POST"])
+def play(id):
+
+    song_id = str(id)
+
+    user_id = session.get("userid")
+    token = session.get("token")
+    played_at = int(time())
+
+    # lookup celebLime id
+    cur = g.db.execute('select song_id from songs where id = ? and twitter_id = ?', [song_id, user_id])
+
+    results = cur.fetchone()
+
+    song_id = str(results[0])
+
+    # now playing!
+    data = {"twitter_id": user_id, "token": token, "song_id": song_id, "played_at": played_at}
+    headers = {"Content-type": "application/json", "Accept": "text/plain"}
+    url = "http://127.0.0.1:8000/stream"
+    response = requests.put(url, data=json.dumps(data), headers=headers)
+
+    return "" 
+
+ 
 # create playlist
 @app.route("/create/<jdata>", methods = ["POST"])
 def create(jdata):
@@ -210,9 +236,9 @@ def create(jdata):
 
     for local_song_id in songs:
         local_song_id = int(local_song_id)
-        cur = g.db.execute('select id, song_title, song_artist, song_album from songs where id = ? and twitter_id = ?', [local_song_id, user_id])
+        cur = g.db.execute('select song_title, song_artist, song_album, song_duration from songs where id = ? and twitter_id = ?', [local_song_id, user_id])
         for row in cur.fetchall():
-            tracks.append(dict(id=row[0], title=row[1], artist=row[2], album=row[3]))
+            tracks.append(dict(title=row[0], artist=row[1], album=row[2], duration=row[3]))
 
     data = {"twitter_id": user_id, "token": token, "name": name, "songs": tracks}
     headers = {"Content-type": "application/json", "Accept": "text/plain"}
@@ -272,6 +298,7 @@ def search():
         song_title = track.get("trackName")
         song_artist = track.get("artistName")
         song_album = track.get("collectionName")
+        song_duration = int(track.get("trackTimeMillis") / 1000)
 
         if song_title != None and song_artist != None and song_album != None:
 
@@ -287,7 +314,7 @@ def search():
                 local_song_id = results[0][0]
             else:
                 # has not been inserted
-                g.db.execute('insert into songs (song_id, song_title, song_artist, song_album, twitter_id) values (?, ?, ?, ?, ?)', [song_id, song_title, song_artist, song_album, user_id])
+                g.db.execute('insert into songs (song_id, song_title, song_artist, song_album, song_duration, twitter_id) values (?, ?, ?, ?, ?, ?)', [song_id, song_title, song_artist, song_album, song_duration, user_id])
                 g.db.commit()
 
     return ""

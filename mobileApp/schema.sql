@@ -30,6 +30,7 @@ create table songs (
   song_title string not null,
   song_artist string not null,
   song_album string not null,
+  song_duration integer not null,
   twitter_id integer not null
 );
 

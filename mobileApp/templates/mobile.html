@@ -93,7 +93,7 @@
                         var title = shorten(song.title,30);
                         var artist = shorten(song.artist,30);
                         var album = shorten(song.album,30);
-                        content += '<li><div class="track" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div></li>';
+                        content += '<li><div class="track" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="play" rel="' + song.id + '">[PLAY]</div></li>';
                   });
                   content += '</ol>';
                 });
@@ -150,6 +150,12 @@
                 showLibrary();
                 showPlaylists();
               }
+          });
+        });
+
+        $('body').on('click', '.play', function() {
+          var id = $(this).attr("rel");
+          $.post("/play/"+id, function(data) {
           });
         });
 

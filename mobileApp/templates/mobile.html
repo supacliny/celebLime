@@ -43,80 +43,124 @@
 {% endif %}
 
     <script>
-    $(function () {
-      $('.tabs a:last').tab('show');
-    });     
-
-    function showPlaylists(){
-      $(".playlists").empty();
-      $.getJSON('/show', function(data) {
-          var playlists = data;
-          var content = '<div class="hero-unit">';
-          content += '<h2 class="header">Playlists</h2>'
-          $.each(playlists, function(index, playlist) {
-            content += '<h4 class="playlist-name">' + playlist.playlist_name + '</h4>';
-            content += '<ol>'
-            $.each(playlist.songs, function(index,song){
-                content += '<li><div class="track" rel="' + song.id + '">' + song.title + ' by ' + song.artist + ' in ' + song.album + '</div></li>'
-            });
-            content += '</ol>'
+        function showLibrary(){
+          $(".music").empty();
+          $.getJSON('/library', function(data) {
+              if (jQuery.isEmptyObject(data)) {
+                return;
+              }
+              else {
+                var songs = data;
+                var content = '<div class="library">';
+                content += '<h2 class="header">Song Library</h2>';
+                content += '<h4 class="playlist-name">Click Playlist Name</h4>';
+                content += '<ol>';
+                $.each(songs, function(index, song) {
+                  content += '<li><div class="track" rel="' + song.id + '">' + song.title + ' by ' + song.artist + ' in ' + song.album + '</div></li>';
+                });
+                content += '</ol>';
+                content += '<div class="create">[CREATE PLAYLIST]</div>';
+                content += '</div>';
+                $(content).appendTo(".music");
+              }
           });
-          content += '</div>';
-          $(content).appendTo(".playlists");
-      });
-    }
+        }
 
-    $(document).ready(function(){
+        function showPlaylists(){
+          $(".playlists").empty();
+          $.getJSON('/show', function(data) {
+              if (jQuery.isEmptyObject(data)) {
+                return;
+              }
+              else {
+                var playlists = data;
+                var content = '<div class="playlist">';
+                content += '<h2 class="header">Playlists</h2>';
+                $.each(playlists, function(index, playlist) {
+                  content += '<h4 class="playlist-header">' + playlist.playlist_name + '</h4>';
+                  content += '<ol>';
+                  $.each(playlist.songs, function(index,song){
+                      content += '<li><div class="track" rel="' + song.id + '">' + song.title + ' by ' + song.artist + ' in ' + song.album + '</div></li>';
+                  });
+                  content += '</ol>';
+                });
+                content += '</div>';
+                $(content).appendTo(".playlists");
+              }
+          });
+        }
 
-      var songs = [];
+      $(document).ready(function(){
 
-      $("[rel=tooltip]").tooltip();
+        showPlaylists();
+        showLibrary();
 
-      $(".delete").click(function(){
-        var id = $(this).attr("rel");
-        $.post("/delete/"+id, function(data) {
-            $(".list").hide().html(data).fadeIn('fast'); 
+        var songs = []
+
+        $(".form").submit(function(event) {
+          event.preventDefault();                 
+          var $form = $( this ),
+              title = $form.find( 'input[name="title"]' ).val(),
+              artist = $form.find( 'input[name="artist"]' ).val(),
+              url = $form.attr( 'action' );
+          jdata = JSON.stringify({ "title": title, "artist": artist });
+          jQuery.ajax({
+                  type: "POST",
+                  url: url,
+                  data: jdata,
+                  success: showLibrary,
+                  dataType: "json",
+                  contentType: "application/json",
+                  processData: false
+                });
         });
-      });
 
-      $(".track").click(function(){
-        var id = $(this).attr("rel");
-        if (jQuery.inArray(id, songs) < 0){
-          $(this).closest(".track").css("color", "#ddd000");
-          songs.push(id);
-        }
-        else {
-          $(this).closest(".track").css("color", "#eeeddd");
-          songs.pop(id);
-        }
-        alert(songs);
-      });
-
-      $(".create").click(function(){
-        var playlist = {};
-        playlist.name = $(".playlist-name").text();
-        playlist.songs = songs;
-        var jdata = JSON.stringify(playlist);
-        $.post("/create/"+jdata, function(data) {
-              showPlaylists();
+        $('body').on('click', '.track', function() {
+            var id = $(this).attr("rel");
+            if (jQuery.inArray(id, songs) < 0){
+              $(this).closest(".track").css("color", "#ddd000");
+              songs.push(id);
+            }
+            else {
+              $(this).closest(".track").css("color", "#eeeddd");
+              songs.pop(id);
+            }
         });
+
+        $(".delete").click(function(){
+          var id = $(this).attr("rel");
+          $.post("/delete/"+id, function(data) {
+              $(".list").hide().html(data).fadeIn('fast'); 
+          });
+        });
+
+
+        $('body').on('click', '.create', function() {
+          var playlist = {};
+          playlist.name = $(".playlist-name").text();
+          playlist.songs = songs;
+          var jdata = JSON.stringify(playlist);
+          $.post("/create/"+jdata, function(data) {
+                showLibrary();
+                showPlaylists();
+          });
+        });
+
+        $('body').on('hover', '.playlist-name', function() {
+          $('.playlist-name').editInPlace({
+            bg_over: "#2C2C2C",
+            saving_animation_color: "#ECF2F8",
+            callback: function(idOfEditor, enteredText, orinalHTMLContent, settingsParams, animationCallbacks) {
+              animationCallbacks.didStartSaving();
+              setTimeout(animationCallbacks.didEndSaving, 2000);
+              $(".playlist-name").text('');
+              return enteredText;
+            }
+          });
+        });  
       });
-
-      $(".playlist-name").editInPlace({
-        bg_over: "#2C2C2C",
-        saving_animation_color: "#ECF2F8",
-        callback: function(idOfEditor, enteredText, orinalHTMLContent, settingsParams, animationCallbacks) {
-          animationCallbacks.didStartSaving();
-          setTimeout(animationCallbacks.didEndSaving, 2000);
-          $(".playlist-name").text('');
-          return enteredText;
-        }
-      });
-
-      showPlaylists();
-
-    });
     </script>
+
  </head>
 
   <body>
@@ -145,33 +189,20 @@
 
     <div class="container">
 
+    {% if logged_in %}      
       <!-- Main banner -->
       <div class="hero-unit">
-          <form class="well" action="{{ url_for('home') }}" method="post">
+          <form class="form" action="/search">
             <input type="text" name="title" class="input-small" placeholder="Track title">
             <input type="text" name="artist" class="input-small" placeholder="Track artist">
             <button type="submit" class="btn">Add</button>
           </form>      
       </div>
-
-      {% if tracks %}
-      <div class="library">
-        <h2 class="header">Song Library</h2>
-        <h4 class="playlist-name">Click Playlist Name</h4>
-        <div class="list">
-          {% endif %}
-          <ol>
-            {% for song in tracks %}
-            <li><div class="track" rel="{{ song.id }}">{{ song.title }} by {{ song.artist }} in {{ song.album}}</div></li>
-            {% endfor %}
-          </ol>
-          {% if tracks %}
-          <div class="create">[CREATE PLAYLIST]</div>
-        </div>  
-      </div>
     {% endif %}
 
-    <div class="playlists"></div>
+      <div class="music"></div>
+
+      <div class="playlists"></div>
 
     </div> <!-- /container -->
 

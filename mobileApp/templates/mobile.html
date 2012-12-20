@@ -43,6 +43,11 @@
 {% endif %}
 
     <script>
+        function shorten(string, limit)
+        {
+           return string = string.length > limit ? string.substring(0,limit) + "...": string;
+        }
+
         function showLibrary(){
           $(".music").empty();
           $.getJSON('/library', function(data) {
@@ -56,7 +61,10 @@
                 content += '<h4 class="playlist-name">Click Playlist Name</h4>';
                 content += '<ol>';
                 $.each(songs, function(index, song) {
-                  content += '<li><div class="track" rel="' + song.id + '">' + song.title + ' by ' + song.artist + ' in ' + song.album + '</div></li>';
+                  var title = shorten(song.title,30);
+                  var artist = shorten(song.artist,30);
+                  var album = shorten(song.album,30);
+                  content += '<li><div class="track" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="delete" rel="' + song.id + '">[DELETE]</div>&nbsp</li>';
                 });
                 content += '</ol>';
                 content += '<div class="create">[CREATE PLAYLIST]</div>';
@@ -77,10 +85,15 @@
                 var content = '<div class="playlist">';
                 content += '<h2 class="header">Playlists</h2>';
                 $.each(playlists, function(index, playlist) {
-                  content += '<h4 class="playlist-header">' + playlist.playlist_name + '</h4>';
-                  content += '<ol>';
-                  $.each(playlist.songs, function(index,song){
-                      content += '<li><div class="track" rel="' + song.id + '">' + song.title + ' by ' + song.artist + ' in ' + song.album + '</div></li>';
+                    var playlist_name = shorten(playlist.playlist_name, 30);
+                    content += '<br>';
+                    content += '<div class="playlist-header">' + playlist_name + '</div><div class="delete" rel="' + playlist.playlist_id + '">[DELETE]</div>&nbsp';
+                    content += '<ol>';
+                    $.each(playlist.songs, function(index,song){
+                        var title = shorten(song.title,30);
+                        var artist = shorten(song.artist,30);
+                        var album = shorten(song.album,30);
+                        content += '<li><div class="track" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div></li>';
                   });
                   content += '</ol>';
                 });
@@ -127,13 +140,18 @@
             }
         });
 
-        $(".delete").click(function(){
+        $('body').on('click', '.delete', function() {
           var id = $(this).attr("rel");
           $.post("/delete/"+id, function(data) {
-              $(".list").hide().html(data).fadeIn('fast'); 
+              if (data.deleted > 0) {
+                showPlaylists(); 
+              }
+              else {
+                showLibrary();
+                showPlaylists();
+              }
           });
         });
-
 
         $('body').on('click', '.create', function() {
           var playlist = {};

@@ -138,7 +138,7 @@ def home():
         if most_recent_songs.count() > 0:
             most_recent_song = most_recent_songs[0]
             song_id = most_recent_song["song_id"]
-            songinfo = mongo.db.songs.find_one({"song_id": song_id})
+            songinfo = mongo.db.songs.find_one({"_id": song_id})
 
             if songinfo:
                 songinfo["played_at"] = most_recent_song["played_at"]
@@ -172,7 +172,7 @@ def home():
         if most_recent_songs.count() > 0:
             most_recent_song = most_recent_songs[0]
             song_id = most_recent_song["song_id"]
-            songinfo = mongo.db.songs.find_one({"song_id": song_id})
+            songinfo = mongo.db.songs.find_one({"_id": song_id})
 
             if songinfo:
                 songinfo["played_at"] = most_recent_song["played_at"]
@@ -366,7 +366,7 @@ def user(screen_name):
 
     for song in streaming_cursor:
         song_id = song["song_id"]
-        songinfo = mongo.db.songs.find_one({"song_id": song_id})
+        songinfo = mongo.db.songs.find_one({"_id": song_id})
         if songinfo:
             songinfo["played_at"] = song["played_at"]
             streaming.append(songinfo)
@@ -378,7 +378,7 @@ def user(screen_name):
 
     for song in top_songs_cursor:
         song_id = song["song_id"]
-        songinfo = mongo.db.songs.find_one({"song_id": song_id})
+        songinfo = mongo.db.songs.find_one({"_id": song_id})
         top_songs.append(songinfo)
 
     artists = []
@@ -389,7 +389,7 @@ def user(screen_name):
     # now get the song info for each song_id
     for song in top_artists_cursor:
         song_id = song["song_id"]
-        songinfo = mongo.db.songs.find_one({"song_id": song_id})
+        songinfo = mongo.db.songs.find_one({"_id": song_id})
         if songinfo:
             artists.append(songinfo)
 
@@ -424,7 +424,7 @@ def poll(screen_name):
 
     for recent_song in recent_songs_cursor:
         song_id = recent_song["song_id"]
-        songinfo = mongo.db.songs.find_one({"song_id": song_id})
+        songinfo = mongo.db.songs.find_one({"_id": song_id})
         if songinfo:
             songinfo["played_at"] = recent_song["played_at"]
             songinfo["played_count"] = recent_song["played_count"]
@@ -617,21 +617,22 @@ def api_stream_song():
         if not is_authorized(token):
             return not_authorized()
 
+        # incoming song_id is a string, convert to ObjectID
+        song_oid = bson.objectid.ObjectId(song_id)
+
         # find the song in mongo streamed by that user
-        song = mongo.db.streaming.find_one({"twitter_id": user_id, "song_id": song_id})
+        song = mongo.db.streaming.find_one({"twitter_id": user_id, "song_id": song_oid})
 
         # update the number of times played, if this key does not exist then song never streamed before
         try:
             incoming["played_count"] = song["played_count"] + 1
+            incoming["song_id"] = song_oid
+            mongo.db.streaming.update({"twitter_id": user_id, "song_id": song_oid}, incoming, upsert=True)
         except TypeError:
             incoming["played_count"] = 1
-
-        # now update
-        try:
-            mongo.db.streaming.update({"twitter_id": user_id, "song_id": song_id}, incoming, upsert=True)
-        except DuplicateKeyError:
-            print "Streaming error! Streaming song can not be updated."
-
+            incoming["song_id"] = song_oid
+            mongo.db.streaming.insert(incoming)
+            
         data = {}
 
         data = json.dumps(data)
@@ -661,13 +662,14 @@ def api_add_song():
 def add_song(song):
 
     # determine if full song or just id
-    # if just id, then this song is already in our database with a proper celebLime id
+    # if just song_id, then this song is already in our database with a proper celebLime id
     try:
         title = song["title"]
         artist = song["artist"]
         album = song["album"]
+        duration = song["duration"]
     except KeyError:
-        return {"song_id": song["id"]}
+        return {"song_id": song["song_id"]}
 
     # if index not there, add a compound index
     mongo.db.songs.ensure_index([("title",ASCENDING),("artist",ASCENDING), ("album", ASCENDING)], unique=True, background=True)

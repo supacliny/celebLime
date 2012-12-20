@@ -178,7 +178,7 @@
                                 {% endif %}
                                     {% for song in playlist.songs %}
                                     <div class="song">
-                                        <div class="thumb" style="background-image: url('{{ song.itunes.artworkUrl100 }}')"></div>
+                                        <div class="thumb" style="background-image: url('{{ song.itunes.artworkUrl60 }}')"></div>
                                         <div class="rowA">
                                             <div class="name">{{ song.title | truncate(30) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
                                         </div>

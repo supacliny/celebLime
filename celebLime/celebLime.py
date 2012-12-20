@@ -63,10 +63,9 @@ def getSpotifyTrack(song_id, search):
     with app.test_request_context():
 
         # preprocess search terms, replace space with + for a direct API call
-        search = search.replace(' ','+')
-        url ="http://ws.spotify.com/search/1/track.json?q=%s" % (search)
-        results = urllib2.urlopen(url).read()
-        results = json.loads(results)
+        query_url ="http://ws.spotify.com/search/1/track.json"
+        query_params = {'q': search}
+        results = requests.get(query_url, params=query_params).json
         # convert the string song_id to a bson ObjectID for mongo
         song_oid = bson.objectid.ObjectId(song_id)
 

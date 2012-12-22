@@ -584,6 +584,14 @@ input[type="text"]
 {
   text-shadow: 0 0 4px #cacaca;
 }
+.playlist-song
+{
+  float: left;
+}
+.playlist-song:hover
+{
+  text-shadow: 0 0 4px #cacaca;
+}
 .header
 {
   color: #eeeddd;

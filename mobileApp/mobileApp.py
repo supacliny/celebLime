@@ -14,7 +14,7 @@ import requests
 import sqlite3
 import itunes
 
-DEBUG = True
+DEBUG = False
 DATABASE = 'mobileApp.db'
 CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"
@@ -184,7 +184,10 @@ def delete(id):
         # delete from celebLime
         data = {"twitter_id": user_id, "token": token, "playlist_id": iid}
         headers = {"Content-type": "application/json", "Accept": "text/plain"}
-        url = "http://127.0.0.1:8000/delete"
+        if DEBUG:
+            url = "http://127.0.0.1:8000/delete"
+        else:
+            url = "https://www.cvstechnology.ca/projects/celebLime/delete"
         response = requests.delete(url, data=json.dumps(data), headers=headers)
 
         # now delete from app
@@ -215,7 +218,10 @@ def play(id):
     # now playing!
     data = {"twitter_id": user_id, "token": token, "song_id": song_id, "played_at": played_at}
     headers = {"Content-type": "application/json", "Accept": "text/plain"}
-    url = "http://127.0.0.1:8000/stream"
+    if DEBUG:
+        url = "http://127.0.0.1:8000/stream"
+    else:
+        url = "https://www.cvstechnology.ca/projects/celebLime/stream"
     response = requests.put(url, data=json.dumps(data), headers=headers)
 
     return "" 
@@ -242,7 +248,10 @@ def create(jdata):
 
     data = {"twitter_id": user_id, "token": token, "name": name, "songs": tracks}
     headers = {"Content-type": "application/json", "Accept": "text/plain"}
-    url = "http://127.0.0.1:8000/create"
+    if DEBUG:
+        url = "http://127.0.0.1:8000/create"
+    else:
+        url = "https://www.cvstechnology.ca/projects/celebLime/create"
     response = requests.post(url, data=json.dumps(data), headers=headers)
     results = response.json
 

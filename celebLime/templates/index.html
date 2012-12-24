@@ -60,7 +60,11 @@
         });
 
         function store(name){
+            {% if debug %}
             $.post("/store/"+name, function() {
+            {% else %}
+            $.post("/projects/celebLime/store/"+name, function() {
+            {% endif %}  
                 $('.tabs a:last').tab('show')  
             });
         }

@@ -50,7 +50,11 @@
 
         function showLibrary(){
           $(".music").empty();
+          {% if debug %}
           $.getJSON('/library', function(data) {
+          {% else %}
+          $.getJSON('/projects/mobileApp/library', function(data) {  
+          {% endif %}  
               if (jQuery.isEmptyObject(data)) {
                 return;
               }
@@ -76,7 +80,11 @@
 
         function showPlaylists(){
           $(".playlists").empty();
+          {% if debug %}
           $.getJSON('/show', function(data) {
+          {% else %}
+          $.getJSON('/projects/mobileApp/show', function(data) {  
+          {% endif %}  
               if (jQuery.isEmptyObject(data)) {
                 return;
               }
@@ -142,7 +150,11 @@
 
         $('body').on('click', '.delete', function() {
           var id = $(this).attr("rel");
+          {% if debug %}
           $.post("/delete/"+id, function(data) {
+          {% else %}
+          $.post("/projects/mobileApp/delete/"+id, function(data) {
+          {% endif %}  
               if (data.deleted > 0) {
                 showPlaylists(); 
               }
@@ -155,7 +167,11 @@
 
         $('body').on('click', '.play', function() {
           var id = $(this).attr("rel");
+          {% if debug %}
           $.post("/play/"+id, function(data) {
+          {% else %}
+          $.post("/projects/mobileApp/play/"+id, function(data) {
+          {% endif %}  
           });
         });
 
@@ -164,7 +180,11 @@
           playlist.name = $(".playlist-name").text();
           playlist.songs = songs;
           var jdata = JSON.stringify(playlist);
+          {% if debug %}
           $.post("/create/"+jdata, function(data) {
+          {% else %}
+          $.post("/projects/mobileApp/create/"+jdata, function(data) {
+          {% endif %}   
                 showLibrary();
                 showPlaylists();
                 songs = [];
@@ -217,7 +237,11 @@
     {% if logged_in %}      
       <!-- Main banner -->
       <div class="hero-unit">
+        {% if debug %} 
           <form class="form" action="/search">
+        {% else %}     
+          <form class="form" action="/projects/mobileApp/search">
+        {% endif %} 
             <input type="text" name="title" class="input-small" placeholder="Track title">
             <input type="text" name="artist" class="input-small" placeholder="Track artist">
             <button type="submit" class="btn">Add</button>

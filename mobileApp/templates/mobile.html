@@ -95,13 +95,13 @@
                 $.each(playlists, function(index, playlist) {
                     var playlist_name = shorten(playlist.playlist_name, 30);
                     content += '<br>';
-                    content += '<div class="playlist-header">' + playlist_name + '</div><div class="delete" rel="' + playlist.playlist_id + '">[DELETE]</div>&nbsp';
+                    content += '<div class="playlist-header">' + playlist_name + '</div><div class="deleteall" rel="' + playlist.playlist_id + '">[DELETE]</div>&nbsp';
                     content += '<ol>';
                     $.each(playlist.songs, function(index,song){
                         var title = shorten(song.title,30);
                         var artist = shorten(song.artist,30);
                         var album = shorten(song.album,30);
-                        content += '<li><div class="playlist-song" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="play" rel="' + song.id + '">[PLAY]</div></li>';
+                        content += '<li><div class="playlist-song" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="update" relb="' + song.id + '" rela="' + playlist.playlist_id + '">[DELETE]</div><div class="play" rel="' + song.id + '">[PLAY]</div></li>';
                   });
                   content += '</ol>';
                 });
@@ -155,13 +155,35 @@
           {% else %}
           $.post("/projects/mobileApp/delete/"+id, function(data) {
           {% endif %}  
-              if (data.deleted > 0) {
-                showPlaylists(); 
-              }
-              else {
-                showLibrary();
-                showPlaylists();
-              }
+              showLibrary();
+              showPlaylists();
+          });
+        });
+
+        $('body').on('click', '.deleteall', function() {
+          var id = $(this).attr("rel");
+          {% if debug %}
+          $.post("/deleteall/"+id, function(data) {
+          {% else %}
+          $.post("/projects/mobileApp/deleteall/"+id, function(data) {
+          {% endif %}
+              showPlaylists();
+          });
+        });
+
+        $('body').on('click', '.update', function() {
+          var playlist_id = $(this).attr("rela");
+          var song_id = $(this).attr("relb");
+          var data = {}
+          data.playlist_id = playlist_id;
+          data.song_id = song_id;
+          var jdata = JSON.stringify(data);
+          {% if debug %}
+          $.post("/update/"+jdata, function(data) {
+          {% else %}
+          $.post("/projects/mobileApp/update/"+jdata, function(data) {
+          {% endif %}
+              showPlaylists();  
           });
         });
 

@@ -180,7 +180,7 @@ def delete(id):
 
 # delete playlist
 @app.route("/deleteall/<id>", methods = ["POST"])
-def delete(id):
+def deleteall(id):
 
     iid = str(id)
 

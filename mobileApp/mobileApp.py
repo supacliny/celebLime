@@ -15,15 +15,16 @@ import sqlite3
 import itunes
 
 DEBUG = False
-DATABASE = 'mobileApp.db'
 CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"
 CONSUMER_SECRET = "cXfqDfMFBQutTMf9KpZWGt2HWDhBVxTajAqVDuFH7U"
 
 if DEBUG: 
     CALLBACK_URL = "http://127.0.0.1:5000/verify"
+    DATABASE = 'mobileApp.db'
 else:
     CALLBACK_URL = "http://www.cvstechnology.ca/projects/mobileApp/verify"
+    DATABASE = '/var/www/projects/mobileApp/mobileApp.db'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -92,10 +93,10 @@ def login():
     try:
         redirect_url = auth.get_authorization_url(True)
         session["request_token"] = (auth.request_token.key,auth.request_token.secret)
+        return redirect(redirect_url)
     except tweepy.TweepError:
         print "Access error! Failed to get request token."
-
-    return redirect(redirect_url)
+        return redirect(url_for("home"))
 
 
 # when we logout remove all session keys
@@ -161,7 +162,7 @@ def verify():
     return redirect(url_for("home"))
 
 
-# delete song or playlist
+# delete song
 @app.route("/delete/<id>", methods = ["POST"])
 def delete(id):
 
@@ -170,32 +171,74 @@ def delete(id):
     user_id = session.get("userid")
     token = session.get("token")
 
-    if is_number(iid):
-        # is a song id
-        g.db.execute('delete from songs where id = ? and twitter_id = ?', [iid, user_id])
-        g.db.execute('delete from playlistsongs where song_id = ?', [iid])
-        g.db.commit()
+    g.db.execute('delete from songs where id = ? and twitter_id = ?', [iid, user_id])
+    g.db.execute('delete from playlistsongs where song_id = ?', [iid])
+    g.db.commit()
 
-        return json.dumps({"deleted": 0})
+    return ""
 
-    else:    
-        # is a playlist id
 
-        # delete from celebLime
-        data = {"twitter_id": user_id, "token": token, "playlist_id": iid}
-        headers = {"Content-type": "application/json", "Accept": "text/plain"}
-        if DEBUG:
-            url = "http://127.0.0.1:8000/delete"
-        else:
-            url = "https://www.cvstechnology.ca/projects/celebLime/delete"
-        response = requests.delete(url, data=json.dumps(data), headers=headers)
+# delete playlist
+@app.route("/deleteall/<id>", methods = ["POST"])
+def delete(id):
 
-        # now delete from app
-        g.db.execute('delete from playlists where playlist_id = ? and twitter_id = ?', [iid, user_id])
-        g.db.execute('delete from playlistsongs where playlist_id = ?', [iid])
-        g.db.commit()
+    iid = str(id)
 
-        return json.dumps({"deleted": 1})
+    user_id = session.get("userid")
+    token = session.get("token")
+
+    # delete from celebLime
+    data = {"twitter_id": user_id, "token": token, "playlist_id": iid}
+    headers = {"Content-type": "application/json", "Accept": "text/plain"}
+    if DEBUG:
+        url = "http://127.0.0.1:8000/delete"
+    else:
+        url = "https://www.cvstechnology.ca/projects/celebLime/delete"
+    response = requests.delete(url, data=json.dumps(data), headers=headers)
+
+    # now delete from app
+    g.db.execute('delete from playlists where playlist_id = ? and twitter_id = ?', [iid, user_id])
+    g.db.execute('delete from playlistsongs where playlist_id = ?', [iid])
+    g.db.commit()
+
+    return ""
+
+
+# update playlist (delete only, ignore response)
+@app.route("/update/<jdata>", methods = ["POST"])
+def update(jdata):
+
+    jdata = json.loads(jdata)
+    user_id = session.get("userid")
+    token = session.get("token")
+
+    playlist_id = jdata["playlist_id"]
+    song_id = jdata["song_id"]
+
+    # delete local songs from a playlist
+    g.db.execute('delete from playlistsongs where playlist_id = ? and song_id = ?', [playlist_id, song_id])
+    g.db.commit()
+
+    # update celebLime
+    songs = []
+    cur = g.db.execute('select song_id from playlistsongs where playlist_id = ?', [playlist_id])
+
+    for row in cur.fetchall():
+        song = row[0]
+        cur = g.db.execute('select song_id from songs where id = ?', [song])
+        results = cur.fetchone()
+        songs.append(dict(song_id=results[0]))
+
+    data = {"twitter_id": user_id, "token": token, "playlist_id": playlist_id, "songs": songs}
+    headers = {"Content-type": "application/json", "Accept": "text/plain"}
+    if DEBUG:
+        url = "http://127.0.0.1:8000/update"
+    else:
+        url = "https://www.cvstechnology.ca/projects/celebLime/update"
+    response = requests.patch(url, data=json.dumps(data), headers=headers)
+    results = response.json
+
+    return ""
 
 
 # stream song

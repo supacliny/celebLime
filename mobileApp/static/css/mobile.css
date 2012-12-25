@@ -562,6 +562,22 @@ input[type="text"]
   color: #b80000;
   font-size: 12px;
 }
+.deleteall
+{
+  float: left;
+  margin-left: 10px;
+  margin-top: 0px;
+  color: #b80000;
+  font-size: 12px;
+}
+.update
+{
+  float: left;
+  margin-left: 10px;
+  margin-top: 0px;
+  color: #b80000;
+  font-size: 12px;
+}
 .play
 {
   float: left;

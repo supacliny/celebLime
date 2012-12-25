@@ -291,10 +291,10 @@ def verify():
                          "verified": user.verified }
 
         # if index not there, add a compound index
-        mongo.db.users.ensure_index([("access_key",ASCENDING),("access_secret",ASCENDING),("twitter_id",ASCENDING),("screen_name",ASCENDING)], unique=True, background=True)
+        mongo.db.users.ensure_index([("access_key",ASCENDING),("twitter_id",ASCENDING)], unique=True, background=True)
 
         # found this user in mongo
-        already_user = mongo.db.users.find_one({"access_key": auth.access_token.key, "access_secret": auth.access_token.secret, "twitter_id": user.id})
+        already_user = mongo.db.users.find_one({"access_key": auth.access_token.key, "twitter_id": user.id})
 
         # maintain the original added_at field
         if already_user:
@@ -303,7 +303,7 @@ def verify():
 
         # now update that user
         try:
-            mongo.db.users.update({"access_key": auth.access_token.key, "access_secret": auth.access_token.secret, "twitter_id": user.id}, user_details, upsert=True)
+            mongo.db.users.update({"access_key": auth.access_token.key, "twitter_id": user.id}, user_details, upsert=True)
         except DuplicateKeyError:
             print "User error! User can not be updated."
 
@@ -474,6 +474,7 @@ def api_create_playlist():
         try:
             user_id = incoming["twitter_id"]
             token = incoming["token"]
+            songs = incoming["songs"]
         except KeyError:
             return bad_request()
 
@@ -481,10 +482,8 @@ def api_create_playlist():
         if not is_authorized(token):
             return not_authorized()
 
-        songs = incoming["songs"]
-        tracks = []
-
         # get celebLime ids for these songs
+        tracks = []
         for song in songs:
             tracks.append(add_song(song))
 
@@ -559,12 +558,18 @@ def api_update_playlist():
             user_id = incoming["twitter_id"]
             token = incoming["token"]
             playlist_id = incoming["playlist_id"]
+            songs = incoming["songs"]
         except KeyError:
             return bad_request()
 
         # check for authorization
         if not is_authorized(token):
             return not_authorized()
+
+        # get celebLime ids for these songs
+        tracks = []
+        for song in songs:
+            tracks.append(add_song(song))
 
         # incoming playlist_id is a string, convert to ObjectID
         playlist_oid = bson.objectid.ObjectId(playlist_id)
@@ -576,6 +581,8 @@ def api_update_playlist():
         if playlist:
             incoming["added_at"] = playlist["added_at"]
             incoming["updated_at"] = int(time())
+            incoming["songs"] = tracks
+            incoming["name"] = playlist["name"]
 
             # now update that playlist
             try:
@@ -586,7 +593,7 @@ def api_update_playlist():
         else:
             print "Playlist error! Playlist not found."
 
-        data = {}
+        data = {"twitter_id": user_id, "playlist_id": str(playlist_id), "songs": tracks}
 
         data = json.dumps(data)
 
@@ -619,6 +626,9 @@ def api_stream_song():
 
         # incoming song_id is a string, convert to ObjectID
         song_oid = bson.objectid.ObjectId(song_id)
+
+        # if index not there, add a compound index
+        mongo.db.streaming.ensure_index([("twitter_id",ASCENDING),("song_id",ASCENDING)], unique=True, background=True)
 
         # find the song in mongo streamed by that user
         song = mongo.db.streaming.find_one({"twitter_id": user_id, "song_id": song_oid})

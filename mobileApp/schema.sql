@@ -33,17 +33,3 @@ create table songs (
   song_duration integer not null,
   twitter_id integer not null
 );
-
-drop table if exists songmap;
-create table songmap (
-  song_id integer primary key,
-  celeblime_id string not null,
-  twitter_id integer not null
-);
-
-drop table if exists playlistmap;
-create table playlistmap (
-  playlist_id integer primary key,
-  celeblime_id string not null,
-  twitter_id integer not null
-);

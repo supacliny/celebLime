@@ -194,7 +194,7 @@ def deleteall(id):
         url = "http://127.0.0.1:8000/delete"
     else:
         url = "https://www.cvstechnology.ca/projects/celebLime/delete"
-    response = requests.delete(url, data=json.dumps(data), headers=headers)
+    response = requests.delete(url, data=json.dumps(data), headers=headers, verify=False)
 
     # now delete from app
     g.db.execute('delete from playlists where playlist_id = ? and twitter_id = ?', [iid, user_id])
@@ -235,7 +235,7 @@ def update(jdata):
         url = "http://127.0.0.1:8000/update"
     else:
         url = "https://www.cvstechnology.ca/projects/celebLime/update"
-    response = requests.patch(url, data=json.dumps(data), headers=headers)
+    response = requests.patch(url, data=json.dumps(data), headers=headers, verify=False)
     results = response.json
 
     return ""
@@ -265,7 +265,7 @@ def play(id):
         url = "http://127.0.0.1:8000/stream"
     else:
         url = "https://www.cvstechnology.ca/projects/celebLime/stream"
-    response = requests.put(url, data=json.dumps(data), headers=headers)
+    response = requests.put(url, data=json.dumps(data), headers=headers, verify=False)
 
     return "" 
 
@@ -295,7 +295,7 @@ def create(jdata):
         url = "http://127.0.0.1:8000/create"
     else:
         url = "https://www.cvstechnology.ca/projects/celebLime/create"
-    response = requests.post(url, data=json.dumps(data), headers=headers)
+    response = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
     results = response.json
 
     # check response

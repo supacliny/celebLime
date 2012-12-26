@@ -692,6 +692,9 @@ def add_song(song):
         song_id = already_song["_id"]
         data = {"song_id": str(song_id)}
     else:
+        song["itunes"] = {}
+        song["spotify"] = {}
+        song["youtube"] = {}
         song_id = mongo.db.songs.insert(song)
         data = {"song_id": str(song_id)}
 

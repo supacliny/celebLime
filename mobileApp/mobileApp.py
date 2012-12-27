@@ -333,8 +333,6 @@ def create(jdata):
 @app.route("/search", methods = ["POST"])
 def search():
 
-    print request.json
-
     user_id = session.get("userid")
 
     if user_id == None:

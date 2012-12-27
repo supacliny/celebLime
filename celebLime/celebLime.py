@@ -18,7 +18,7 @@ import urllib2
 import urlparse
 import requests
 
-DEBUG = True
+DEBUG = False
 
 CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"

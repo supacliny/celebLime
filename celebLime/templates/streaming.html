@@ -14,7 +14,7 @@
     $(document).ready(function(){   
 
         $(".youtube").click(function() {
-            $(window).scrollTop($(".playwindow").offset().top);
+            $("html, body").animate({ scrollTop: 0 }, "slow");
             $(".playwindow").empty();
             $(".tunein_container").animate({height: "210px"}, 1000, "easeInOutQuad");
             var ytid = $(this).attr("rel");
@@ -24,7 +24,7 @@
 
 
         $(".spotify").click(function() {
-            $(window).scrollTop($(".playwindow").offset().top);
+            $("html, body").animate({ scrollTop: 0 }, "slow");
             $(".playwindow").empty();
             $(".tunein_container").animate({height: "100px"}, 1000, "easeInOutQuad");
             var spid = $(this).attr("rel");
@@ -33,7 +33,7 @@
             });
      
         $(".itunes").click(function() {
-            $(window).scrollTop($(".playwindow").offset().top);
+            $("html, body").animate({ scrollTop: 0 }, "slow");
             $(".playwindow").empty();
             $(".tunein_container").animate({height: "120px"}, 1000, "easeInOutQuad");
             var itida = shorten($(this).attr("rela"), 25);

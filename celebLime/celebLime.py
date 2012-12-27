@@ -440,7 +440,7 @@ def poll(screen_name):
         if ((most_recent_song_start + most_recent_song_duration) >= int(time())):
             now = True
 
-    return render_template("streaming.html", streaming=recent_songs, now=now)
+    return render_template("streaming.html", streaming=recent_songs, now=now, debug=debug)
 
 
 # store session preferences - right place or use g?

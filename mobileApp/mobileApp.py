@@ -350,9 +350,10 @@ def search():
         song_title = track.get("trackName")
         song_artist = track.get("artistName")
         song_album = track.get("collectionName")
-        song_duration = int(track.get("trackTimeMillis") / 1000)
 
         if song_title != None and song_artist != None and song_album != None:
+
+            song_duration = int(int(track.get("trackTimeMillis")) / 1000)
 
             # celebLime id is 0 for now, gets updated when playlist created
             song_id = "0"

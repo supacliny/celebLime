@@ -296,7 +296,7 @@ def create(jdata):
     else:
         url = "https://www.cvstechnology.ca/projects/celebLime/create"
     response = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
-    results = response.json
+    results = response.json()
 
     # check response
     try:

@@ -213,8 +213,14 @@ def delete(id):
     token = session.get("token")
 
     g.db.execute('delete from songs where id = ? and twitter_id = ?', [iid, user_id])
-    g.db.execute('delete from playlistsongs where song_id = ?', [iid])
     g.db.commit()
+
+    songs = []
+    cur = g.db.execute('select playlist_id from playlists where twitter_id = ?', [user_id])
+
+    for row in cur.fetchall():
+        playlist_id = row[0]
+        update_playlist(playlist_id, iid)
 
     return ""
 
@@ -256,29 +262,7 @@ def update(jdata):
     playlist_id = jdata["playlist_id"]
     song_id = jdata["song_id"]
 
-    # delete local songs from a playlist
-    g.db.execute('delete from playlistsongs where playlist_id = ? and song_id = ?', [playlist_id, song_id])
-    g.db.commit()
-
-    # update celebLime
-    songs = []
-    cur = g.db.execute('select song_id from playlistsongs where playlist_id = ?', [playlist_id])
-
-    for row in cur.fetchall():
-        song = row[0]
-        cur = g.db.execute('select song_id from songs where id = ?', [song])
-        results = cur.fetchone()
-        songs.append(dict(song_id=results[0]))
-
-    data = {"twitter_id": user_id, "token": token, "playlist_id": playlist_id, "songs": songs}
-    headers = {"Content-type": "application/json", "Accept": "text/plain"}
-    if DEBUG:
-        url = "http://127.0.0.1:8000/update"
-    else:
-        url = "https://www.cvstechnology.ca/projects/celebLime/update"
-    response = requests.patch(url, data=json.dumps(data), headers=headers, verify=False)
-    results = response.json
-
+    results = update_playlist(playlist_id, song_id)
     return ""
 
 
@@ -547,6 +531,38 @@ def is_authorized(access_token):
         return True
     else:
         return False
+
+
+# update one playlist on celebLime
+def update_playlist(playlist_id, song_id):
+
+    user_id = session.get("userid")
+    token = session.get("token")
+
+    # delete local songs from a playlist
+    g.db.execute('delete from playlistsongs where playlist_id = ? and song_id = ?', [playlist_id, song_id])
+    g.db.commit()
+
+    # update celebLime
+    songs = []
+    cur = g.db.execute('select song_id from playlistsongs where playlist_id = ?', [playlist_id])
+
+    for row in cur.fetchall():
+        song = row[0]
+        cur = g.db.execute('select song_id from songs where id = ?', [song])
+        results = cur.fetchone()
+        songs.append(dict(song_id=results[0]))
+
+    data = {"twitter_id": user_id, "token": token, "playlist_id": playlist_id, "songs": songs}
+    headers = {"Content-type": "application/json", "Accept": "text/plain"}
+    if DEBUG:
+        url = "http://127.0.0.1:8000/update"
+    else:
+        url = "https://www.cvstechnology.ca/projects/celebLime/update"
+    response = requests.patch(url, data=json.dumps(data), headers=headers, verify=False)
+    results = response.json
+
+    return results
 
 
 if __name__ == "__main__":

@@ -180,18 +180,18 @@
                                     <div class="song">
                                         <div class="thumb" style="background-image: url('{{ song.itunes.artworkUrl60 }}')"></div>
                                         <div class="rowA">
-                                            <div class="name">{{ song.title | truncate(30) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
+                                            <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
                                         </div>
                                         {% if debug %}
                                         <div class="rowB">
-                                            <div class="album">{{ song.album | truncate(30) }}</div>
+                                            <div class="album">{{ song.album | truncate(25) }}</div>
                                             <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/static/img/icons/youtube.png" width="25" height="25"/></div> 
                                             <div class="spotify" rel="{{ song.spotify.href }}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
                                             <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
                                         </div>
                                         {% else %}
                                         <div class="rowB">
-                                            <div class="album">{{ song.album | truncate(30) }}</div>
+                                            <div class="album">{{ song.album | truncate(25) }}</div>
                                             <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/projects/celebLime/static/img/icons/youtube.png" width="25" height="25"/></div> 
                                             <div class="spotify" rel="{{ song.spotify.href }}"><img src="/projects/celebLime/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
                                             <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/projects/celebLime/static/img/icons/itunes.png" width="25" height="25"/></div>

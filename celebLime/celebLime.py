@@ -65,7 +65,7 @@ def getSpotifyTrack(song_id, search):
         # preprocess search terms, replace space with + for a direct API call
         query_url ="http://ws.spotify.com/search/1/track.json"
         query_params = {'q': search}
-        results = requests.get(query_url, params=query_params).json
+        results = requests.get(query_url, params=query_params).json()
         # convert the string song_id to a bson ObjectID for mongo
         song_oid = bson.objectid.ObjectId(song_id)
 
@@ -85,7 +85,7 @@ def getYouTubeVideo(song_id, search):
 
         query_url = "https://gdata.youtube.com/feeds/api/videos"
         query_params = {'alt': 'json', 'max-results': '1', 'orderby': 'relevance', 'q': search, 'v': '2'}
-        results = requests.get(query_url, params=query_params).json
+        results = requests.get(query_url, params=query_params).json()
 
         # convert the string song_id to a bson ObjectID for mongo
         song_oid = bson.objectid.ObjectId(song_id)        

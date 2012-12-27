@@ -200,13 +200,13 @@ def home():
 def login():
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET, CALLBACK_URL)
 
-    try:
+     try:
         redirect_url = auth.get_authorization_url(True)
         session["request_token"] = (auth.request_token.key,auth.request_token.secret)
+        return redirect(redirect_url)
     except tweepy.TweepError:
         print "Access error! Failed to get request token."
-
-    return redirect(redirect_url)
+        return redirect(url_for("home"))
 
 
 # when we logout remove all session keys

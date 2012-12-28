@@ -95,7 +95,7 @@
                 $.each(playlists, function(index, playlist) {
                     var playlist_name = shorten(playlist.playlist_name, 30);
                     content += '<br>';
-                    content += '<div class="playlist-header">' + playlist_name + '</div><div class="deleteall" rel="' + playlist.playlist_id + '">[DELETE]</div>&nbsp';
+                    content += '<div class="playlist-header">' + playlist_name + '</div><div class="deleteall" rel="' + playlist.playlist_id + '"><a href="#">[DELETE]</a></div>&nbsp';
                     content += '<ol>';
                     $.each(playlist.songs, function(index,song){
                         var title = shorten(song.title,30);

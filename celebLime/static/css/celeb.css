@@ -607,12 +607,11 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 }
 .headthumb
 {
-  width: 40px;
-  height: 40px;
-  padding-bottom: 10px;
-  padding-left: 10px;
-  padding-right: 0px;
+  width: 48px;
+  height: 48px;
+  margin-left: 2px;
   margin-right: 10px;
+  margin-top: 2px;
   float: left;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;

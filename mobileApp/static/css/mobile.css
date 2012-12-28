@@ -575,6 +575,11 @@ input[type="text"]
   color: #b80000;
   font-size: 12px;
 }
+.deleteall a
+{
+  color: #b80000;
+  text-decoration: none;
+}
 .update
 {
   float: left;

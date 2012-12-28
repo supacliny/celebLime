@@ -255,8 +255,8 @@ def verify():
         created_at = int(mktime(user.created_at.timetuple()))
 
         user_details = { "added_at": current_time,
-                         "access_key": auth.access_token.key,
-                         "access_secret": auth.access_token.secret,
+                         "token": auth.access_token.key,
+                         "secret": auth.access_token.secret,
                          "contributors_enabled": user.contributors_enabled,
                          "created_at": created_at,
                          "description": user.description,
@@ -291,10 +291,10 @@ def verify():
                          "verified": user.verified }
 
         # if index not there, add a compound index
-        mongo.db.users.ensure_index([("access_key",ASCENDING),("twitter_id",ASCENDING)], unique=True, background=True)
+        mongo.db.users.ensure_index([("token",ASCENDING),("twitter_id",ASCENDING)], unique=True, background=True)
 
         # found this user in mongo
-        already_user = mongo.db.users.find_one({"access_key": auth.access_token.key, "twitter_id": user.id})
+        already_user = mongo.db.users.find_one({"token": auth.access_token.key, "twitter_id": user.id})
 
         # maintain the original added_at field
         if already_user:
@@ -303,7 +303,7 @@ def verify():
 
         # now update that user
         try:
-            mongo.db.users.update({"access_key": auth.access_token.key, "twitter_id": user.id}, user_details, upsert=True)
+            mongo.db.users.update({"token": auth.access_token.key, "twitter_id": user.id}, user_details, upsert=True)
         except DuplicateKeyError:
             print "User error! User can not be updated."
 
@@ -461,6 +461,54 @@ def store(pref):
 
 
 ## API ##
+
+# create a new user
+@app.route("/signup", methods = ["POST"])
+def api_create_user():
+
+    if request.headers["Content-Type"] == "application/json":
+
+        incoming = request.json
+
+        # partially validate JSON fields
+        try:
+            user_id = incoming["twitter_id"]
+            token = incoming["token"]
+            name = incoming["name"]
+            screen_name = incoming["screen_name"]
+            verified = incoming["verified"]
+        except KeyError:
+            return bad_request()
+
+        # work in unix time
+        current_time = int(time())
+        incoming["added_at"] = current_time
+        incoming["last_logged_in"] = current_time
+        incoming["total_logins"] = 1
+        incoming["ip"] = request.access_route[0]
+
+        # check if already registered
+        already_user = mongo.db.users.find_one({"token": token, "twitter_id": user_id})
+
+        # then return no content, already in mongo
+        if already_user:
+            incoming["added_at"] = already_user["added_at"]
+            incoming["total_logins"] = already_user["total_logins"] + 1
+            mongo.db.users.update({"token": token, "twitter_id": user_id}, incoming, upsert=True)
+            data = {}
+            data = json.dumps(data)
+            resp = Response(data, status=204, mimetype="application/json")
+            return resp
+        # else register new user
+        else:
+            mongo.db.users.insert(incoming)
+            data = {}
+            data = json.dumps(data)
+            resp = Response(data, status=201, mimetype="application/json")
+            return resp
+    else:
+        return not_json()
+
 
 # create a playlist from JSON object
 @app.route("/create", methods = ["POST"])
@@ -778,7 +826,7 @@ def find_between(s, first, last):
 # later on we would use it in conjunction with the secret to sign a request for twitter
 def is_authorized(access_token):
 
-    result = mongo.db.users.find_one({"access_key": access_token})
+    result = mongo.db.users.find_one({"token": access_token})
     if result:
         return True
     else:

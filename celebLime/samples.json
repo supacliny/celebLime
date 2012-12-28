@@ -77,4 +77,6 @@ curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1
 
 curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1:8000/stream -d '{"token": "demo", "twitter_id": 100000000, "song_id": 75, "played_at": 1355356552}'
 
-'
+
+curl -H "Content-type: application/json" -X POST http://127.0.0.1:8000/signup -d '{"name": "Lebron James", "token": "demo", "twitter_id": 100000000, "screen_name": "KingJames", "verified": false}'
+

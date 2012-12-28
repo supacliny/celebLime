@@ -417,10 +417,12 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 }
 .thumb
 {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
+  margin-left: 2px;
+  margin-right: 10px;
+  margin-top: 1px;
   float: left;
-  margin: 0px 10px 0px 0px;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;

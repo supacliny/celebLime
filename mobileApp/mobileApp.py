@@ -127,9 +127,9 @@ def verify():
     token = session.get("request_token")
     session.pop("request_token", None)
 
-    # die gracefully
+    # die gracefully and redirect to login
     if token == None:
-        return redirect(url_for("home"))
+        return redirect(url_for("login"))
 
     auth.set_request_token(token[0], token[1])
 

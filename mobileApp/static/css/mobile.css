@@ -638,8 +638,15 @@ input[type="text"]
   font-family: klavika-regular;
   font-size: 16px;
   font-weight: 100;
-  line-height: 27px;
+  line-height: 20px;
   color: #eeeddd;
+}
+
+.wrap 
+{ 
+  display: inline-block; 
+  position: relative;
+  top: 6px;
 }
 .playlist {
   padding: 10px;
@@ -667,6 +674,6 @@ input[type="text"]
   font-family: klavika-regular;
   font-size: 16px;
   font-weight: 100;
-  line-height: 27px;
+  line-height: 20px;
   color: #eeeddd;
 }

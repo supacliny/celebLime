@@ -401,7 +401,7 @@ def user(screen_name):
         counter[artist] += 1
 
     # now reverse sort
-    top_artists = sorted(counter, key=counter.get, reverse=False)
+    top_artists = sorted(counter, key=counter.get, reverse=True)
 
     return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top_songs=top_songs, top_artists=top_artists, logged_in=logged_in, name=name, debug=DEBUG)
 

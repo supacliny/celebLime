@@ -19,7 +19,6 @@ import urlparse
 import requests
 
 DEBUG = False
-
 CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"
 CONSUMER_SECRET = "cXfqDfMFBQutTMf9KpZWGt2HWDhBVxTajAqVDuFH7U"
@@ -236,9 +235,9 @@ def verify():
     token = session.get("request_token")
     session.pop("request_token", None)
 
-    # die gracefully
+    # die gracefully and redirect to login
     if token == None:
-        return redirect(url_for("home"))
+        return redirect(url_for("login"))
 
     auth.set_request_token(token[0], token[1])
 
@@ -307,7 +306,8 @@ def verify():
         except DuplicateKeyError:
             print "User error! User can not be updated."
 
-    except tweepy.TweepError:
+    except tweepy.TweepError, e:
+        print e
         print "Access error! Failed to get access token."
 
     return redirect(url_for("home"))

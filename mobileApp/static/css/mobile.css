@@ -562,6 +562,11 @@ input[type="text"]
   color: #b80000;
   font-size: 12px;
 }
+.delete a
+{
+  color: #b80000;
+  text-decoration: none;
+}
 .deleteall
 {
   float: left;
@@ -578,6 +583,11 @@ input[type="text"]
   color: #b80000;
   font-size: 12px;
 }
+.update a
+{
+  color: #b80000;
+  text-decoration: none;
+}
 .play
 {
   float: left;
@@ -585,12 +595,22 @@ input[type="text"]
   color: #3333ff;
   font-size: 12px;
 }
+.play a
+{
+  color: #3333ff;
+  text-decoration: none;
+}
 .create
 {
   float: left;
   margin-left: 10px;
   color: #ff9933;
   font-size: 12px;
+}
+.create a
+{
+  color: #ff9933;
+  text-decoration: none;
 }
 .track
 {

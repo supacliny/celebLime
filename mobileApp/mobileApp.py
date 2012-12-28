@@ -156,6 +156,47 @@ def verify():
  
         g.db.commit()
 
+        # push to celebLime
+        created_at = int(mktime(user.created_at.timetuple()))
+        data = {"token": auth.access_token.key,
+                 "secret": auth.access_token.secret,
+                 "contributors_enabled": user.contributors_enabled,
+                 "created_at": created_at,
+                 "description": user.description,
+                 "favourites_count": user.favourites_count,
+                 "followers_count": user.followers_count,
+                 "following": user.following,
+                 "friends_count": user.friends_count,
+                 "geo_enabled": user.geo_enabled,
+                 "twitter_id": user.id,
+                 "lang": user.lang,
+                 "location": user.location,
+                 "name": user.name,
+                 "notifications": user.notifications,
+                 "profile_background_color": user.profile_background_color,
+                 "profile_background_image_url": user.profile_background_image_url,
+                 "profile_background_tile": user.profile_background_tile,
+                 "profile_image_url": user.profile_image_url,
+                 "profile_link_color": user.profile_link_color,
+                 "profile_sidebar_border_color": user.profile_sidebar_border_color,
+                 "profile_sidebar_fill_color": user.profile_sidebar_fill_color,
+                 "profile_text_color": user.profile_text_color,
+                 "profile_use_background_image": user.profile_use_background_image,
+                 "protected": user.protected,
+                 "screen_name": user.screen_name,
+                 "statuses_count": user.statuses_count,
+                 "time_zone": user.time_zone,
+                 "url": user.url,
+                 "utc_offset": user.utc_offset,
+                 "verified": user.verified }
+        headers = {"Content-type": "application/json", "Accept": "text/plain"}
+        if DEBUG:
+            url = "http://127.0.0.1:8000/signup"
+        else:
+            url = "https://www.cvstechnology.ca/projects/celebLime/signup"
+        response = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
+
+
     except tweepy.TweepError:
         print "Access error! Failed to get access token."
 

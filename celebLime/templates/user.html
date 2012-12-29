@@ -169,7 +169,13 @@
                         <div class="playlists_container innercollapsable">
                             {% for playlist in playlists %}
                             <div class="playlist">
-                                <h3 class="playlist_header outerclickable blackback">{{ playlist.name | truncate(64) }}</h3>
+                                <div class="playlist_header outerclickable blackback"><div class="left playlistname">{{ playlist.name | truncate(64) }}</div><div class="right date updated">
+                                {% if playlist.added_at == playlist.updated_at %}
+                                Added {{ format_date(playlist.added_at) }}
+                                {% else %}
+                                Updated {{ format_date(playlist.updated_at) }}
+                                {% endif %}
+                                </div></div>
                                 {% if playlist.songs %}
                                 <div class="playlist_container innercollapsable blackback">
                                 {% else %}

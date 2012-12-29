@@ -336,8 +336,8 @@ def user(screen_name):
 
     playlists = []
 
-    # get all playlists for this userid
-    playlists_cursor = mongo.db.playlists.find({"twitter_id": user_id})
+    # get all playlists for this userid and sort by descending updated date!
+    playlists_cursor = mongo.db.playlists.find({"twitter_id": user_id}).sort([("updated_at", -1)])
 
     for playlist in playlists_cursor:
 

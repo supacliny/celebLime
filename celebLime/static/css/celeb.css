@@ -303,7 +303,9 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
 .playlist_header 
 {
   margin-left: 50px;
+  margin-bottom: 10px;
   width: 500px;
+  height: 40px;
   padding-left: 10px;
   padding-top: 10px;
   padding-bottom: 5px;
@@ -768,4 +770,24 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
   margin-right: 10px;
   padding-top: 5px;
   padding-bottom: 2px;
+}
+.left
+{
+  float: left;
+}
+.right
+{
+  float: right;
+}
+.playlistname
+{
+  font-family: klavika-regular;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 40px;
+}
+.updated
+{
+  line-height: 40px;
+  margin-right: 10px;
 }

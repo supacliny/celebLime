@@ -80,7 +80,7 @@
         </div>
         <div class="rowB">
             <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
-            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/static/img/icons/youtube.png"/>></div> 
+            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/static/img/icons/youtube.png"/></div> 
             <div class="spotify" rel="{{ song.spotify.href }}"><img class="spotifylogo" src="/static/img/icons/spotify-logo.png"/></div>
             <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img class="ituneslogo" src="/static/img/icons/itunes.png"/></div>
         </div>

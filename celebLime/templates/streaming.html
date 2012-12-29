@@ -61,14 +61,14 @@
         <div class="rowB">
         {% if now %}
             <now>Now Playing</now><div class="times">Played <b>{{ song.played_count }}</b> times</div>
-            <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/static/img/icons/youtube.png" width="25" height="25"/></div>            
-            <div class="spotify" rel="{{ song.spotify.href }}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
-            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/static/img/icons/youtube.png"/></div>            
+            <div class="spotify" rel="{{ song.spotify.href }}"><img class="spotifylogo" src="/static/img/icons/spotify-logo.png"/></div>
+            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img class="ituneslogo" src="/static/img/icons/itunes.png"/></div>
         {% else %}
             <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
-            <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/static/img/icons/youtube.png" width="25" height="25"/></div>
-            <div class="spotify" rel="{{ song.spotify.href }}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
-            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/static/img/icons/youtube.png"/></div>
+            <div class="spotify" rel="{{ song.spotify.href }}"><img class="spotifylogo" src="/static/img/icons/spotify-logo.png"/></div>
+            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img class="ituneslogo" src="/static/img/icons/itunes.png"/></div>
         {% endif %}
         </div>
     </div>
@@ -80,9 +80,9 @@
         </div>
         <div class="rowB">
             <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
-            <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/static/img/icons/youtube.png" width="25" height="25"/></div> 
-            <div class="spotify" rel="{{ song.spotify.href }}"><img src="/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
-            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/static/img/icons/itunes.png" width="25" height="25"/></div>
+            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/static/img/icons/youtube.png"/>></div> 
+            <div class="spotify" rel="{{ song.spotify.href }}"><img class="spotifylogo" src="/static/img/icons/spotify-logo.png"/></div>
+            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img class="ituneslogo" src="/static/img/icons/itunes.png"/></div>
         </div>
     </div>
     {% endif %}
@@ -98,14 +98,14 @@
         <div class="rowB">
         {% if now %}
             <now>Now Playing</now><div class="times">Played <b>{{ song.played_count }}</b> times</div>
-            <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/projects/celebLime/static/img/icons/youtube.png" width="25" height="25"/></div>            
-            <div class="spotify" rel="{{ song.spotify.href }}"><img src="/projects/celebLime/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
-            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/projects/celebLime/static/img/icons/itunes.png" width="25" height="25"/></div>
+            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/projects/celebLime/static/img/icons/youtube.png"/></div>            
+            <div class="spotify" rel="{{ song.spotify.href }}"><img class="spotifylogo" src="/projects/celebLime/static/img/icons/spotify-logo.png"/></div>
+            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img class="ituneslogo" src="/projects/celebLime/static/img/icons/itunes.png"/></div>
         {% else %}
             <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
-            <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/projects/celebLime/static/img/icons/youtube.png" width="25" height="25"/></div>
-            <div class="spotify" rel="{{ song.spotify.href }}"><img src="/projects/celebLime/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
-            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/projects/celebLime/static/img/icons/itunes.png" width="25" height="25"/></div>
+            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/projects/celebLime/static/img/icons/youtube.png"/></div>
+            <div class="spotify" rel="{{ song.spotify.href }}"><img class="spotifylogo" src="/projects/celebLime/static/img/icons/spotify-logo.png"/></div>
+            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img class="ituneslogo" src="/projects/celebLime/static/img/icons/itunes.png"/></div>
         {% endif %}
         </div>
     </div>
@@ -117,9 +117,9 @@
         </div>
         <div class="rowB">
             <div class="listen">Listened</div><div class="date"> {{ format_date(song.played_at) }}</div>
-            <div class="youtube" rel="{{ song.youtube.videoid }}"><img src="/projects/celebLime/static/img/icons/youtube.png" width="25" height="25"/></div> 
-            <div class="spotify" rel="{{ song.spotify.href }}"><img src="/projects/celebLime/static/img/icons/spotify-logo.png" width="23" height="23"/></div>
-            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img src="/projects/celebLime/static/img/icons/itunes.png" width="25" height="25"/></div>
+            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/projects/celebLime/static/img/icons/youtube.png"/></div> 
+            <div class="spotify" rel="{{ song.spotify.href }}"><img class="spotifylogo" src="/projects/celebLime/static/img/icons/spotify-logo.png"/></div>
+            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img class="ituneslogo" src="/projects/celebLime/static/img/icons/itunes.png"/></div>
         </div>
     </div>
     {% endif %}

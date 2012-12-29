@@ -791,3 +791,18 @@ html body div.navbar div.navbar-inner div.container div.dropdown b.caret{
   line-height: 40px;
   margin-right: 10px;
 }
+.ituneslogo
+{
+  width: 25px;
+  height: 25px;
+}
+.spotifylogo
+{
+  width: 23px;
+  height: 23px;
+}
+.youtubelogo
+{
+  width: 25px;
+  height: 25px;
+}

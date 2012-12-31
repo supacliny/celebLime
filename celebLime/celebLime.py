@@ -733,13 +733,13 @@ def api_publish_playlist():
         if not is_authorized(token):
             return not_authorized()
 
-        if not playist_id:
+        if playlist_id:
             # incoming playlist_id is a string, convert to ObjectID
             playlist_oid = bson.objectid.ObjectId(playlist_id)
             # make the playlist visible or not
             mongo.db.playlists.update({"_id": playlist_oid},{"$set": {"visible": visibility}})
 
-        if not song_id:
+        if song_id:
             # incoming song_id is a string, convert to ObjectID
             song_oid = bson.objectid.ObjectId(song_id)
 

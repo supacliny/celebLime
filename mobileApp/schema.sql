@@ -14,13 +14,23 @@ create table playlists (
   playlist_id string not null,
   twitter_id integer not null,
   playlist_name string not null
+  visibility boolean not null
 );
 
 drop table if exists playlistsongs;
 create table playlistsongs (
   playlist_id string not null,
   song_id integer not null,
-  rank integer not null
+  rank integer not null,
+);
+
+drop table if exists played;
+create table played (
+  twitter_id integer not null,
+  playlist_id string not null,
+  song_id integer not null,
+  played_at integer not null,
+  visibility boolean not null
 );
 
 drop table if exists songs;

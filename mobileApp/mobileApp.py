@@ -251,6 +251,89 @@ def deleteall(id):
     return ""
 
 
+# publish playlist
+@app.route("/publish/<id>", methods = ["POST"])
+def publish(id):
+
+    iid = str(id)
+
+    user_id = session.get("userid")
+    token = session.get("token")
+
+    # lookup visibility flag for this playlist
+    cur = g.db.execute('select visibility from playlists where playlist_id = ? and twitter_id = ?', [iid, user_id])
+
+    results = cur.fetchone()
+
+    visibility = results[0]
+
+    if visibility:
+        visibility = False
+    else:
+        visibility = True
+
+    # publish to celebLime
+    data = {"twitter_id": user_id, "token": token, "playlist_id": iid, "visible": visibility}
+    headers = {"Content-type": "application/json", "Accept": "text/plain"}
+    if DEBUG:
+        url = "http://127.0.0.1:8000/publish"
+    else:
+        url = "https://www.cvstechnology.ca/projects/celebLime/publish"
+    response = requests.patch(url, data=json.dumps(data), headers=headers, verify=False)
+
+    # update the visibility flag
+    g.db.execute('update playlists set visibility = ? where playlist_id = ? and twitter_id = ?', [visibility, iid, user_id]) 
+    g.db.commit()
+
+    return ""
+
+
+# publish recent song
+@app.route("/recent/<jdata>", methods = ["POST"])
+def recent(jdata):
+
+    jdata = json.loads(jdata)
+    user_id = session.get("userid")
+    token = session.get("token")
+
+    playlist_id = jdata["playlist_id"]
+    song_id = jdata["song_id"]
+
+    # lookup visibility
+    cur = g.db.execute('select visibility from played where playlist_id = ? and song_id = ? and twitter_id = ?', [playlist_id, song_id, user_id])
+
+    results = cur.fetchone()
+
+    visibility = results[0]
+
+    if visibility:
+        visibility = False
+    else:
+        visibility = True
+
+    # lookup celebLime id
+    cur = g.db.execute('select song_id from songs where id = ? and twitter_id = ?', [song_id, user_id])
+
+    results = cur.fetchone()
+
+    cl_song_id = str(results[0])
+
+    # publish to celebLime
+    data = {"twitter_id": user_id, "token": token, "song_id": cl_song_id, "visible": visibility}
+    headers = {"Content-type": "application/json", "Accept": "text/plain"}
+    if DEBUG:
+        url = "http://127.0.0.1:8000/publish"
+    else:
+        url = "https://www.cvstechnology.ca/projects/celebLime/publish"
+    response = requests.patch(url, data=json.dumps(data), headers=headers, verify=False)
+
+    # update the visibility flag
+    g.db.execute('update played set visibility = ? where playlist_id = ? and song_id = ? and twitter_id = ?', [visibility, playlist_id, song_id, user_id]) 
+    g.db.commit()
+
+    return ""
+
+
 # update playlist (delete only, ignore response)
 @app.route("/update/<jdata>", methods = ["POST"])
 def update(jdata):
@@ -267,14 +350,22 @@ def update(jdata):
 
 
 # stream song
-@app.route("/play/<id>", methods = ["POST"])
-def play(id):
+@app.route("/play/<jdata>", methods = ["POST"])
+def play(jdata):
 
-    song_id = str(id)
-
+    jdata = json.loads(jdata)
     user_id = session.get("userid")
     token = session.get("token")
+
+    playlist_id = jdata["playlist_id"]
+    song_id = jdata["song_id"]
+
     played_at = int(time())
+    visibility = 1
+
+    # insert into played
+    g.db.execute('insert into played (twitter_id, playlist_id, song_id, played_at, visibility) values (?, ?, ?, ?, ?)', [user_id, playlist_id, song_id, played_at, visibility])
+    g.db.commit()
 
     # lookup celebLime id
     cur = g.db.execute('select song_id from songs where id = ? and twitter_id = ?', [song_id, user_id])
@@ -331,9 +422,10 @@ def create(jdata):
         print "Key Error! Values returned at fault."
         return ""
 
-    # make a local playlist
+    # create a local playlist default visible
     try:
-        g.db.execute('insert into playlists (playlist_id, twitter_id, playlist_name) values (?, ?, ?)', [playlist_id, user_id, name])
+        visibility = 1
+        g.db.execute('insert into playlists (playlist_id, twitter_id, playlist_name, visibility) values (?, ?, ?, ?)', [playlist_id, user_id, name, visibility])
         g.db.commit()
     except sqlite3.IntegrityError, m:
         print "Duplicate Error! Playlist already exists."
@@ -430,14 +522,15 @@ def showPlaylists():
     if user_id == None:
         return json.dumps(data)
 
-    cur = g.db.execute('select playlist_id, twitter_id, playlist_name from playlists where twitter_id = ?', [user_id])
-    playlists = [dict(playlist_id=row[0], twitter_id=row[1], playlist_name=row[2]) for row in cur.fetchall()]
+    cur = g.db.execute('select playlist_id, twitter_id, playlist_name, visibility from playlists where twitter_id = ?', [user_id])
+    playlists = [dict(playlist_id=row[0], twitter_id=row[1], playlist_name=row[2], visibility=row[3]) for row in cur.fetchall()]
 
     for playlist in playlists:
 
         song_data = []
         playlist_id = playlist["playlist_id"]
         playlist_name = playlist["playlist_name"]
+        visible = playlist["visibility"]
 
         cur = g.db.execute('select song_id from playlistsongs where playlist_id = ? order by rank asc', [playlist_id])
         songs = [dict(song_id=row[0]) for row in cur.fetchall()]
@@ -445,11 +538,18 @@ def showPlaylists():
         for song in songs:
 
             local_song_id = song["song_id"]
+            cur = g.db.execute('select visibility from played where song_id = ? and playlist_id = ? and twitter_id = ?', [local_song_id, playlist_id, user_id])
+            results = cur.fetchone()
+            if results:
+                local_song_visible = results[0]
+            else:
+                local_song_visible = 3
+
             cur = g.db.execute('select id, song_title, song_artist, song_album from songs where id = ? and twitter_id = ?', [local_song_id, user_id])
             for row in cur.fetchall():
-                song_data.append(dict(id=row[0], title=row[1], artist=row[2], album=row[3]))
+                song_data.append(dict(id=row[0], title=row[1], artist=row[2], album=row[3], visible=local_song_visible))
 
-        data.append({"playlist_id": playlist_id, "playlist_name": playlist_name, "songs": song_data})
+        data.append({"playlist_id": playlist_id, "playlist_name": playlist_name, "visible": visible, "songs": song_data})
 
     data = json.dumps(data)
 

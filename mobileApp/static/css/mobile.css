@@ -617,6 +617,30 @@ input[type="text"]
   color: #ff9933;
   text-decoration: none;
 }
+.publish
+{
+  float: left;
+  margin-left: 10px;
+  color: #996600;
+  font-size: 12px;
+}
+.publish a
+{
+  color: #996600;
+  text-decoration: none;
+}
+.songpublish
+{
+  float: left;
+  margin-left: 10px;
+  color: #996600;
+  font-size: 12px;
+}
+.songpublish a
+{
+  color: #996600;
+  text-decoration: none;
+}
 .track
 {
   float: left;

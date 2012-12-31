@@ -132,7 +132,7 @@ def home():
     for celeb in celebs_cursor:
 
         celebid = celeb["twitter_id"]
-        most_recent_songs = mongo.db.streaming.find({"twitter_id": celebid}).limit(25).sort([("played_at", -1)])
+        most_recent_songs = mongo.db.streaming.find({"twitter_id": celebid, "visible": True}).limit(25).sort([("played_at", -1)])
 
         if most_recent_songs.count() > 0:
             most_recent_song = most_recent_songs[0]
@@ -166,7 +166,7 @@ def home():
     for fan in fans_cursor:
 
         fanid = fan["twitter_id"]
-        most_recent_songs = mongo.db.streaming.find({"twitter_id": fanid}).limit(25).sort([("played_at", -1)])
+        most_recent_songs = mongo.db.streaming.find({"twitter_id": fanid, "visible": True}).limit(25).sort([("played_at", -1)])
 
         if most_recent_songs.count() > 0:
             most_recent_song = most_recent_songs[0]
@@ -336,14 +336,14 @@ def user(screen_name):
 
     playlists = []
 
-    # get all playlists for this userid and sort by descending updated date!
-    playlists_cursor = mongo.db.playlists.find({"twitter_id": user_id}).sort([("updated_at", -1)])
+    # get all visible playlists for this userid and sort by descending updated date!
+    playlists_cursor = mongo.db.playlists.find({"twitter_id": user_id, "visible": True}).sort([("updated_at", -1)])
 
     for playlist in playlists_cursor:
 
         songs = []
         song_ids = playlist["songs"]
-        
+
         for song_id in song_ids:
             # song_id is a dict string, convert to ObjectID
             song_id = song_id["song_id"]
@@ -362,7 +362,7 @@ def user(screen_name):
     streaming = []
 
     # sort recently played songs in descending order by date
-    streaming_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(25).sort([("played_at", -1)])
+    streaming_cursor = mongo.db.streaming.find({"twitter_id": user_id, "visible": True}).limit(25).sort([("played_at", -1)])
 
     for song in streaming_cursor:
         song_id = song["song_id"]
@@ -374,7 +374,7 @@ def user(screen_name):
     top_songs = []
 
     # sort in descending order by number of times played
-    top_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(10).sort([("played_count", -1)])
+    top_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id, "visible": True}).limit(10).sort([("played_count", -1)])
 
     for song in top_songs_cursor:
         song_id = song["song_id"]
@@ -384,7 +384,7 @@ def user(screen_name):
     artists = []
 
     # get all streamed songs of this user
-    top_artists_cursor = mongo.db.streaming.find({"twitter_id": user_id})
+    top_artists_cursor = mongo.db.streaming.find({"twitter_id": user_id, "visible": True})
 
     # now get the song info for each song_id
     for song in top_artists_cursor:
@@ -418,7 +418,7 @@ def poll(screen_name):
     user_id = user["twitter_id"]
 
     # sort in descending order by date and return most recent song
-    recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(25).sort([("played_at", -1)])
+    recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id, "visible": True}).limit(25).sort([("played_at", -1)])
 
     recent_songs = []
 
@@ -539,6 +539,7 @@ def api_create_playlist():
         incoming["added_at"] = int(time())
         incoming["updated_at"] = int(time())
         incoming["songs"] = tracks
+        incoming["visible"] = True
 
         #  then insert
         mongo.db.playlists.ensure_index([("name",ASCENDING),("twitter_id",ASCENDING)], unique=True, background=True)
@@ -628,6 +629,7 @@ def api_update_playlist():
         # maintain the original added_at field but update the updated_at field
         if playlist:
             incoming["added_at"] = playlist["added_at"]
+            incoming["visible"] = playlist["visible"]
             incoming["updated_at"] = int(time())
             incoming["songs"] = tracks
             incoming["name"] = playlist["name"]
@@ -645,7 +647,7 @@ def api_update_playlist():
 
         data = json.dumps(data)
 
-        resp = Response(data, status=204, mimetype="application/json")
+        resp = Response(data, status=200, mimetype="application/json")
         return resp
     else:
         return not_json()
@@ -681,6 +683,9 @@ def api_stream_song():
         # find the song in mongo streamed by that user
         song = mongo.db.streaming.find_one({"twitter_id": user_id, "song_id": song_oid})
 
+        # by default, a streaming song has to be visible
+        incoming["visible"] = True
+
         # update the number of times played, if this key does not exist then song never streamed before
         try:
             incoming["played_count"] = song["played_count"] + 1
@@ -691,6 +696,56 @@ def api_stream_song():
             incoming["song_id"] = song_oid
             mongo.db.streaming.insert(incoming)
             
+        data = {}
+
+        data = json.dumps(data)
+
+        resp = Response(data, status=204, mimetype="application/json")
+        return resp
+    else:
+        return not_json()
+
+
+# publish/unpublish a playlist or streamed song
+@app.route("/publish", methods = ["PATCH"])
+def api_update_playlist():
+
+    if request.headers["Content-Type"] == "application/json":
+
+        incoming = request.json
+
+        playlist_id = 0
+        song_id = 0
+
+        # partially validate JSON fields
+        try:
+            user_id = incoming["twitter_id"]
+            token = incoming["token"]
+            if "playlist_id" in incoming:
+                playlist_id = incoming["playlist_id"]
+            if "song_id" in incoming:  
+                song_id = incoming["song_id"]
+            visibility = incoming["visible"]
+        except KeyError:
+            return bad_request()
+
+        # check for authorization
+        if not is_authorized(token):
+            return not_authorized()
+
+        if not playist_id:
+            # incoming playlist_id is a string, convert to ObjectID
+            playlist_oid = bson.objectid.ObjectId(playlist_id)
+            # make the playlist visible or not
+            mongo.db.playlists.update({"_id": playlist_oid},{"$set": {"visible": visibility}})
+
+        if not song_id:
+            # incoming song_id is a string, convert to ObjectID
+            song_oid = bson.objectid.ObjectId(song_id)
+
+            # make the streamed song visible or not
+            mongo.db.streaming.update({"twitter_id": user_id, "song_id": song_oid}, {"$set": {"visible": visibility}})
+
         data = {}
 
         data = json.dumps(data)

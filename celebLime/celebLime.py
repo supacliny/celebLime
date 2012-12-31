@@ -708,7 +708,7 @@ def api_stream_song():
 
 # publish/unpublish a playlist or streamed song
 @app.route("/publish", methods = ["PATCH"])
-def api_update_playlist():
+def api_publish_playlist():
 
     if request.headers["Content-Type"] == "application/json":
 

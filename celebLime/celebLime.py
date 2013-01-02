@@ -558,19 +558,25 @@ def api_create_playlist():
         return not_json()
 
 
-# delete a playlist
+# delete a playlist or song
 @app.route("/delete", methods = ["DELETE"])
-def api_delete_playlist():
+def api_delete():
 
     if request.headers["Content-Type"] == "application/json":
 
         incoming = request.json
 
+        playlist_id = 0
+        song_id = 0
+
         # partially validate JSON fields
         try:
             user_id = incoming["twitter_id"]
             token = incoming["token"]
-            playlist_id = incoming["playlist_id"]
+            if "playlist_id" in incoming:
+                playlist_id = incoming["playlist_id"]
+            if "song_id" in incoming:  
+                song_id = incoming["song_id"]
         except KeyError:
             return bad_request()
 
@@ -578,11 +584,22 @@ def api_delete_playlist():
         if not is_authorized(token):
             return not_authorized()
 
-        # incoming playlist_id is a string, convert to ObjectID
-        playlist_oid = bson.objectid.ObjectId(playlist_id)
+        if playlist_id:
+            # incoming playlist_id is a string, convert to ObjectID
+            playlist_oid = bson.objectid.ObjectId(playlist_id)
 
-        # remove from mongo
-        mongo.db.playlists.remove({"_id": playlist_oid})
+            # remove from mongo
+            mongo.db.playlists.remove({"_id": playlist_oid})
+
+        if song_id:
+            # incoming song_id is a string, convert to ObjectID
+            song_oid = bson.objectid.ObjectId(song_id)
+
+            # remove all from mongo
+            mongo.db.songs.remove({"_id": song_oid})
+            mongo.db.streaming.remove({"_id": song_oid})
+            mongo.db.playlists.update({"twitter_id": user_id}, {"$pull": {"songs": {"song_id": song_id}}}, multi=True)
+
 
         data = {}
 

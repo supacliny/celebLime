@@ -152,7 +152,7 @@ def verify():
         try:
             g.db.execute('insert into users (twitter_id, token, secret, screen_name, name, logins) values (?, ?, ?, ?, ?, ?)', [twitter_id, token, secret, screen_name, name, logins])
         except sqlite3.IntegrityError, m:
-            g.db.execute('update users set logins = logins + 1')
+            g.db.execute('update users set logins = logins + 1 where twitter_id = ? and token = ?', [twitter_id, token])
  
         g.db.commit()
 
@@ -289,18 +289,16 @@ def publish(id):
 
 
 # publish recent song
-@app.route("/recent/<jdata>", methods = ["POST"])
-def recent(jdata):
+@app.route("/recent/<id>", methods = ["POST"])
+def recent(id):
 
-    jdata = json.loads(jdata)
+    song_id = int(id)
+
     user_id = session.get("userid")
     token = session.get("token")
 
-    playlist_id = jdata["playlist_id"]
-    song_id = jdata["song_id"]
-
     # lookup visibility
-    cur = g.db.execute('select visibility from played where playlist_id = ? and song_id = ? and twitter_id = ?', [playlist_id, song_id, user_id])
+    cur = g.db.execute('select visibility from played where song_id = ? and twitter_id = ?', [song_id, user_id])
 
     results = cur.fetchone()
 
@@ -328,7 +326,7 @@ def recent(jdata):
     response = requests.patch(url, data=json.dumps(data), headers=headers, verify=False)
 
     # update the visibility flag
-    g.db.execute('update played set visibility = ? where playlist_id = ? and song_id = ? and twitter_id = ?', [visibility, playlist_id, song_id, user_id]) 
+    g.db.execute('update played set visibility = ? where song_id = ? and twitter_id = ?', [visibility, song_id, user_id]) 
     g.db.commit()
 
     return ""
@@ -350,24 +348,32 @@ def update(jdata):
 
 
 # stream song
-@app.route("/play/<jdata>", methods = ["POST"])
-def play(jdata):
+@app.route("/play/<id>", methods = ["POST"])
+def play(id):
 
-    jdata = json.loads(jdata)
+    song_id = int(id)
     user_id = session.get("userid")
     token = session.get("token")
 
-    playlist_id = jdata["playlist_id"]
-    song_id = jdata["song_id"]
-
     played_at = int(time())
-    visibility = 1
 
-    # insert into played
-    g.db.execute('insert into played (twitter_id, playlist_id, song_id, played_at, visibility) values (?, ?, ?, ?, ?)', [user_id, playlist_id, song_id, played_at, visibility])
+    cur = g.db.execute('select twitter_id, song_id, played_at, played_count, visibility from played where twitter_id = ? and song_id = ?', [user_id, song_id])
+
+    results = cur.fetchone()
+
+    # song has already been played so update.
+    if results:
+        g.db.execute('update played set played_count = played_count + 1 where twitter_id = ? and song_id = ?', [user_id, song_id])
+        g.db.execute('update played set played_at = ? where twitter_id = ? and song_id = ?', [played_at, user_id, song_id])
+    # song has not been played before.
+    else:
+        played_count = 1
+        visibility = 1
+        g.db.execute('insert into played (twitter_id, song_id, played_at, played_count, visibility) values (?, ?, ?, ?, ?)', [user_id, song_id, played_at, played_count, visibility])
+    
     g.db.commit()
 
-    # lookup celebLime id
+    # now lookup celebLime id
     cur = g.db.execute('select song_id from songs where id = ? and twitter_id = ?', [song_id, user_id])
 
     results = cur.fetchone()
@@ -509,6 +515,36 @@ def showLibrary():
     return data
 
 
+# show list of played songs
+@app.route("/played")
+def showPlayed():
+
+    user_id = session.get("userid")
+
+    # now lets shuttle data back to the front end
+    data = []
+
+    # check for login first
+    if user_id == None:
+        return json.dumps(data)
+
+    cur = g.db.execute('select song_id, played_at, played_count, visibility from played where twitter_id = ? order by played_at desc', [user_id])
+    played = [dict(song_id=row[0], played_at=row[1], played_count=row[2], visible=row[3]) for row in cur.fetchall()]
+
+    for song in played:
+        song_id = song["song_id"]
+        played_at = song["played_at"]
+        played_count = song["played_count"]
+        visible = song["visible"]
+        cur = g.db.execute('select id, song_title, song_artist, song_album from songs where id = ? and twitter_id = ?', [song_id, user_id])
+        for row in cur.fetchall():
+            data.append(dict(id=row[0], title=row[1], artist=row[2], album=row[3], played_at=played_at, played_count=played_count, visible=visible))
+
+    data = json.dumps(data)
+
+    return data
+
+
 # show playlists
 @app.route("/show")
 def showPlaylists():
@@ -536,21 +572,15 @@ def showPlaylists():
         songs = [dict(song_id=row[0]) for row in cur.fetchall()]
 
         for song in songs:
-
             local_song_id = song["song_id"]
-            cur = g.db.execute('select visibility from played where song_id = ? and playlist_id = ? and twitter_id = ?', [local_song_id, playlist_id, user_id])
-            results = cur.fetchone()
-            if results:
-                local_song_visible = results[0]
-            else:
-                local_song_visible = 3
-
             cur = g.db.execute('select id, song_title, song_artist, song_album from songs where id = ? and twitter_id = ?', [local_song_id, user_id])
             for row in cur.fetchall():
-                song_data.append(dict(id=row[0], title=row[1], artist=row[2], album=row[3], visible=local_song_visible))
+                song_data.append(dict(id=row[0], title=row[1], artist=row[2], album=row[3]))
 
         data.append({"playlist_id": playlist_id, "playlist_name": playlist_name, "visible": visible, "songs": song_data})
 
+    # reverse order - last created playlist is now first
+    data.reverse()
     data = json.dumps(data)
 
     return data
@@ -620,17 +650,6 @@ def find_between(s, first, last):
         return s[start:end]
     except ValueError:
         return ""
-
-
-# for now, simply check that the access token is present in mongodb
-# later on we would use it in conjunction with the secret to sign a request for twitter
-def is_authorized(access_token):
-
-    #result = mongo.db.users.find_one({"access_key": access_token})
-    if result:
-        return True
-    else:
-        return False
 
 
 # update one playlist on celebLime

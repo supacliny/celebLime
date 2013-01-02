@@ -27,9 +27,9 @@ create table playlistsongs (
 drop table if exists played;
 create table played (
   twitter_id integer not null,
-  playlist_id string not null,
   song_id integer not null,
   played_at integer not null,
+  played_count integer not null,
   visibility boolean not null
 );
 

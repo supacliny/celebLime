@@ -78,6 +78,40 @@
           });
         }
 
+        function showPlayed(){
+          $(".played").empty();
+          {% if debug %}
+          $.getJSON('/played', function(data) {
+          {% else %}
+          $.getJSON('/projects/mobileApp/played', function(data) {  
+          {% endif %}  
+              if (jQuery.isEmptyObject(data)) {
+                return;
+              }
+              else {
+                var songs = data;
+                var content = '<div class="recent">';
+                content += '<h2 class="header">Recently listened</h2>';
+                content += '<ol>';
+                $.each(songs, function(index, song) {
+                  var title = shorten(song.title,30);
+                  var artist = shorten(song.artist,30);
+                  var album = shorten(song.album,30);
+                  var visible = song.visible;
+                  var publish = '[HIDE]';
+                  if (visible == 0)
+                  {
+                    publish = '[UNHIDE]';
+                  }
+                  content += '<li><div class="wrap"><div class="track" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="songpublish" rel="' + song.id + '"><a href="#">' + publish + '</a></div></div></li>';
+                });
+                content += '</ol>';
+                content += '</div>';
+                $(content).appendTo(".played");
+              }
+          });
+        }
+
         function showPlaylists(){
           $(".playlists").empty();
           {% if debug %}
@@ -107,18 +141,7 @@
                         var title = shorten(song.title,30);
                         var artist = shorten(song.artist,30);
                         var album = shorten(song.album,30);
-                        var svisible = song.visible;
-                        var spublish = '[HIDE]';
-                        if (svisible == 0)
-                        {
-                          spublish = '[UNHIDE]';
-                        }
-                        if (svisible == 3)
-                        {
-                          spublish = '';
-                        }
-
-                        content += '<li><div class="wrap"><div class="playlist-song" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="play" relb="' + song.id + '"rela="' + playlist.playlist_id + '"><a href="#">[PLAY]</a></div><div class="songpublish" relb="' + song.id + '" rela="' + playlist.playlist_id + '"><a href="#">' + spublish + '</a></div><div class="update" relb="' + song.id + '" rela="' + playlist.playlist_id + '"><a href="#">[DELETE]</a></div></div></li>';
+                        content += '<li><div class="wrap"><div class="playlist-song" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="play" rel="' + song.id + '"><a href="#">[PLAY]</a></div><div class="update" relb="' + song.id + '" rela="' + playlist.playlist_id + '"><a href="#">[DELETE]</a></div></div></li>';
                   });
                   content += '</ol>';
                 });
@@ -130,8 +153,9 @@
 
       $(document).ready(function(){
 
-        showPlaylists();
         showLibrary();
+        showPlayed();
+        showPlaylists();
 
         var songs = []
 
@@ -200,18 +224,13 @@
         });
 
         $('body').on('click', '.songpublish', function() {
-          var playlist_id = $(this).attr("rela");
-          var song_id = $(this).attr("relb");
-          var data = {}
-          data.playlist_id = playlist_id;
-          data.song_id = song_id;
-          var jdata = JSON.stringify(data);
+          var id = $(this).attr("rel");
           {% if debug %}
-          $.post("/recent/"+jdata, function(data) {
+          $.post("/recent/"+id, function(data) {
           {% else %}
-          $.post("/projects/mobileApp/recent/"+jdata, function(data) {
+          $.post("/projects/mobileApp/recent/"+id, function(data) {
           {% endif %}
-              showPlaylists();
+              showPlayed();
           });
         });
 
@@ -232,18 +251,13 @@
         });
 
         $('body').on('click', '.play', function() {
-          var playlist_id = $(this).attr("rela");
-          var song_id = $(this).attr("relb");
-          var data = {}
-          data.playlist_id = playlist_id;
-          data.song_id = song_id;
-          var jdata = JSON.stringify(data);
+          var id = $(this).attr("rel");
           {% if debug %}
-          $.post("/play/"+jdata, function(data) {
+          $.post("/play/"+id, function(data) {
           {% else %}
-          $.post("/projects/mobileApp/play/"+jdata, function(data) {
+          $.post("/projects/mobileApp/play/"+id, function(data) {
           {% endif %}
-                showPlaylists();
+              showPlayed();
           });
         });
 
@@ -322,7 +336,7 @@
     {% endif %}
 
       <div class="music"></div>
-
+      <div class="played"></div>
       <div class="playlists"></div>
 
     </div> <!-- /container -->

@@ -754,3 +754,26 @@ input[type="text"]
   position: relative;
   top: 6px;
 }
+.dull
+{ 
+  display: inline-block; 
+  color: #333333 !important;
+}
+.dull li
+{
+  font-family: klavika-regular;
+  font-size: 16px;
+  font-weight: 100;
+  line-height: 20px;
+  color: #333333
+}
+a
+{
+  color: #eeeddd;
+  text-decoration: none;
+}
+a:hover
+{
+  color: #eeeddd;
+  text-decoration: none;  
+}

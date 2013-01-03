@@ -60,9 +60,7 @@
               }
               else {
                 var songs = data;
-                var content = '<div class="library">';
-                content += '<h2 class="header">Song Library</h2>';
-                content += '<h4 class="playlist-name">Click Playlist Name</h4>';
+                var content = '<h4 class="playlist-name">Click Playlist Name</h4>';
                 content += '<ol>';
                 $.each(songs, function(index, song) {
                   var title = shorten(song.title,30);
@@ -71,8 +69,6 @@
                   content += '<li><div class="wrap"><div class="track" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="delete" rel="' + song.id + '"><a href="#">[DELETE]</a></div></div></li>';
                 });
                 content += '</ol>';
-                content += '<div class="create"><a href="#">[CREATE PLAYLIST]</a></div>';
-                content += '</div>';
                 $(content).appendTo(".music");
               }
           });
@@ -90,9 +86,7 @@
               }
               else {
                 var songs = data;
-                var content = '<div class="recent">';
-                content += '<h2 class="header">Recently listened</h2>';
-                content += '<ol>';
+                var content = '<ol>';
                 $.each(songs, function(index, song) {
                   var title = shorten(song.title,30);
                   var artist = shorten(song.artist,30);
@@ -100,16 +94,14 @@
                   var visible = song.visible;
                   if (visible == 0)
                   {
-
-                    content += '<div class="wrap dull"><div class="track" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="songpublish" rel="' + song.id + '"><a href="#">[UNHIDE]</a></div></div><br>';
+                    content += '<div class="wrap dull"><div class="playlist-song" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="songpublish" rel="' + song.id + '"><a href="#">[UNHIDE]</a></div></div><br>';
                   }
                   else
                   {
-                    content += '<li><div class="wrap"><div class="track" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="songpublish" rel="' + song.id + '"><a href="#">[HIDE]</a></div></div></li>';
+                    content += '<li><div class="wrap"><div class="playlist-song" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="songpublish" rel="' + song.id + '"><a href="#">[HIDE]</a></div></div></li>';
                   }
                 });
                 content += '</ol>';
-                content += '</div>';
                 $(content).appendTo(".played");
               }
           });
@@ -127,8 +119,7 @@
               }
               else {
                 var playlists = data;
-                var content = '<div class="playlist">';
-                content += '<h2 class="header">Playlists</h2>';
+                var content = '';
                 $.each(playlists, function(index, playlist) {
                     var playlist_name = shorten(playlist.playlist_name, 30);
                     var pvisible = playlist.visible;
@@ -136,7 +127,7 @@
                     {
                       content += '<br>';
                       content += '<div class="dull">';
-                      content += '<div class="playlist-header"><a href="#' + playlist.playlist_id + '">' + playlist_name + '</a></div><div class="publish" rel="' + playlist.playlist_id + '"><a href="#' + playlist.playlist_id + '">[UNHIDE]</a></div><div class="deleteall" rel="' + playlist.playlist_id + '"><a href="#">[DELETE]</a></div>&nbsp';
+                      content += '<div class="playlist-header">' + playlist_name + '</div><div class="publish" rel="' + playlist.playlist_id + '"><a href="#">[UNHIDE]</a></div><div class="deleteall" rel="' + playlist.playlist_id + '"><a href="#">[DELETE]</a></div>&nbsp';
                       content += '<ol>';
                       $.each(playlist.songs, function(index,song){
                           var title = shorten(song.title,30);
@@ -151,7 +142,7 @@
                     else
                     {
                       content += '<br>';
-                      content += '<div class="playlist-header"><a href="#' + playlist.playlist_id + '">' + playlist_name + '</a></div><div class="publish" rel="' + playlist.playlist_id + '"><a href="#' + playlist.playlist_id + '">[HIDE]</a></div><div class="deleteall" rel="' + playlist.playlist_id + '"><a href="#">[DELETE]</a></div>&nbsp';
+                      content += '<div class="playlist-header">' + playlist_name + '</div><div class="publish" rel="' + playlist.playlist_id + '"><a href="#">[HIDE]</a></div><div class="deleteall" rel="' + playlist.playlist_id + '"><a href="#">[DELETE]</a></div>&nbsp';
                       content += '<ol>';
                       $.each(playlist.songs, function(index,song){
                           var title = shorten(song.title,30);
@@ -162,7 +153,6 @@
                       content += '</ol>';
                     }
                 });
-                content += '</div>';
                 $(content).appendTo(".playlists");
               }
           });
@@ -214,6 +204,7 @@
           $.post("/projects/mobileApp/delete/"+id, function(data) {
           {% endif %}  
               showLibrary();
+              showPlayed();
               showPlaylists();
           });
         });
@@ -229,7 +220,7 @@
           });
         });
 
-        $('body').on('click', '.publish', function() {
+        $('body').on('click', '.publish', function(event) {
           var id = $(this).attr("rel");
           {% if debug %}
           $.post("/publish/"+id, function(data) {
@@ -352,9 +343,21 @@
       </div>
     {% endif %}
 
-      <div class="music"></div>
-      <div class="played"></div>
-      <div class="playlists"></div>
+      <div class="library">
+        <h2 class="header">Song Library</h2>
+          <div class="music"></div>
+          <div class="create"><a href="#">[CREATE PLAYLIST]</a></div>
+      </div>
+
+      <div class="recent">
+        <h2 class="header">Recently listened</h2>
+          <div class="played"></div>
+      </div>
+
+      <div class="playlist">
+        <h2 class="header">Playlists</h2>
+          <div class="playlists"></div>
+      </div>
 
     </div> <!-- /container -->
 

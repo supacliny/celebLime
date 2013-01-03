@@ -49,7 +49,7 @@
         }
 
         function showLibrary(){
-          $(".music").empty();
+          var content = '';
           {% if debug %}
           $.getJSON('/library', function(data) {
           {% else %}
@@ -60,7 +60,7 @@
               }
               else {
                 var songs = data;
-                var content = '<h4 class="playlist-name">Click Playlist Name</h4>';
+                content += '<h4 class="playlist-name">Click Playlist Name</h4>';
                 content += '<ol>';
                 $.each(songs, function(index, song) {
                   var title = shorten(song.title,30);
@@ -69,13 +69,14 @@
                   content += '<li><div class="wrap"><div class="track" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="delete" rel="' + song.id + '"><a href="#">[DELETE]</a></div></div></li>';
                 });
                 content += '</ol>';
-                $(content).appendTo(".music");
+                content +=  '<div class="create"><a href="#playlist">[CREATE PLAYLIST]</a></div>';
+                $(".music").html(content);
               }
           });
         }
 
         function showPlayed(){
-          $(".played").empty();
+          var content = '';
           {% if debug %}
           $.getJSON('/played', function(data) {
           {% else %}
@@ -86,7 +87,7 @@
               }
               else {
                 var songs = data;
-                var content = '<ol>';
+                content += '<ol>';
                 $.each(songs, function(index, song) {
                   var title = shorten(song.title,30);
                   var artist = shorten(song.artist,30);
@@ -102,13 +103,13 @@
                   }
                 });
                 content += '</ol>';
-                $(content).appendTo(".played");
+                $(".played").html(content);
               }
           });
         }
 
         function showPlaylists(){
-          $(".playlists").empty();
+          var content = '';
           {% if debug %}
           $.getJSON('/show', function(data) {
           {% else %}
@@ -119,7 +120,6 @@
               }
               else {
                 var playlists = data;
-                var content = '';
                 $.each(playlists, function(index, playlist) {
                     var playlist_name = shorten(playlist.playlist_name, 30);
                     var pvisible = playlist.visible;
@@ -148,12 +148,12 @@
                           var title = shorten(song.title,30);
                           var artist = shorten(song.artist,30);
                           var album = shorten(song.album,30);
-                          content += '<li><div class="wrap"><div class="playlist-song" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="play" rel="' + song.id + '"><a href="#">[PLAY]</a></div><div class="update" relb="' + song.id + '" rela="' + playlist.playlist_id + '"><a href="#">[DELETE]</a></div></div></li>';
+                          content += '<li><div class="wrap"><div class="playlist-song" rel="' + song.id + '">' + title + ' by ' + artist + ' in ' + album + '</div><div class="play" rel="' + song.id + '"><a href="#recent">[PLAY]</a></div><div class="update" relb="' + song.id + '" rela="' + playlist.playlist_id + '"><a href="#">[DELETE]</a></div></div></li>';
                       });
                       content += '</ol>';
                     }
                 });
-                $(content).appendTo(".playlists");
+                $(".playlists").html(content);
               }
           });
         }
@@ -184,7 +184,8 @@
                 });
         });
 
-        $('body').on('click', '.track', function() {
+        $('body').on('click', '.track', function(event) {
+            event.preventDefault();
             var id = $(this).attr("rel");
             if (jQuery.inArray(id, songs) < 0){
               $(this).closest(".track").css("color", "#ddd000");
@@ -196,7 +197,8 @@
             }
         });
 
-        $('body').on('click', '.delete', function() {
+        $('body').on('click', '.delete', function(event) {
+          event.preventDefault();
           var id = $(this).attr("rel");
           {% if debug %}
           $.post("/delete/"+id, function(data) {
@@ -209,7 +211,8 @@
           });
         });
 
-        $('body').on('click', '.deleteall', function() {
+        $('body').on('click', '.deleteall', function(event) {
+          event.preventDefault();
           var id = $(this).attr("rel");
           {% if debug %}
           $.post("/deleteall/"+id, function(data) {
@@ -221,6 +224,7 @@
         });
 
         $('body').on('click', '.publish', function(event) {
+          event.preventDefault(); 
           var id = $(this).attr("rel");
           {% if debug %}
           $.post("/publish/"+id, function(data) {
@@ -231,7 +235,8 @@
           });
         });
 
-        $('body').on('click', '.songpublish', function() {
+        $('body').on('click', '.songpublish', function(event) {
+          event.preventDefault();
           var id = $(this).attr("rel");
           {% if debug %}
           $.post("/recent/"+id, function(data) {
@@ -242,7 +247,8 @@
           });
         });
 
-        $('body').on('click', '.update', function() {
+        $('body').on('click', '.update', function(event) {
+          event.preventDefault();
           var playlist_id = $(this).attr("rela");
           var song_id = $(this).attr("relb");
           var data = {}
@@ -258,7 +264,7 @@
           });
         });
 
-        $('body').on('click', '.play', function() {
+        $('body').on('click', '.play', function(event) {
           var id = $(this).attr("rel");
           {% if debug %}
           $.post("/play/"+id, function(data) {
@@ -269,7 +275,7 @@
           });
         });
 
-        $('body').on('click', '.create', function() {
+        $('body').on('click', '.create', function(event) {
           var playlist = {};
           playlist.name = $(".playlist-name").text();
           playlist.songs = songs;
@@ -344,17 +350,19 @@
     {% endif %}
 
       <div class="library">
+        <a name="library"></a>
         <h2 class="header">Song Library</h2>
           <div class="music"></div>
-          <div class="create"><a href="#">[CREATE PLAYLIST]</a></div>
       </div>
 
       <div class="recent">
+        <a name="recent"></a>
         <h2 class="header">Recently listened</h2>
           <div class="played"></div>
       </div>
 
       <div class="playlist">
+        <a name="playlist"></a>
         <h2 class="header">Playlists</h2>
           <div class="playlists"></div>
       </div>

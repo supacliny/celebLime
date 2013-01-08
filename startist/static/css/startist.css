@@ -36,6 +36,7 @@ body {
 /* main band image under navigation bar */
 .hero-unit {
   padding: 160px;
+  margin-top: 25px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   border-radius: 6px;

@@ -182,9 +182,6 @@ body {
     text-shadow: 0 1px 0 #FFFFFF;
     text-decoration: none;
 }
-input .span2 {
-    float: left;
-}
 .heading {
     padding-bottom: 5px;
     font-weight: bold;

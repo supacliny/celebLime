@@ -1,61 +1,59 @@
 {% extends "base.html" %}
 {% block body %}
-<script>
-  $(document).ready(function(){
-    $(".signup").submit(function(event) {
-      event.preventDefault();                 
-      var $form = $( this ),
-          email = $form.find( 'input[name="email"]' ).val(),
-          url = $form.attr( 'action' );
-      jdata = JSON.stringify({ "email": email});
-      jQuery.ajax({
-              type: "POST",
-              url: url,
-              data: jdata,
-              success: function(data) {
-                signal = data.valid;
-                if (signal == 0)
-                {
-                  $("input[placeholder]").val("Sorry, not a valid email address.");
-                }
-                if (signal == 1)
-                {
-                  $("input[placeholder]").val("Thanks, will notify you soon.");
-                }
-                if (signal == 2)
-                {
-                  $("input[placeholder]").val("Cheers, we already got you.");
-                }
-              },
-              dataType: "json",
-              contentType: "application/json",
-              processData: false
-            });
-      $("input[placeholder]").val("validating your email...");  
+  <script>
+    $(document).ready(function(){
+      $(".signup").submit(function(event) {
+        event.preventDefault();                 
+        var $form = $( this ),
+            email = $form.find( 'input[name="email"]' ).val(),
+            url = $form.attr( 'action' );
+        jdata = JSON.stringify({ "email": email});
+        jQuery.ajax({
+                type: "POST",
+                url: url,
+                data: jdata,
+                success: function(data) {
+                  signal = data.valid;
+                  if (signal == 0)
+                  {
+                    $("input[placeholder]").val("Sorry, not a valid email address.");
+                  }
+                  if (signal == 1)
+                  {
+                    $("input[placeholder]").val("Thanks, we will notify you soon.");
+                  }
+                  if (signal == 2)
+                  {
+                    $("input[placeholder]").val("Cheers, we already got you.");
+                  }
+                },
+                dataType: "json",
+                contentType: "application/json",
+                processData: false
+              });
+        $("input[placeholder]").val("validating your email...");  
+      });
     });
-  });
-</script>
+  </script>
 
-<div class="navbar navbar-fixed-top">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-      <a class="brand" href="{{ url_for('signup') }}">Startist</a>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <a class="brand" href="{{ url_for('signup') }}">Startist</a>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="container">
-  <div class="hero-unit" style="background-image:url('{{ url_for('static', filename='img/banner.jpg') }}');">
-    <form class="signup" action="{{ url_for('email') }}">
-      <div class="signup-heading">Startist is launching soon.</div>
-      <input type="text" name="email" class="input-block-level" placeholder="Sign up to get notified when we launch">
-      <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
-    </form>
+  <div class="container">
+      <form class="signup transparent" action="{{ url_for('email') }}">
+        <div class="signup-heading">Startist is launching soon.</div>
+        <input type="text" name="email" class="input-block-level" placeholder="Sign up to get notified when we launch.">
+        <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+      </form>
   </div>
-</div>
 {% endblock %}

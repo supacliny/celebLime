@@ -1,7 +1,13 @@
+/* fixed background image */
+html {  
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
 /* background gradient color of the entire page */
 body {
-    padding-top: 60px;
-    padding-bottom: 40px;
     background-color: #ffffff;
     background-repeat: no-repeat;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#f0f0f0), to(#ffffff));
@@ -12,9 +18,11 @@ body {
     filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#f0f0f0', EndColorStr='#ffffff', GradientType=0);
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#f0f0f0', EndColorStr='#ffffff', GradientType=0))";
 }
+
 /* background gradient color of the top navigation bar */
 .navbar-inner {
     background-color: #f0f0f0;
+    opacity: 0.8;
     background-repeat: repeat-x;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f0f0f0));
     background-image: -webkit-linear-gradient(#e8e8e8, #f0f0f0);
@@ -24,6 +32,7 @@ body {
     filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0);
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0))";
 }
+
 /* startist brand name font and color */
 .navbar .brand {
     color: #0088CC;
@@ -42,13 +51,16 @@ body {
   border-radius: 6px;
 }
 
-/* signup form box and text box*/
+/* signup form box and text box */
 .signup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    margin: -100px 0 0 -200px;
     max-width: 300px;
     padding: 19px 29px 29px;
-    margin: 20px auto 20px;
     background-color: #f0f0f0;
-    opacity: 0.70;
     border: 2px solid #f0f0f0;
     -webkit-border-radius: 5px;
        -moz-border-radius: 5px;
@@ -64,9 +76,131 @@ body {
     text-align: center;
     font-weight: bold;
 }
-.signup input[type="text"]{
+.signup input[type="text"] {
     font-size: 16px;
     height: auto;
     margin-bottom: 15px;
     padding: 7px 9px;
+}
+
+/* lander top right corner: login join search */
+.navbar-search {
+    position: relative;
+}  
+.navbar-search .search-query {
+    padding-left: 29px;
+}
+.navbar-search .icon-search {
+    position: absolute;
+    top: 7px;
+    left: 11px;
+}
+
+/* modal */
+.modal-heading {
+    color: #000000;
+    font-size: 18px;
+    padding-bottom: 15px;
+    font-weight: bold;
+}
+.modal-header {
+    background-color: #f0f0f0;
+    background-repeat: repeat-x;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f0f0f0));
+    background-image: -webkit-linear-gradient(#e8e8e8, #f0f0f0);
+    background-image: -moz-linear-gradient(#e8e8e8, #f0f0f0);
+    background-image: -o-linear-gradient(top, #e8e8e8, #f0f0f0);
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f0f0f0));
+    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0))";
+    -webkit-border-top-left-radius: 6px;
+    -moz-border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    text-align: center;
+}
+.modal-body {
+    background-color: #f0f0f0;
+    background-repeat: repeat-x;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f0f0f0));
+    background-image: -webkit-linear-gradient(#e8e8e8, #f0f0f0);
+    background-image: -moz-linear-gradient(#e8e8e8, #f0f0f0);
+    background-image: -o-linear-gradient(top, #e8e8e8, #f0f0f0);
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f0f0f0));
+    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0))";
+    -webkit-border-bottom-left-radius: 6px;
+    -moz-border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    text-align: center;
+}
+#join {
+    -webkit-border-top-left-radius: 6px;
+    -moz-border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    -webkit-border-bottom-left-radius: 6px;
+    -moz-border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;    
+    border-top: 4px solid #0088CC;
+    border-bottom: 4px solid #0088CC;
+    border-right: 4px solid #0088CC;
+    border-left: 4px solid #0088CC;
+    opacity: 0.70;
+}
+#login {
+    -webkit-border-top-left-radius: 6px;
+    -moz-border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    -webkit-border-bottom-left-radius: 6px;
+    -moz-border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;    
+    border-top: 4px solid #0088CC;
+    border-bottom: 4px solid #0088CC;
+    border-right: 4px solid #0088CC;
+    border-left: 4px solid #0088CC;
+    opacity: 0.70;
+}
+#myModalLabel {
+    color: #0088CC;
+    font-size: 25px;
+    display: block;
+    font-weight: 200;
+    text-shadow: 0 1px 0 #FFFFFF;
+    text-decoration: none;
+}
+
+/* set the opacity */
+.transparent {
+    opacity: 0.70;
+}
+
+/* join and login errors */
+.name-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
+}
+.email-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
+}
+.password-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
+}
+.confirm-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
+}
+.login-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
+}
+.token-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
 }

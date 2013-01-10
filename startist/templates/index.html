@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block body %}
+  <script>
+    $(document).ready(function(){
+
+      $('.join').submit(function(event) {
+        event.preventDefault();
+        $('.name-error').html('');                 
+        $('.email-error').html('');                 
+        $('.password-error').html('');                 
+        $('.confirm-error').html('');                 
+        var $form = $( this ),
+            name = $form.find( 'input[name="name"]' ).val(),
+            email = $form.find( 'input[name="email"]' ).val(),
+            password = $form.find( 'input[name="password"]' ).val(),
+            confirm = $form.find( 'input[name="confirm"]' ).val(),
+            url = $form.attr( 'action' );
+        jdata = JSON.stringify({"name": name, "email": email, "password": password, "confirm": confirm});
+        jQuery.ajax({
+                type: "POST",
+                url: url,
+                data: jdata,
+                success: function(data) {
+                  if ((data.name == 1) && (data.email == 1) && (data.password == 1)) 
+                  {                    
+                    $('.join').html('<h3>' + name + ', welcome to Startist!</h3>');
+                    setTimeout(function(){$('#join').modal('hide'); window.location.reload(true);}, 2000);
+                  }
+                  else
+                  {
+                    if (data.name == 0)
+                    {
+                      $('.join-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
+                      $('.name-error').html('Name can not be empty.');
+                    }
+                    if (data.email == 0)
+                    {
+                      $('.join-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
+                      $('.email-error').html('Invalid email address.');
+                    }
+                    if (data.email == 2)
+                    {
+                      $('.join-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
+                      $('.email-error').html('Email address already exists.');
+                    }
+                    if (data.password == 0)
+                    {
+                      $('.join-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
+                      $('.confirm-error').html('Passwords do not match.');
+                    }
+                    if (data.password == 2)
+                    {
+                      $('.join-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
+                      $('.password-error').html('Password must be at least 7 characters.');
+                    }
+                    return;
+                  }
+                },
+                dataType: "json",
+                contentType: "application/json",
+                processData: false
+              });
+        $('.join-button').html('<img src="{{ url_for("static", filename="img/loading.gif") }}"/>');
+      });
+ 
+      $('.login').submit(function(event) {
+        event.preventDefault();
+        $('.login-error').html('');                 
+        $('.token-error').html('');                 
+        var $form = $( this ),
+            email = $form.find( 'input[name="email"]' ).val(),
+            password = $form.find( 'input[name="password"]' ).val(),
+            url = $form.attr( 'action' );
+        jdata = JSON.stringify({"email": email, "password": password});
+        jQuery.ajax({
+                type: "POST",
+                url: url,
+                data: jdata,
+                success: function(data) {
+                  if ((data.email == 1) && (data.password == 1)) 
+                  {                    
+                    $('.login').html('<h2>Welcome back, ' + data.name + '!</h2>');
+                    setTimeout(function(){$('#login').modal('hide'); window.location.reload(true);}, 2000);
+                  }
+                  else
+                  {
+                    if (data.email == 0)
+                    {
+                      $('.login-button').html('<button type="submit" class="btn btn-primary">Log In</button>');
+                      $('.login-error').html('Invalid email address.');
+                    }
+                    if (data.password == 0)
+                    {
+                      $('.login-button').html('<button type="submit" class="btn btn-primary">Log In</button>');
+                      $('.token-error').html('Invalid password.');
+                    }
+                    return;
+                  }
+                },
+                dataType: "json",
+                contentType: "application/json",
+                processData: false
+              });
+        $('.login-button').html('<img src="{{ url_for("static", filename="img/loading.gif") }}"/>');
+      });
+
+    });
+  </script>
+
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <a class="brand" href="{{ url_for('home') }}">Startist</a>
+        <div class="lander">
+          <div class="nav-collapse collapse pull-right">
+              <ul class="nav">
+              {% if not session.logged_in %}
+                <li><a href="#login" data-toggle="modal">login</a></li>
+                <li><a href="#join" data-toggle="modal">join</a></li>
+              {% else %}
+                <li><a href="{{ url_for('logout') }}" id="logout">logout</a></li>
+              {% endif %}
+              </ul>
+              <form class="navbar-search">
+                <input type="text" class="search-query" placeholder="Search projects">
+                <div class="icon-search" style="background-image:url('{{ url_for('static', filename='img/glyphicons-halflings.png') }}');"></div>
+              </form>
+            </div>
+        </div>
+        <div class="login" style="display:none;">
+          <form class="navbar-form pull-right" action="{{ url_for('login') }}">
+              <input class="span2" type="text" placeholder="Email">
+              <input class="span2" type="password" placeholder="Password">
+              <button type="submit" class="btn">Sign in</button>
+            </form>
+        </div>  
+      </div>
+    </div>
+  </div>
+
+  <div id="login" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <div id="myModalLabel">Startist</div>
+    </div>
+    <div class="modal-body">
+      <form class="login" action="{{ url_for('login') }}">
+        <div class="modal-heading">Log In</div>
+        <div><input type="text" name="email" class="span2" placeholder="Email"></div>
+        <div class="login-error"></div>
+        <div><input type="password" name="password" class="span2" placeholder="Password"></div>
+        <div class="token-error"></div>
+        <div class="login-button"><button type="submit" class="btn btn-primary">Log In</button></div>
+      </form>
+    </div>
+  </div>
+     
+  <div id="join" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <div id="myModalLabel">Startist</div>
+    </div>
+    <div class="modal-body">
+      <form class="join" action="{{ url_for('join') }}">
+        <div class="modal-heading">Create an Account</div>
+        <div><input type="text" name="name" class="span2" placeholder="Name"></div>
+        <div class="name-error"></div>
+        <div><input type="text" name="email" class="span2" placeholder="Email"></div>
+        <div class="email-error"></div>
+        <div><input type="password" name="password" class="span2" placeholder="Password"></div>
+        <div class="password-error"></div>
+        <div><input type="password" name="confirm" class="span2" placeholder="Confirm Password"></div>
+        <div class="confirm-error"></div>
+        <div class="join-button"><button type="submit" class="btn btn-primary">Create New Account</button></div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

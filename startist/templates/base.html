@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="background: url('{{ url_for('static', filename='img/banner.jpg')}}') no-repeat top center fixed;">
   <head>
     <meta charset="utf-8">
     <title>Startist</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="An online platform for talented users to collaborate on awesome projects">
     <meta name="keywords" content="talent collaborate social network project partner">
-    <meta name="author" content="cvstechnolgy">
+    <meta name="author" content="cvstechnology">
 
     <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="shortcut icon" type="image/x-icon"/>
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
@@ -14,7 +14,10 @@
     <link href="{{ url_for('static', filename='css/startist.css') }}" rel="stylesheet" type="text/css">
 
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   </head>
-{% block body %}
-{% endblock %}
+  <body>
+    {% block body %}
+    {% endblock %}
+  </body>
 </html>

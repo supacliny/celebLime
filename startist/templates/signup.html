@@ -52,8 +52,9 @@
   <div class="container">
       <form class="signup transparent" action="{{ url_for('email') }}">
         <div class="signup-heading">Startist is launching soon.</div>
-        <input type="text" name="email" class="input-block-level" placeholder="Sign up to get notified when we launch.">
-        <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+        <div class="signup-heading">Sign up to get notified!</div>
+        <input type="text" name="email" class="input-block-level" placeholder="Email Address">
+        <div class="signup-button"><button type="submit" class="btn btn-primary">Sign Up</button></div>
       </form>
   </div>
 {% endblock %}

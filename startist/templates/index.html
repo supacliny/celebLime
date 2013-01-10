@@ -151,8 +151,10 @@
     <div class="modal-body">
       <form class="login" action="{{ url_for('login') }}">
         <div class="modal-heading">Log In</div>
+        <div class="heading">Email</div>
         <div><input type="text" name="email" class="span2" placeholder="Email"></div>
         <div class="login-error"></div>
+        <div class="heading">Password</div>
         <div><input type="password" name="password" class="span2" placeholder="Password"></div>
         <div class="token-error"></div>
         <div class="login-button"><button type="submit" class="btn btn-primary">Log In</button></div>
@@ -168,12 +170,16 @@
     <div class="modal-body">
       <form class="join" action="{{ url_for('join') }}">
         <div class="modal-heading">Create an Account</div>
+        <div class="heading">Name</div>
         <div><input type="text" name="name" class="span2" placeholder="Name"></div>
         <div class="name-error"></div>
+        <div class="heading">Email</div>
         <div><input type="text" name="email" class="span2" placeholder="Email"></div>
         <div class="email-error"></div>
+        <div class="heading">Password</div>
         <div><input type="password" name="password" class="span2" placeholder="Password"></div>
         <div class="password-error"></div>
+        <div class="heading">Confirm Password</div>
         <div><input type="password" name="confirm" class="span2" placeholder="Confirm Password"></div>
         <div class="confirm-error"></div>
         <div class="join-button"><button type="submit" class="btn btn-primary">Create New Account</button></div>

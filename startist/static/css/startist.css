@@ -107,6 +107,7 @@ body {
     font-size: 18px;
     padding-bottom: 15px;
     font-weight: bold;
+    text-align: center;
 }
 .modal-header {
     background-color: #f0f0f0;
@@ -138,7 +139,6 @@ body {
     -moz-border-bottom-right-radius: 6px;
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
-    text-align: center;
 }
 #join {
     -webkit-border-top-left-radius: 6px;
@@ -154,6 +154,8 @@ body {
     border-right: 4px solid #0088CC;
     border-left: 4px solid #0088CC;
     opacity: 0.70;
+    width: 300px;
+    margin: 40px 0 0 -150px;
 }
 #login {
     -webkit-border-top-left-radius: 6px;
@@ -169,6 +171,8 @@ body {
     border-right: 4px solid #0088CC;
     border-left: 4px solid #0088CC;
     opacity: 0.70;
+    width: 300px;
+    margin: 40px 0 0 -150px;
 }
 #myModalLabel {
     color: #0088CC;
@@ -177,6 +181,14 @@ body {
     font-weight: 200;
     text-shadow: 0 1px 0 #FFFFFF;
     text-decoration: none;
+}
+input .span2 {
+    float: left;
+}
+.heading {
+    padding-bottom: 5px;
+    font-weight: bold;
+    display: inline-block;
 }
 
 /* set the opacity */

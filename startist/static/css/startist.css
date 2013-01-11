@@ -4,10 +4,12 @@ html {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+    overflow: hidden;
 }
 
 /* background gradient color of the entire page */
 body {
+    font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
     background-color: #ffffff;
     background-repeat: no-repeat;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#f0f0f0), to(#ffffff));
@@ -36,7 +38,7 @@ body {
 /* startist brand name font and color */
 .navbar .brand {
     color: #0088CC;
-    font-size: 25px;
+    font-size: 35px;
 }
 .navbar .brand:hover {
     text-decoration: none;
@@ -55,27 +57,20 @@ body {
 .signup {
     position: fixed;
     top: 50%;
-    left: 50%;
-    width: 400px;
-    margin: -100px 0 0 -200px;
-    max-width: 300px;
-    padding: 19px 29px 29px;
-    background-color: #f0f0f0;
-    border: 2px solid #f0f0f0;
-    -webkit-border-radius: 5px;
-       -moz-border-radius: 5px;
-            border-radius: 5px;
-    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-       -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
-            box-shadow: 0 1px 2px rgba(0,0,0,.05);
+    width: 100%;
+    padding: 19px;
+    background-color: #000000;
 }
 .signup-heading {
-    color: #0088cc;
-    font-size: 18px;
+    color: #ffffff;
+    font-size: 22px;
+    padding-bottom: 35px;
+}
+.signup-content {
+    color: #ffffff;
+    font-size: 22px;
     padding-bottom: 15px;
-    text-align: center;
-    font-weight: 200;
-    text-shadow: 0 0 2px #0088cc;
+    line-height: 25px;
 }
 .signup input[type="text"] {
     font-size: 16px;
@@ -83,6 +78,7 @@ body {
     margin-bottom: 15px;
     padding: 7px 9px;
     text-align: center;
+    width: 330px;
 }
 .signup-button {
     text-align: center;
@@ -217,4 +213,38 @@ body {
 .token-error {
     color: #a80000 ;
     padding-bottom: 10px;
+}
+
+/* carousel */
+#background-slides {
+    position:absolute; 
+    top:0px; 
+    left:0px
+}   
+.slide {
+    float:left
+}
+
+/* email and hiring */
+.leftnav {
+   width: 400px;
+   margin-right: 100px;
+   margin-left: 200px;
+   float: left;
+}
+
+.vertical {
+   border-left: 3px solid gray;
+   float: left;
+   height: 180px;
+}
+
+.rightnav {
+   width: 400px;
+   margin-left: 150px;
+   float: left;
+}
+
+.play {
+    margin-bottom: 15px;
 }

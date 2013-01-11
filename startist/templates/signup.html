@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block body %}
   <script>
+
+    $(function(){
+        $('#background-slides').fsCarousel();
+    });
+
     $(document).ready(function(){
       $(".signup").submit(function(event) {
         event.preventDefault();                 
@@ -36,6 +41,14 @@
     });
   </script>
 
+  <div id="background-slides">
+      <div class="slide"><img src="{{ url_for('static', filename='img/startisthomepage1.jpg') }}"/></div>
+      <div class="slide"><img src="{{ url_for('static', filename='img/startisthomepage2.jpg') }}"/></div>
+      <div class="slide"><img src="{{ url_for('static', filename='img/startisthomepage3.jpg') }}"/></div>
+      <div class="slide"><img src="{{ url_for('static', filename='img/startisthomepage4.jpg') }}"/></div>
+      <div class="slide"><img src="{{ url_for('static', filename='img/startisthomepage5.jpg') }}"/></div>
+  </div>
+
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container">
@@ -49,12 +62,16 @@
     </div>
   </div>
 
-  <div class="container">
-      <form class="signup transparent" action="{{ url_for('email') }}">
-        <div class="signup-heading">Startist is launching soon.</div>
-        <div class="signup-heading">Sign up to get notified!</div>
-        <input type="text" name="email" class="input-block-level" placeholder="Email Address">
-        <div class="signup-button"><button type="submit" class="btn btn-primary">Sign Up</button></div>
-      </form>
-  </div>
+  <form class="signup transparent" action="{{ url_for('email') }}">
+    <div class="leftnav">
+      <div class="signup-heading">Startist is launching soon.</div>
+      <div class="signup-content">If you'd like to be part of our beta, please sign up!</div>
+      <input type="text" name="email" class="input-block-level" placeholder="Email Address"><input class="play" type="image" src="{{ url_for('static', filename='img/play.png') }}">
+    </div>
+    <div class="vertical"> </div>  
+    <div class="rightnav">
+      <div class="signup-heading">We're Hiring.</div>
+      <div class="signup-content">Send your resume and a brief cover letter to jobs[at]startists.com and we'll be in touch!</div>      
+    </div>  
+  </form>
 {% endblock %}

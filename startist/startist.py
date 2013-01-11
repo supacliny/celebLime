@@ -91,6 +91,7 @@ def join():
     confirm = request.json['confirm']
     is_email_valid = validate_email(email,verify=True)
 
+
     if len(name) > 0:
         name_signal = 1
     else:

@@ -10,35 +10,16 @@ html {
 /* background gradient color of the entire page */
 body {
     font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
-    background-color: #ffffff;
-    background-repeat: no-repeat;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#f0f0f0), to(#ffffff));
-    background-image: -webkit-linear-gradient(#f0f0f0, #ffffff);
-    background-image: -moz-linear-gradient(#f0f0f0, #ffffff);
-    background-image: -o-linear-gradient(top, #f0f0f0, #ffffff);
-    background-image: -khtml-gradient(linear, left top, left bottom, from(#f0f0f0), to(#ffffff));
-    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#f0f0f0', EndColorStr='#ffffff', GradientType=0);
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#f0f0f0', EndColorStr='#ffffff', GradientType=0))";
 }
 
 /* background gradient color of the top navigation bar */
 .navbar-inner {
-    background-color: #f0f0f0;
     opacity: 0.8;
-    background-repeat: repeat-x;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f0f0f0));
-    background-image: -webkit-linear-gradient(#e8e8e8, #f0f0f0);
-    background-image: -moz-linear-gradient(#e8e8e8, #f0f0f0);
-    background-image: -o-linear-gradient(top, #e8e8e8, #f0f0f0);
-    background-image: -khtml-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f0f0f0));
-    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0);
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0))";
 }
 
 /* startist brand name font and color */
 .navbar .brand {
-    color: #0088CC;
-    font-size: 35px;
+    width: 15%;
 }
 .navbar .brand:hover {
     text-decoration: none;

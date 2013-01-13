@@ -57,14 +57,14 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </a>
-        <a class="brand" href="{{ url_for('signup') }}">Startist</a>
+        <a href="{{ url_for('signup') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a>
       </div>
     </div>
   </div>
 
   <div class="signup transparent">
     <div class="leftnav">
-      <div class="signup-heading">Startist is launching soon.</div>
+      <div class="signup-heading">Startists is launching soon.</div>
       <div class="signup-content">If you'd like to be part of our beta, please sign up!</div>
 
       <form class="email" action="{{ url_for('email') }}">

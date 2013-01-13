@@ -25,7 +25,10 @@ def signup():
 @app.route('/email', methods = ['POST'])
 def email():
     email = request.json['email']
-    is_valid = validate_email(email,verify=True)
+    try:
+        is_valid = validate_email(email)
+    except Exception:
+        is_valid = True
     signal = 0
     if is_valid:
         mongo.db.emails.ensure_index([("email",ASCENDING)], unique=True, background=True)
@@ -89,8 +92,10 @@ def join():
     email = request.json['email']
     password = request.json['password']
     confirm = request.json['confirm']
-    is_email_valid = validate_email(email,verify=True)
-
+    try:
+        is_email_valid = validate_email(email,verify=True)
+    except Exception:
+        is_email_valid = True
 
     if len(name) > 0:
         name_signal = 1

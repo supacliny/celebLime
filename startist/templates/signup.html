@@ -7,7 +7,7 @@
     });
 
     $(document).ready(function(){
-      $(".signup").submit(function(event) {
+      $(".email").submit(function(event) {
         event.preventDefault();                 
         var $form = $( this ),
             email = $form.find( 'input[name="email"]' ).val(),
@@ -62,16 +62,28 @@
     </div>
   </div>
 
-  <form class="signup transparent" action="{{ url_for('email') }}">
+  <div class="signup transparent">
     <div class="leftnav">
       <div class="signup-heading">Startist is launching soon.</div>
       <div class="signup-content">If you'd like to be part of our beta, please sign up!</div>
-      <input type="text" name="email" class="input-block-level" placeholder="Email Address"><input class="play" type="image" src="{{ url_for('static', filename='img/play.png') }}">
+
+      <form class="email" action="{{ url_for('email') }}">
+        <div class="controlacti-group pull-left">
+          <div class="controls">
+            <div class="input-prepend">
+              <span class="add-on"><i class="icon-envelope"></i></span>
+              <input class="span2 input-block-level" id="inputIcon" type="text" name="email" placeholder="email address"><input class="play" type="image" src="{{ url_for('static', filename='img/play.png') }}">
+            </div>
+          </div>
+        </div>        
+      </form>
+
     </div>
     <div class="vertical"> </div>  
     <div class="rightnav">
       <div class="signup-heading">We're Hiring.</div>
       <div class="signup-content">Send your resume and a brief cover letter to jobs[at]startists.com and we'll be in touch!</div>      
-    </div>  
-  </form>
+    </div> 
+  </div> 
+
 {% endblock %}

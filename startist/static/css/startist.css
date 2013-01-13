@@ -76,12 +76,35 @@ body {
     font-size: 16px;
     height: auto;
     margin-bottom: 15px;
-    padding: 7px 9px;
     text-align: center;
-    width: 330px;
+    width: 300px;
 }
 .signup-button {
     text-align: center;
+}
+
+/* email and hiring divs */
+.leftnav {
+   width: 400px;
+   margin-right: 100px;
+   margin-left: 200px;
+   float: left;
+}
+
+.vertical {
+   border-left: 3px solid gray;
+   float: left;
+   height: 180px;
+}
+
+.rightnav {
+   width: 400px;
+   margin-left: 150px;
+   float: left;
+}
+
+.input-prepend .play {
+    margin-top: -10px;
 }
 
 /* lander top right corner: login join search */
@@ -223,28 +246,4 @@ body {
 }   
 .slide {
     float:left
-}
-
-/* email and hiring */
-.leftnav {
-   width: 400px;
-   margin-right: 100px;
-   margin-left: 200px;
-   float: left;
-}
-
-.vertical {
-   border-left: 3px solid gray;
-   float: left;
-   height: 180px;
-}
-
-.rightnav {
-   width: 400px;
-   margin-left: 150px;
-   float: left;
-}
-
-.play {
-    margin-bottom: 15px;
 }

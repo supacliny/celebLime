@@ -37,26 +37,26 @@ body {
 /* signup form box and text box */
 .signup {
     position: fixed;
-    top: 50%;
-    width: 100%;
+    top: 70%;
+    width: 78%;
+    height: 20%;
     padding: 19px;
     background-color: #000000;
 }
 .signup-heading {
     color: #ffffff;
-    font-size: 22px;
-    padding-bottom: 35px;
+    font-size: 19px;
+    padding-bottom: 20px;
 }
 .signup-content {
     color: #ffffff;
-    font-size: 22px;
+    font-size: 19px;
     padding-bottom: 15px;
     line-height: 25px;
 }
 .signup input[type="text"] {
-    font-size: 16px;
+    font-size: 15px;
     height: auto;
-    margin-bottom: 15px;
     text-align: center;
     width: 300px;
 }
@@ -66,21 +66,20 @@ body {
 
 /* email and hiring divs */
 .leftnav {
-   width: 400px;
-   margin-right: 100px;
-   margin-left: 200px;
+   width: 29%;
+   margin-right: 200px;
    float: left;
 }
 
 .vertical {
    border-left: 3px solid gray;
    float: left;
-   height: 180px;
+   height: 100%;
 }
 
 .rightnav {
-   width: 400px;
-   margin-left: 150px;
+   width: 38%;
+   margin-left: 20px;
    float: left;
 }
 

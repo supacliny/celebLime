@@ -62,28 +62,31 @@
     </div>
   </div>
 
-  <div class="signup transparent">
-    <div class="leftnav">
-      <div class="signup-heading">Startists is launching soon.</div>
-      <div class="signup-content">If you'd like to be part of our beta, please sign up!</div>
+  <div class="container">
+    <div class="signup transparent">
 
-      <form class="email" action="{{ url_for('email') }}">
-        <div class="controlacti-group pull-left">
-          <div class="controls">
-            <div class="input-prepend">
-              <span class="add-on"><i class="icon-envelope"></i></span>
-              <input class="span2 input-block-level" id="inputIcon" type="text" name="email" placeholder="email address"><input class="play" type="image" src="{{ url_for('static', filename='img/play.png') }}">
+      <div class="leftnav">
+        <div class="signup-heading">Startist is launching soon.</div>
+        <div class="signup-content">If you'd like to be part of our beta, please sign up!</div>
+        <form class="email" action="{{ url_for('email') }}">
+          <div class="controlacti-group pull-left">
+            <div class="controls">
+              <div class="input-prepend">
+                <span class="add-on"><i class="icon-envelope"></i></span>
+                <input class="span2 input-block-level" id="inputIcon" type="text" name="email" placeholder="email address"><input class="play" type="image" src="{{ url_for('static', filename='img/play.png') }}">
+              </div>
             </div>
-          </div>
-        </div>        
-      </form>
+          </div>        
+        </form>
+      </div>
 
-    </div>
-    <div class="vertical"> </div>  
-    <div class="rightnav">
-      <div class="signup-heading">We're Hiring.</div>
-      <div class="signup-content">Send your resume and a brief cover letter to info[at]startists.com and we'll be in touch!</div>      
+      <div class="vertical"> </div>  
+
+      <div class="rightnav">
+        <div class="signup-heading">We're Hiring.</div>
+        <div class="signup-content">Send your resume and a brief cover letter to info[at]startists.com and we'll be in touch!</div>      
+      </div> 
+
     </div> 
-  </div> 
-
+  </div>
 {% endblock %}

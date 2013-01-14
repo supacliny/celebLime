@@ -115,7 +115,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </a>
-        <a class="brand" href="{{ url_for('home') }}">Startist</a>
+        <a href="{{ url_for('home') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a>
         <div class="lander">
           <div class="nav-collapse collapse pull-right">
               <ul class="nav">
@@ -132,13 +132,6 @@
               </form>
             </div>
         </div>
-        <div class="login" style="display:none;">
-          <form class="navbar-form pull-right" action="{{ url_for('login') }}">
-              <input class="span2" type="text" placeholder="Email">
-              <input class="span2" type="password" placeholder="Password">
-              <button type="submit" class="btn">Sign in</button>
-            </form>
-        </div>  
       </div>
     </div>
   </div>

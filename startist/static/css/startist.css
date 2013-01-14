@@ -42,6 +42,7 @@ body {
     height: 20%;
     padding: 19px;
     background-color: #000000;
+    border-radius: 6px 6px 6px 6px;
 }
 .signup-heading {
     color: #ffffff;
@@ -62,6 +63,9 @@ body {
 }
 .signup-button {
     text-align: center;
+}
+a:hover {
+  text-decoration: none;
 }
 
 /* email and hiring divs */

@@ -1,0 +1,70 @@
+body {
+  padding-top: 20px;
+  padding-bottom: 40px;
+  background-color: #c0c0c0;
+}
+
+/* background gradient color of the top navigation bar */
+.navbar-inner {
+    opacity: 0.8;
+}
+
+/* startist brand name font and color */
+.navbar .brand {
+    width: 15%;
+}
+.navbar .brand:hover {
+    text-decoration: none;
+}
+
+/* Custom container */
+.container-narrow {
+  margin: 0 auto;
+  max-width: 700px;
+}
+.container-narrow > hr {
+  margin: 30px 0;
+}
+
+/* Main marketing message and sign up button */
+.jumbotron {
+  margin: 60px 0;
+  text-align: center;
+}
+.jumbotron h1 {
+  font-size: 72px;
+  line-height: 1;
+}
+.jumbotron .btn {
+  font-size: 21px;
+  padding: 14px 24px;
+}
+
+/* Supporting marketing content */
+.marketing {
+  margin: 60px 0;
+}
+.marketing p + h4 {
+  margin-top: 28px;
+}
+
+/* startist brand name */
+.startist-logo {
+    width: 20%;
+}
+
+/* hide components */
+.invisible {
+  display: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+/* jobs */
+.jobs
+{
+  margin-top: -20px;
+  margin-bottom: -40px;
+}

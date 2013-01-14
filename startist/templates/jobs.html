@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Jobs &middot; Startist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An online platform for talented users to collaborate on awesome projects">
+    <meta name="author" content="cvstechnology">
+
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="shortcut icon" type="image/x-icon"/>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/jobs.css') }}" rel="stylesheet" type="text/css"/>
+
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  </head>
+    
+  <body>
+
+    <div class="container-narrow">
+
+      <div class="masthead invisible">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+        <a href="{{ url_for('signup') }}"><img class="startist-logo" src="{{ url_for('static', filename='img/startist.gif') }}"/></a>
+      </div>
+
+      <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+            <a href="{{ url_for('signup') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="jumbotron">
+        <h1>Startist is hiring!</h1>
+        <p class="lead">Please apply.</p>
+      </div>
+
+      <hr>
+
+      <div class="row-fluid marketing">
+        <div class="span12">
+          <div class="jobs">
+            <div class="accordion" id="accordion1">
+              <div class="accordion-group">
+                <div class="accordion-heading">
+                 <a class="accordion-toggle no-link" data-toggle="collapse" data-parent="#accordion1" href="#collapseOne">
+                    Designer
+                </a>
+              </div>
+              <div id="collapseOne" class="accordion-body collapse">
+                <div class="accordion-inner">
+                Anim pariatur cliche...
+                </div>
+              </div>
+            </div>
+            </div>
+            <div class="accordion" id="accordion2">
+            <div class="accordion-group">
+              <div class="accordion-heading">
+                <a class="accordion-toggle no-link" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                    Engineer
+                </a>
+              </div>
+              <div id="collapseTwo" class="accordion-body collapse">
+                <div class="accordion-inner">
+                Anim pariatur cliche...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <hr>
+
+      <div class="footer">
+        <p>&copy; Startist 2013</p>
+      </div>
+
+    </div> <!-- /container -->
+
+
+  </body>
+</html>

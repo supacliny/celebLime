@@ -18,6 +18,12 @@ mongo = PyMongo(app)
 def signup():
     return render_template('signup.html')
 
+
+@app.route('/launch')
+def launch():
+    return render_template('launch.html')
+
+
 # validate email submitted from signup page:
 # if the email is invalid, then return 0
 # if the email is valid, then return 1 
@@ -43,6 +49,12 @@ def email():
     data = {"valid": signal}
     data = json.dumps(data)
     return data
+
+
+@app.route('/jobs')
+def jobs():
+    return render_template('jobs.html')
+
 
 # lander page
 @app.route('/lander')

@@ -142,7 +142,7 @@ def home():
             if songinfo:
                 songinfo["played_at"] = most_recent_song["played_at"]
 
-                if ((songinfo["played_at"] + songinfo["duration"])) >= int(time()):
+                if ((int(songinfo["played_at"]) + int(songinfo["duration"])) >= int(time())):
                     celeb["now"] = True
                 else:
                     celeb["now"] = False
@@ -176,7 +176,7 @@ def home():
             if songinfo:
                 songinfo["played_at"] = most_recent_song["played_at"]
 
-                if ((songinfo["played_at"] + songinfo["duration"]) >= int(time())):
+                if ((int(songinfo["played_at"]) + int(songinfo["duration"])) >= int(time())):
                     fan["now"] = True
                 else:
                     fan["now"] = False
@@ -437,7 +437,7 @@ def poll(screen_name):
         most_recent_song_start = recent_songs[0]["played_at"]
         most_recent_song_duration = recent_songs[0]["duration"]
 
-        if ((most_recent_song_start + most_recent_song_duration) >= int(time())):
+        if ((int(most_recent_song_start) + int(most_recent_song_duration)) >= int(time())):
             now = True
 
     return render_template("streaming.html", streaming=recent_songs, now=now, debug=DEBUG)

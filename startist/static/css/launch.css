@@ -1,0 +1,233 @@
+/* fixed background image */
+html {  
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    overflow: hidden;
+}
+
+/* background gradient color of the entire page */
+body {
+    font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+}
+
+/* background gradient color of the top navigation bar */
+.navbar-inner {
+    opacity: 0.8;
+}
+
+/* startist brand name font and color */
+.navbar .brand {
+    width: 15%;
+}
+.navbar .brand:hover {
+    text-decoration: none;
+}
+
+/* main band image under navigation bar */
+.hero-unit {
+  padding: 160px;
+  margin-top: 25px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+}
+
+/* signup form box and text box */
+.signup {
+    position: fixed;
+    top: 65%;
+    width: 78%;
+    height: 20%;
+    padding: 19px;
+    background-color: #000000;
+    border-radius: 6px 6px 6px 6px;
+}
+.signup-heading {
+    color: #ffffff;
+    font-size: 16px;
+    padding-bottom: 20px;
+}
+.signup-content {
+    color: #ffffff;
+    font-size: 16px;
+    padding-bottom: 15px;
+    line-height: 25px;
+}
+.signup input[type="text"] {
+    font-size: 15px;
+    height: auto;
+    text-align: center;
+    width: 300px;
+}
+.signup-button {
+    text-align: center;
+}
+a:hover {
+  text-decoration: none;
+}
+
+/* email and hiring divs */
+.leftnav {
+   width: 35%;
+   margin-right: 200px;
+   float: left;
+}
+
+.vertical {
+   border-left: 3px solid gray;
+   float: left;
+   height: 100%;
+}
+
+.rightnav {
+   width: 37%;
+   margin-left: 20px;
+   float: left;
+}
+
+.input-prepend .play {
+    margin-top: -10px;
+}
+
+/* lander top right corner: login join search */
+.navbar-search {
+    position: relative;
+}  
+.navbar-search .search-query {
+    padding-left: 29px;
+}
+.navbar-search .icon-search {
+    position: absolute;
+    top: 7px;
+    left: 11px;
+}
+
+/* modal */
+.modal-heading {
+    color: #000000;
+    font-size: 18px;
+    padding-bottom: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+.modal-header {
+    background-color: #f0f0f0;
+    background-repeat: repeat-x;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f0f0f0));
+    background-image: -webkit-linear-gradient(#e8e8e8, #f0f0f0);
+    background-image: -moz-linear-gradient(#e8e8e8, #f0f0f0);
+    background-image: -o-linear-gradient(top, #e8e8e8, #f0f0f0);
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f0f0f0));
+    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0))";
+    -webkit-border-top-left-radius: 6px;
+    -moz-border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    text-align: center;
+}
+.modal-body {
+    background-color: #f0f0f0;
+    background-repeat: repeat-x;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f0f0f0));
+    background-image: -webkit-linear-gradient(#e8e8e8, #f0f0f0);
+    background-image: -moz-linear-gradient(#e8e8e8, #f0f0f0);
+    background-image: -o-linear-gradient(top, #e8e8e8, #f0f0f0);
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f0f0f0));
+    filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#e8e8e8', EndColorStr='#f0f0f0', GradientType=0))";
+    -webkit-border-bottom-left-radius: 6px;
+    -moz-border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+#join {
+    -webkit-border-top-left-radius: 6px;
+    -moz-border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    -webkit-border-bottom-left-radius: 6px;
+    -moz-border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;    
+    border-top: 4px solid #0088CC;
+    border-bottom: 4px solid #0088CC;
+    border-right: 4px solid #0088CC;
+    border-left: 4px solid #0088CC;
+    opacity: 0.70;
+    width: 300px;
+    margin: 40px 0 0 -150px;
+}
+#login {
+    -webkit-border-top-left-radius: 6px;
+    -moz-border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    -webkit-border-bottom-left-radius: 6px;
+    -moz-border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;    
+    border-top: 4px solid #0088CC;
+    border-bottom: 4px solid #0088CC;
+    border-right: 4px solid #0088CC;
+    border-left: 4px solid #0088CC;
+    opacity: 0.70;
+    width: 300px;
+    margin: 40px 0 0 -150px;
+}
+#myModalLabel {
+    color: #0088CC;
+    font-size: 25px;
+    display: block;
+    font-weight: 200;
+    text-shadow: 0 1px 0 #FFFFFF;
+    text-decoration: none;
+}
+.heading {
+    padding-bottom: 5px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* set the opacity */
+.transparent {
+    opacity: 0.70;
+}
+
+/* join and login errors */
+.name-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
+}
+.email-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
+}
+.password-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
+}
+.confirm-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
+}
+.login-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
+}
+.token-error {
+    color: #a80000 ;
+    padding-bottom: 10px;
+}
+
+/* carousel */
+#background-slides {
+    position:absolute; 
+    top:0px; 
+    left:0px
+}   
+.slide {
+    float:left
+}

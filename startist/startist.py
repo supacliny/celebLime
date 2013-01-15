@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import re
 
-DEBUG = True
+DEBUG = False
 
 app = Flask(__name__)
 app.config.from_object(__name__)

@@ -142,7 +142,8 @@ def join():
     return data
 
 
-# auxillary function
+# AUXILLARY FUNCTIONS [
+
 # validate password
 def validate_password(password, confirm):
     if password != confirm:
@@ -151,7 +152,7 @@ def validate_password(password, confirm):
         return 1
     else:
         return 2
-
+# ]
 
 if __name__ == "__main__":
     if DEBUG:

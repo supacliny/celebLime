@@ -13,6 +13,7 @@ app.config.from_object(__name__)
 app.config['SECRET_KEY'] = "H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1"
 mongo = PyMongo(app)
 
+# PRELAUNCH [
 # render the signup page for now until we launch
 @app.route('/')
 def signup():
@@ -55,6 +56,7 @@ def email():
 def jobs():
     return render_template('jobs.html')
 
+# ]
 
 # lander page
 @app.route('/lander')

@@ -58,6 +58,8 @@ def jobs():
 
 # ]
 
+
+# LAUNCH [
 # lander page
 @app.route('/lander')
 def home():
@@ -141,6 +143,7 @@ def join():
     data = json.dumps(data)
     return data
 
+# ]
 
 # AUXILLARY FUNCTIONS [
 

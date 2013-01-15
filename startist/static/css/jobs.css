@@ -1,7 +1,7 @@
 body {
-  padding-top: 20px;
-  padding-bottom: 40px;
+  font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
   background-color: #c0c0c0;
+  padding-bottom: 40px;
 }
 
 /* background gradient color of the top navigation bar */
@@ -11,7 +11,7 @@ body {
 
 /* startist brand name font and color */
 .navbar .brand {
-    width: 15%;
+    width: 12%;
 }
 .navbar .brand:hover {
     text-decoration: none;
@@ -46,11 +46,6 @@ body {
 }
 .marketing p + h4 {
   margin-top: 28px;
-}
-
-/* startist brand name */
-.startist-logo {
-    width: 20%;
 }
 
 /* hide components */

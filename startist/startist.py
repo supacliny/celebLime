@@ -17,12 +17,12 @@ mongo = PyMongo(app)
 # render the signup page for now until we launch
 @app.route('/')
 def signup():
-    return render_template('signup.html')
+    return render_template('launch.html')
 
 
 @app.route('/launch')
 def launch():
-    return render_template('launch.html')
+    return render_template('launch-ipad.html')
 
 
 # validate email submitted from signup page:

@@ -148,9 +148,11 @@ def register():
     email = request.json['email']
     password = request.json['password']
     try:
-        is_email_valid = validate_email(email,verify=True)
+        is_email_valid = validate_email(email)
     except Exception:
         is_email_valid = True
+
+    mongo.db.users.ensure_index([("email",ASCENDING), ("username", ASCENDING)], unique=True, background=True)
 
     if len(name) > 0:
         name_signal = 1
@@ -159,32 +161,30 @@ def register():
 
     if len(username) > 0:
         username_signal = 1
+        already_username = mongo.db.users.find_one({"username": username})
+        if already_username:
+            username_signal = 2
     else:
         username_signal = 0
 
     if is_email_valid:
         email_signal = 1
+        already_email = mongo.db.users.find_one({"email": email})
+        if already_email:
+            email_signal = 2
     else:
         email_signal = 0
 
     password_signal = validate_password(password)
 
-    if name_signal and username_signal and email_signal and password_signal:
-        mongo.db.users.ensure_index([("email",ASCENDING), ("username", ASCENDING)], unique=True, background=True)
-        already_email = mongo.db.users.find_one({"email": email})
-        already_username = mongo.db.users.find_one({"username": username})
-        if already_email:
-            email_signal = 2
-        if already_username:
-            username_signal = 2
-        else:
-            salted_password = generate_password_hash(password)
-            user = {"name": name, "username": username, "email": email, "password": salted_password, "logins": 1}
-            user_id = mongo.db.users.insert(user)
-            session["logged_in"] = True
-            session["name"] = name
-            session["username"] = username
-            session["user_id"] = str(user_id)        
+    if (name_signal == 1) and (username_signal == 1) and (email_signal == 1) and (password_signal == 1):
+        salted_password = generate_password_hash(password)
+        user = {"name": name, "username": username, "email": email, "password": salted_password, "logins": 1}
+        user_id = mongo.db.users.insert(user)
+        session["logged_in"] = True
+        session["name"] = name
+        session["username"] = username
+        session["user_id"] = str(user_id)        
 
     data = {"name": name_signal, "username": username_signal, "email": email_signal, "password": password_signal}
     data = json.dumps(data)

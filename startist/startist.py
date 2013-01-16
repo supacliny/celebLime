@@ -98,16 +98,30 @@ def login():
 def logout():
     session.pop("logged_in", None)
     session.pop("name", None)
+    session.pop("username", None)
     session.pop("user_id", None)
     return redirect(url_for('home'))
 
+
 # join page
-@app.route('/join', methods = ['POST'])
+@app.route('/join')
 def join():
+    return render_template('join.html')
+
+
+# signup page
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
+
+
+# register new user
+@app.route('/register', methods = ['POST'])
+def register():
     name = request.json['name']
+    username = request.json['username']
     email = request.json['email']
     password = request.json['password']
-    confirm = request.json['confirm']
     try:
         is_email_valid = validate_email(email,verify=True)
     except Exception:
@@ -118,28 +132,36 @@ def join():
     else:
         name_signal = 0
 
+    if len(username) > 0:
+        username_signal = 1
+    else:
+        username_signal = 0
+
     if is_email_valid:
         email_signal = 1
     else:
         email_signal = 0
 
-    password_signal = validate_password(password, confirm)
+    password_signal = validate_password(password)
 
-    if name_signal and email_signal and (password_signal == 1):
-
-        mongo.db.users.ensure_index([("email",ASCENDING)], unique=True, background=True)
-        already = mongo.db.users.find_one({"email": email})
-        if already:
+    if name_signal and username_signal and email_signal and password_signal:
+        mongo.db.users.ensure_index([("email",ASCENDING), ("username", ASCENDING)], unique=True, background=True)
+        already_email = mongo.db.users.find_one({"email": email})
+        already_username = mongo.db.users.find_one({"username": username})
+        if already_email:
             email_signal = 2
+        if already_username:
+            username_signal = 2
         else:
             salted_password = generate_password_hash(password)
-            user = {"name": name, "email": email, "password": salted_password, "logins": 1}
+            user = {"name": name, "username": username, "email": email, "password": salted_password, "logins": 1}
             user_id = mongo.db.users.insert(user)
             session["logged_in"] = True
             session["name"] = name
+            session["username"] = username
             session["user_id"] = str(user_id)        
 
-    data = {"name": name_signal, "email": email_signal, "password": password_signal}
+    data = {"name": name_signal, "username": username_signal, "email": email_signal, "password": password_signal}
     data = json.dumps(data)
     return data
 
@@ -148,13 +170,11 @@ def join():
 # AUXILLARY FUNCTIONS [
 
 # validate password
-def validate_password(password, confirm):
-    if password != confirm:
-        return 0
+def validate_password(password):
     if re.match(r'[A-Za-z0-9@#$%^&+=]{7,}', password):
         return 1
     else:
-        return 2
+        return 0
 # ]
 
 if __name__ == "__main__":

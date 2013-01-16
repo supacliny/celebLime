@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Home &middot; Startist</title>
+    <title>Join &middot; Startist</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="An online platform for talented users to collaborate on awesome projects">
     <meta name="author" content="cvstechnology">
@@ -27,27 +27,21 @@
           <span class="icon-bar"></span>
         </a>
         <a href="{{ url_for('home') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a>
-        <div class="lander">
-          <div class="nav-collapse collapse pull-right">
-              <ul class="nav">
-              {% if not session.logged_in %}
-                <li><a href="/login" data-toggle="modal">login</a></li>
-                <li><a href="/join" data-toggle="modal">join</a></li>
-              {% else %}
-                <li><a href="{{ url_for('logout') }}" id="logout">logout</a></li>
-              {% endif %}
-              </ul>
-              <form class="navbar-search">
-                <input type="text" class="search-query" placeholder="Search projects">
-                <div class="icon-search" style="background-image:url('{{ url_for('static', filename='img/glyphicons-halflings.png') }}');"></div>
-              </form>
-            </div>
-        </div>
       </div>
     </div>
   </div>
 
   <div class="container-narrow">
+
+    <div class="jumbotron well">
+      <h2>Welcome to</h2>
+      <p class="lead"><a href="{{ url_for('home') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a></p>
+      <h3>Create your account to explore Startist.</h3>
+      <p><div class="adjust"><a class="btn btn-large btn-primary facebook" href="/facebook">Facebook</a><a class="btn btn-large btn-primary twitter" href="/twitter">Twitter</a></div></p><br><br>
+      <h3>or, sign up with your <a href="/signup">email adddress</a></h3>
+    </div>
+
+
 
   </div> <!-- /container -->
 

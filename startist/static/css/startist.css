@@ -1,15 +1,7 @@
-/* fixed background image */
-html {  
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    overflow: hidden;
-}
-
-/* background gradient color of the entire page */
 body {
-    font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    background-color: #c0c0c0;
 }
 
 /* background gradient color of the top navigation bar */
@@ -17,90 +9,119 @@ body {
     opacity: 0.8;
 }
 
-/* startist brand name font and color */
+/* startist brand name font and color, navbar */
 .navbar .brand {
-    width: 15%;
+    width: 10%;
 }
 .navbar .brand:hover {
     text-decoration: none;
 }
+.navbar .nav > li > a {
+    padding: 14px 15px;
+}
+
+/* custom container */
+.container-narrow {
+    margin: 0 auto;
+    max-width: 900px;
+}
+.container-narrow > hr {
+    margin: 30px 0;
+}
+
+/* main marketing message and sign up button */
+.jumbotron {
+    margin: 60px 0;
+    text-align: center;
+}
+.jumbotron h1 {
+    font-size: 72px;
+    line-height: 1;
+}
+.jumbotron h2 {
+    font-size: 50px;
+    line-height: 1;
+}
+.jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+}
+
+/* Supporting marketing content */
+.marketing {
+    margin: 60px 0;
+}
+.marketing p + h4 {
+    margin-top: 28px;
+}
+
+/* startist brand name */
+.startist-logo {
+    width: 20%;
+}
+
+/* hide components */
+.invisible {
+    display: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.space {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.center {
+    text-align: center;
+}
+
+.adjust {
+    margin-left: 33%;
+}
+
+
+.facebook {
+    margin-left: 10px;
+    margin-right: 10px;
+    float: left;    
+}
+
+.twitter {
+    margin-left: 10px;
+    margin-right: 10px;
+    float: left;    
+}
+
+/* jobs */
+.jobs
+{
+    margin-top: -20px;
+    margin-bottom: -40px;
+}
 
 /* main band image under navigation bar */
 .hero-unit {
-  padding: 160px;
-  margin-top: 25px;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-}
-
-/* signup form box and text box */
-.signup {
-    position: fixed;
-    top: 65%;
-    width: 78%;
-    height: 20%;
-    padding: 19px;
-    background-color: #000000;
-    border-radius: 6px 6px 6px 6px;
-}
-.signup-heading {
-    color: #ffffff;
-    font-size: 16px;
-    padding-bottom: 20px;
-}
-.signup-content {
-    color: #ffffff;
-    font-size: 16px;
-    padding-bottom: 15px;
-    line-height: 25px;
-}
-.signup input[type="text"] {
-    font-size: 15px;
-    height: auto;
-    text-align: center;
-    width: 300px;
-}
-.signup-button {
-    text-align: center;
-}
-a:hover {
-  text-decoration: none;
-}
-
-/* email and hiring divs */
-.leftnav {
-   width: 35%;
-   margin-right: 200px;
-   float: left;
-}
-
-.vertical {
-   border-left: 3px solid gray;
-   float: left;
-   height: 100%;
-}
-
-.rightnav {
-   width: 37%;
-   margin-left: 20px;
-   float: left;
-}
-
-.input-prepend .play {
-    margin-top: -10px;
+    padding: 160px;
+    margin-top: 25px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
 }
 
 /* lander top right corner: login join search */
 .navbar-search {
     position: relative;
+    padding-top: 5px;
 }  
 .navbar-search .search-query {
     padding-left: 29px;
 }
 .navbar-search .icon-search {
     position: absolute;
-    top: 7px;
+    top: 11px;
     left: 11px;
 }
 
@@ -209,7 +230,7 @@ a:hover {
     color: #a80000 ;
     padding-bottom: 10px;
 }
-.confirm-error {
+.username-error {
     color: #a80000 ;
     padding-bottom: 10px;
 }
@@ -222,12 +243,3 @@ a:hover {
     padding-bottom: 10px;
 }
 
-/* carousel */
-#background-slides {
-    position:absolute; 
-    top:0px; 
-    left:0px
-}   
-.slide {
-    float:left
-}

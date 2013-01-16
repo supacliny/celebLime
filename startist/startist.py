@@ -3,15 +3,40 @@ from flask.ext.pymongo import PyMongo
 from pymongo import ASCENDING
 from validate_email import validate_email
 from werkzeug.security import generate_password_hash, check_password_hash
+import tweepy
 import json
 import re
+import requests
+import urlparse
 
 DEBUG = False
+KEY = 'H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SECRET_KEY'] = "H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1"
+app.config['SECRET_KEY'] = KEY
 mongo = PyMongo(app)
+
+if DEBUG:
+    FB_REDIRECT = 'http://localhost:8000/fb_verify'
+    FB_APP_ID = '330274977087606'
+    FB_SECRET = 'e9fe610df8d1cbf4ae3dd57226558a29'
+    FB_PERMISSIONS = 'user_about_me, email'
+    FB_STATE = KEY
+    TW_REDIRECT = 'http://localhost:8000/tw_verify'
+    TW_CONSUMER_KEY = '9EUuiPXssnwKPwDioQeEyw'
+    TW_CONSUMER_SECRET = 'gWXFTi1bDtkbR6Tbu1zRsZ2QHvPkOBh2nsubfA15D8'
+else:
+    FB_REDIRECT = 'http://www.startists.com/fb_verify'
+    FB_APP_ID = '471868396209054'
+    FB_SECRET = '12d3aa51e0c73758cac9f283fcca23e8'
+    FB_PERMISSIONS = 'user_about_me, email'
+    FB_STATE = KEY
+    TW_REDIRECT = 'http://www.startists.com/tw_verify'
+    TW_CONSUMER_KEY = 'QTidL2svjqbtbnDIi3GEg'
+    TW_CONSUMER_SECRET = 'GVZ6eApHktuiFJeZRrUQSqc4CwfEfltwi2rC6hTg8'
+
+
 
 # PRELAUNCH [
 # render the signup page for now until we launch
@@ -165,6 +190,60 @@ def register():
     data = json.dumps(data)
     return data
 
+
+@app.route('/facebook')
+def facebook():
+    try:
+        fb_app_info = {'client_id': FB_APP_ID, 'redirect_uri': FB_REDIRECT, 'scope': FB_PERMISSIONS, 'state': FB_STATE}
+        fb_auth_request = requests.get('https://www.facebook.com/dialog/oauth', params=fb_app_info, allow_redirects=True)
+        fb_oAuthRedirect = fb_auth_request.url
+        return redirect(fb_oAuthRedirect)
+    except Exception:
+        return redirect(url_for('join'))
+
+
+@app.route('/fb_verify')
+def fb_verify():
+    try:
+        code = request.args['code']
+        app_info = {'client_id': FB_APP_ID, 'redirect_uri': FB_REDIRECT, 'client_secret': FB_SECRET, 'code': code}
+        token_request = requests.get('https://graph.facebook.com/oauth/access_token', params=app_info)
+        response = token_request.text
+        access_token = urlparse.parse_qs(response)['access_token'][0]
+        expires = urlparse.parse_qs(response)['expires'][0]
+        graph_params = {'access_token': access_token}
+        user_details = requests.get('https://graph.facebook.com/me/', params=graph_params)
+        user_details = user_details.json()
+        return render_template('signup.html', name=user_details['name'], username=user_details['username'], email=user_details['email'])
+    except Exception:
+        return redirect(url_for('join'))
+
+
+@app.route('/twitter')
+def twitter():
+    try:
+        tw_auth_request = tweepy.OAuthHandler(TW_CONSUMER_KEY, TW_CONSUMER_SECRET, TW_REDIRECT)
+        tw_oAuthRedirect = tw_auth_request.get_authorization_url()
+        session["tw_request_token"] = (tw_auth_request.request_token.key,tw_auth_request.request_token.secret)
+        return redirect(tw_oAuthRedirect)
+    except Exception:
+        return redirect(url_for('join'))
+
+
+@app.route('/tw_verify')
+def tw_verify():
+    try: 
+        verifier = request.args["oauth_verifier"]
+        auth = tweepy.OAuthHandler(TW_CONSUMER_KEY, TW_CONSUMER_SECRET) 
+        token = session.get("tw_request_token")
+        session.pop("tw_request_token", None)
+        auth.set_request_token(token[0], token[1])        
+        auth.get_access_token(verifier)
+        api = tweepy.API(auth)
+        user = api.me()
+        return render_template('signup.html', name=user.name, username=user.screen_name)
+    except Exception:
+        return redirect(url_for('join'))
 # ]
 
 # AUXILLARY FUNCTIONS [

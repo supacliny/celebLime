@@ -16,7 +16,6 @@
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script>
       $(document).ready(function(){
-
         $('.register').submit(function(event) {
           event.preventDefault();
           $('.name-error').html('');
@@ -82,48 +81,6 @@
                 });
           $('.register-button').html('<img src="{{ url_for("static", filename="img/loading.gif") }}"/>');
         });
-   
-        $('.login').submit(function(event) {
-          event.preventDefault();
-          $('.login-error').html('');                 
-          $('.token-error').html('');                 
-          var $form = $( this ),
-              email = $form.find( 'input[name="email"]' ).val(),
-              password = $form.find( 'input[name="password"]' ).val(),
-              url = $form.attr( 'action' );
-          jdata = JSON.stringify({"email": email, "password": password});
-          jQuery.ajax({
-                  type: "POST",
-                  url: url,
-                  data: jdata,
-                  success: function(data) {
-                    if ((data.email == 1) && (data.password == 1)) 
-                    {                    
-                      $('.login').html('<h2>Welcome back, ' + data.name + '!</h2>');
-                      setTimeout(function(){$('#login').modal('hide'); window.location.reload(true);}, 2000);
-                    }
-                    else
-                    {
-                      if (data.email == 0)
-                      {
-                        $('.login-button').html('<button type="submit" class="btn btn-primary">Log In</button>');
-                        $('.login-error').html('Invalid email address.');
-                      }
-                      if (data.password == 0)
-                      {
-                        $('.login-button').html('<button type="submit" class="btn btn-primary">Log In</button>');
-                        $('.token-error').html('Invalid password.');
-                      }
-                      return;
-                    }
-                  },
-                  dataType: "json",
-                  contentType: "application/json",
-                  processData: false
-                });
-          $('.login-button').html('<img src="{{ url_for("static", filename="img/loading.gif") }}"/>');
-        });
-
       });
     </script>
   </head>
@@ -150,13 +107,13 @@
         <h2>Create your account</h2>
           <form class="register" action="{{ url_for('register') }}">
             <div class="heading">Name</div>
-            <div><input type="text" name="name" class="span2" placeholder="Name"></div>
+            <div><input type="text" name="name" class="span2" value="{{ name }}" placeholder="Name"></div>
             <div class="name-error"></div>
             <div class="heading">Username</div>
-            <div><input type="text" name="username" class="span2" placeholder="Username"></div>
+            <div><input type="text" name="username" class="span2" value="{{ username }}" placeholder="Username"></div>
             <div class="username-error"></div>
             <div class="heading">Email</div>
-            <div><input type="text" name="email" class="span2" placeholder="Email"></div>
+            <div><input type="text" name="email" class="span2" value="{{ email }}" placeholder="Email"></div>
             <div class="email-error"></div>
             <div class="heading">Password</div>
             <div><input type="password" name="password" class="span2" placeholder="Password"></div>

@@ -38,7 +38,7 @@
       <p class="lead"><a href="{{ url_for('home') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a></p>
       <h3>Create your account to explore Startist.</h3>
       <p><div class="adjust-join"><a class="btn btn-large btn-primary facebook" href="{{ url_for('facebook') }}">Facebook</a><a class="btn btn-large btn-primary twitter" href="{{ url_for('twitter') }}">Twitter</a></div></p><br><br>
-      <h3>or, sign up with your <a href="/signup">email adddress</a></h3>
+      <h3>or, sign up with your <a href="{{ url_for('signup_page') }}">email adddress</a></h3>
     </div>
 
   </div> <!-- /container -->

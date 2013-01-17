@@ -78,10 +78,13 @@ a:hover {
     text-align: center;
 }
 
-.adjust {
+.adjust-join {
     margin-left: 33%;
 }
 
+.adjust-login {
+    margin-left: 20%;
+}
 
 .facebook {
     margin-left: 10px;

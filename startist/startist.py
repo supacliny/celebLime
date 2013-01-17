@@ -90,9 +90,10 @@ def jobs():
 def home():
     return render_template('index.html')
 
+
 # login user
-@app.route('/login', methods = ['POST'])
-def login():
+@app.route('/signin', methods = ['POST'])
+def signin():
     email = request.json['email']
     password = request.json['password']
     name = ''
@@ -117,6 +118,13 @@ def login():
     data = {"name": name, "email": email_signal, "password": password_signal}
     data = json.dumps(data)
     return data
+
+
+# login page
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
 
 # logout user
 @app.route('/logout')

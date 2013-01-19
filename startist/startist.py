@@ -11,7 +11,7 @@ import re
 import requests
 import urlparse
 
-DEBUG = True
+DEBUG = False
 KEY = 'H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1'
 
 app = Flask(__name__)

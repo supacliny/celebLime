@@ -36,9 +36,8 @@
                   data: jdata,
                   success: function(data) {
                     if ((data.name == 1) && (data.username == 1) && (data.email == 1) && (data.password == 1)) 
-                    {                    
-                      $('.register-container').html('<h3>' + name + ', welcome to Startist!</h3>');
-                      setTimeout(function(){window.location = "{{ url_for('home') }}";}, 2000);
+                    { 
+                      document.location.href = '{{ url_for("user", username=session.username) }}' + username;
                     }
                     else
                     {

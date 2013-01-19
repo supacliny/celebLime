@@ -11,7 +11,7 @@ import re
 import requests
 import urlparse
 
-DEBUG = False
+DEBUG = True
 KEY = 'H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1'
 
 app = Flask(__name__)
@@ -234,16 +234,18 @@ def fblverify():
         code = request.args['code']
         fb_app_info = {'client_id': FB_APP_ID, 'redirect_uri': FB_LOGIN_REDIRECT, 'client_secret': FB_SECRET, 'code': code}
         user_details = facebook_verify(fb_app_info)
-        name = user_details['name']
-        username = user_details['username']
-        email = user_details['email']
-        if check_for_account(username):
+        fb_name = user_details['name']
+        fb_username = user_details['username']
+        fb_email = user_details['email']
+        user = get_user(fb_username, "facebook")
+        if user:
+            username = user["username"]
             login_user(username)
-            update_fb_info(user_details)
+            update_fb_info(username, user_details)
             return redirect(url_for('user', username=username))
         else:
             session["facebook"] = user_details
-            return render_template('signup.html', name=name, username=username, email=email)
+            return render_template('signup.html', name=fb_name, username=fb_username, email=fb_email)
     except Exception, e:
         print e
         return redirect(url_for('login'))
@@ -265,15 +267,17 @@ def twlverify():
     try: 
         verifier = request.args["oauth_verifier"]
         user_details = twitter_verify(verifier)
-        name = user_details['name']
-        username = user_details["screen_name"]
-        if check_for_account(username):
+        tw_name = user_details['name']
+        tw_username = user_details["screen_name"]
+        user = get_user(tw_username, "twitter")
+        if user:
+            username = user["username"]
             login_user(username)
-            update_tw_info(user_details)
+            update_tw_info(username, user_details)
             return redirect(url_for('user', username=username))
         else:
             session["twitter"] = user_details        
-            return render_template('signup.html', name=name, username=username)
+            return render_template('signup.html', name=tw_name, username=tw_username)
     except Exception, e:
         print e
         return redirect(url_for('login'))
@@ -298,16 +302,18 @@ def fbsverify():
         code = request.args['code']
         fb_app_info = {'client_id': FB_APP_ID, 'redirect_uri': FB_SIGNUP_REDIRECT, 'client_secret': FB_SECRET, 'code': code}
         user_details = facebook_verify(fb_app_info)
-        name = user_details['name']
-        username = user_details['username']
-        email = user_details['email']
-        if check_for_account(username):
+        fb_name = user_details['name']
+        fb_username = user_details['username']
+        fb_email = user_details['email']
+        user = get_user(fb_username, "facebook")
+        if user:
+            username = user["username"]
             login_user(username)
-            update_fb_info(user_details)
+            update_fb_info(username, user_details)
             return redirect(url_for('user', username=username))
         else:
             session["facebook"] = user_details
-            return render_template('signup.html', name=name, username=username, email=email)
+            return render_template('signup.html', name=fb_name, username=fb_username, email=fb_email)
     except Exception, e:
         print e
         return redirect(url_for('join'))
@@ -329,15 +335,17 @@ def twsverify():
     try: 
         verifier = request.args["oauth_verifier"]
         user_details = twitter_verify(verifier)
-        name = user_details['name']
-        username = user_details['screen_name']
-        if check_for_account(username):
+        tw_name = user_details['name']
+        tw_username = user_details['screen_name']
+        user = get_user(tw_username, "twitter")
+        if user:
+            username = user["username"]
             login_user(username)
-            update_tw_info(user_details)
+            update_tw_info(username, user_details)
             return redirect(url_for('user', username=username))
         else:
             session["twitter"] = user_details        
-            return render_template('signup.html', name=name, username=username)
+            return render_template('signup.html', name=tw_name, username=tw_username)
     except Exception, e:
         print e
         return redirect(url_for('join'))
@@ -373,7 +381,7 @@ def facebook_verify(fb_app_info):
 
 
 def twitter_connect(tw_auth_request):
-    tw_oAuthRedirect = tw_auth_request.get_authorization_url()
+    tw_oAuthRedirect = tw_auth_request.get_authorization_url(True)
     session["tw_request_token"] = (tw_auth_request.request_token.key,tw_auth_request.request_token.secret)
     return tw_oAuthRedirect
 
@@ -423,7 +431,7 @@ def twitter_verify(verifier):
     return user_details
 
 
-def check_for_account(username):
+def get_account(username):
     user = mongo.db.users.find_one({"username": username})
     if user:
         return True
@@ -441,21 +449,22 @@ def login_user(username):
     mongo.db.users.update({"username": username}, {"$set": {"logins": logins, "last_login_at": current_time, "ip": ip}})
 
 
-def get_user(username):
-    user = mongo.db.users.find_one({"username": username})
-    if user:
-        return user
+def get_user(username, ext=None):
+    if ext == None:
+        return mongo.db.users.find_one({"username": username})
+    if ext == "twitter":
+        return mongo.db.users.find_one({"twitter.screen_name": username})
+    if ext == "facebook":
+        return mongo.db.users.find_one({"facebook.username": username})
     else:
         return {}
 
 
-def update_fb_info(user_details):
-    username = user_details['username']
+def update_fb_info(username, user_details):
     mongo.db.users.update({"username": username},{"$set": {"facebook": user_details}})
 
 
-def update_tw_info(user_details):
-    username = user_details['screen_name']
+def update_tw_info(username, user_details):
     mongo.db.users.update({"username": username},{"$set": {"twitter": user_details}})
 
 # ]

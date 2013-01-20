@@ -1,8 +1,10 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, Response, jsonify
 from flask.ext.pymongo import PyMongo
+from flask import send_from_directory
 from pymongo import ASCENDING
 from validate_email import validate_email
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug import secure_filename
 from time import mktime
 from time import time
 import tweepy
@@ -10,13 +12,18 @@ import json
 import re
 import requests
 import urlparse
+import os
+
 
 DEBUG = False
 KEY = 'H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1'
+UPLOAD_FOLDER = os.path.realpath('.') + '/static/pics/'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = KEY
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 mongo = PyMongo(app)
 
 if DEBUG:
@@ -149,10 +156,18 @@ def email_signup():
 # register new user
 @app.route('/register', methods = ['POST'])
 def register():
+    group = request.json['group']
     name = request.json['name']
     username = request.json['username']
     email = request.json['email']
     password = request.json['password']
+    pic = request.json['pic']
+    country = request.json['country']
+    city = request.json['city']
+    title = request.json['title']
+    fields = request.json['fields']
+    website = request.json['website']
+
     try:
         is_email_valid = validate_email(email)
     except Exception:
@@ -201,7 +216,7 @@ def register():
         current_time = int(time())
         ip = request.access_route[0]
 
-        user = {"name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip}
+        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website}
         user_id = mongo.db.users.insert(user)
         login_user(username)
 
@@ -305,6 +320,8 @@ def fbsverify():
         fb_name = user_details['name']
         fb_username = user_details['username']
         fb_email = user_details['email']
+        fb_id = user_details['id']
+        fb_pic = 'http://graph.facebook.com/' + fb_id + '/picture?type=large'
         user = get_user(fb_username, "facebook")
         if user:
             username = user["username"]
@@ -313,7 +330,7 @@ def fbsverify():
             return redirect(url_for('user', username=username))
         else:
             session["facebook"] = user_details
-            return render_template('signup.html', name=fb_name, username=fb_username, email=fb_email)
+            return render_template('signup.html', name=fb_name, username=fb_username, email=fb_email, pic=fb_pic)
     except Exception, e:
         print e
         return redirect(url_for('join'))
@@ -338,6 +355,7 @@ def twsverify():
         tw_name = user_details['name']
         tw_username = user_details['screen_name']
         user = get_user(tw_username, "twitter")
+        tw_pic = 'https://api.twitter.com/1/users/profile_image?screen_name=' + tw_username + '&size=reasonably_small'
         if user:
             username = user["username"]
             login_user(username)
@@ -345,11 +363,36 @@ def twsverify():
             return redirect(url_for('user', username=username))
         else:
             session["twitter"] = user_details        
-            return render_template('signup.html', name=tw_name, username=tw_username)
+            return render_template('signup.html', name=tw_name, username=tw_username, pic=tw_pic)
     except Exception, e:
         print e
         return redirect(url_for('join'))
 # ]
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('uploaded_file',
+                                    filename=filename))
+    return ''
+
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename)
+
+
+
+
+
+
+
 
 # AUXILLARY FUNCTIONS [
 
@@ -467,6 +510,10 @@ def update_fb_info(username, user_details):
 def update_tw_info(username, user_details):
     mongo.db.users.update({"username": username},{"$set": {"twitter": user_details}})
 
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 # ]
 
 if __name__ == "__main__":

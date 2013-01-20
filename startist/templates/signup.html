@@ -11,11 +11,20 @@
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/startist.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/bootstrap-formhelpers.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/bootstrap-formhelpers-countries.flags.css') }}" rel="stylesheet" type="text/css"/>
 
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-formhelpers-countries.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-formhelpers-countries.en_US.js') }}"></script>
     <script>
       $(document).ready(function(){
+
+        $(".icon-refresh").click(function() {
+          var link = $("#link").val();
+          $(".thumbnail").html('<img style="height: 100px;" src="' + link + '"/>');
+        });
+
         $('.register').submit(function(event) {
           event.preventDefault();
           $('.name-error').html('');
@@ -24,12 +33,19 @@
           $('.password-error').html('');                 
                          
           var $form = $( this ),
+              group = $form.find( 'input[name="group"]:checked' ).val(),
               name = $form.find( 'input[name="name"]' ).val(),
               username = $form.find( 'input[name="username"]' ).val(),
               email = $form.find( 'input[name="email"]' ).val(),
               password = $form.find( 'input[name="password"]' ).val(),
+              pic = $form.find( 'input[name="pic"]' ).val(),
+              country = $form.find(":selected").text(),
+              city = $form.find( 'input[name="city"]' ).val(),
+              title = $form.find( 'input[name="title"]' ).val(),
+              fields = $form.find( 'input[name="fields"]' ).val(),
+              website = $form.find( 'input[name="website"]' ).val(),
               url = $form.attr( 'action' );
-          jdata = JSON.stringify({"name": name, "username": username, "email": email, "password": password});
+          jdata = JSON.stringify({"group": group, "name": name, "username": username, "email": email, "password": password, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website});
           jQuery.ajax({
                   type: "POST",
                   url: url,
@@ -100,11 +116,11 @@
   </div>
 
   <div class="container-narrow">
-
     <div class="jumbotron well">
       <div class="register-container">
         <h2>Create your account</h2>
           <form class="register" action="{{ url_for('register') }}">
+            <br><div><input type="radio" name="group" value="individual" checked="yes"><i class="space icon-user"></i><div class="heading rightspace">Individual</div><input type="radio" name="group" value="team"><i class="space icon-user"></i><div class="heading">Team</div></div><br>
             <div class="heading">Name</div>
             <div><input type="text" name="name" class="span2" value="{{ name }}" placeholder="Name"></div>
             <div class="name-error"></div>
@@ -117,11 +133,21 @@
             <div class="heading">Password</div>
             <div><input type="password" name="password" class="span2" placeholder="Password"></div>
             <div class="password-error"></div>
+            <div class="heading">Profile Picture</div>
+            <div class="thumbnail"><img src="{{ pic }}"/></div> 
+            <div><input type="text" id="link" name="pic" class="span2" value="{{ pic }}" placeholder="Picture Link"><i class="space icon-refresh"></i></div>
+            <div class="heading">Location</div>
+            <div><select class="input-medium countries space" data-country="US"></select><input type="text" name="city" class="span2" placeholder="City"></div>
+            <div class="heading">Title</div>
+            <div><input type="text" name="title" class="span2" placeholder="Title"></div>
+            <div class="heading">Creative Fields</div>
+            <div><input type="text" name="fields" class="span2" placeholder="Creative Fields"></div>
+            <div class="heading">Web Site</div>
+            <div><input type="text" name="website" class="span2" placeholder="Web Site"></div>
             <div class="register-button"><button type="submit" class="btn btn-primary">Create New Account</button></div>
           </form>
-        </div>  
-      </div>
-
+      </div>  
+    </div>
   </div> <!-- /container -->
 
   </body>

@@ -527,7 +527,7 @@ def api_create_playlist():
             return bad_request()
 
         # check for authorization
-        if not is_authorized(token):
+        if not is_authorized(user_id):
             return not_authorized()
 
         # get celebLime ids for these songs
@@ -581,7 +581,7 @@ def api_delete():
             return bad_request()
 
         # check for authorization
-        if not is_authorized(token):
+        if not is_authorized(user_id):
             return not_authorized()
 
         if playlist_id:
@@ -629,7 +629,7 @@ def api_update_playlist():
             return bad_request()
 
         # check for authorization
-        if not is_authorized(token):
+        if not is_authorized(user_id):
             return not_authorized()
 
         # get celebLime ids for these songs
@@ -688,7 +688,7 @@ def api_stream_song():
             return bad_request()
 
         # check for authorization
-        if not is_authorized(token):
+        if not is_authorized(user_id):
             return not_authorized()
 
         # incoming song_id is a string, convert to ObjectID
@@ -740,7 +740,7 @@ def api_recent_list():
             return bad_request()
 
         # check for authorization
-        if not is_authorized(token):
+        if not is_authorized(user_id):
             return not_authorized()
 
         try:
@@ -781,7 +781,7 @@ def api_playlists():
             return bad_request()
 
         # check for authorization
-        if not is_authorized(token):
+        if not is_authorized(user_id):
             return not_authorized()
 
         try:
@@ -831,7 +831,7 @@ def api_publish_playlist():
             return bad_request()
 
         # check for authorization
-        if not is_authorized(token):
+        if not is_authorized(user_id):
             return not_authorized()
 
         if playlist_id:
@@ -978,11 +978,11 @@ def find_between(s, first, last):
         return ""
 
 
-# for now, simply check that the access token is present in mongodb
-# later on we would use it in conjunction with the secret to sign a request for twitter
-def is_authorized(access_token):
+# for now, simply check that the twitter_id is present in mongodb
+# later on we would use it in conjunction with the secret and key to sign a request for twitter
+def is_authorized(user_id):
 
-    result = mongo.db.users.find_one({"token": access_token})
+    result = mongo.db.users.find_one({"twitter_id": user_id})
     if result:
         return True
     else:

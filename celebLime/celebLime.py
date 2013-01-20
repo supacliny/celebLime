@@ -488,13 +488,13 @@ def api_create_user():
         incoming["ip"] = request.access_route[0]
 
         # check if already registered
-        already_user = mongo.db.users.find_one({"token": token, "twitter_id": user_id})
+        already_user = mongo.db.users.find_one({"twitter_id": user_id})
 
         # then return no content, already in mongo
         if already_user:
             incoming["added_at"] = already_user["added_at"]
             incoming["total_logins"] = already_user["total_logins"] + 1
-            mongo.db.users.update({"token": token, "twitter_id": user_id}, incoming, upsert=True)
+            mongo.db.users.update({"twitter_id": user_id}, incoming, upsert=True)
             data = {}
             data = json.dumps(data)
             resp = Response(data, status=204, mimetype="application/json")

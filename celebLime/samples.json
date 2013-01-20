@@ -78,5 +78,9 @@ curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1
 curl -u cliny:Pag82% -H "Content-type: application/json" -X PUT http://127.0.0.1:8000/stream -d '{"token": "demo", "twitter_id": 100000000, "song_id": 75, "played_at": 1355356552}'
 
 
-curl -H "Content-type: application/json" -X POST http://127.0.0.1:8000/signup -d '{"name": "Lebron James", "token": "demo", "twitter_id": 100000000, "screen_name": "KingJames", "verified": false}'
+curl -H "Content-type: application/json" -X POST http://127.0.0.1:8000/signup -d '{"name": "Lebron James", "token": "762328716-sMMMvXtlo7g2nNR1ofXWdPCVecSKev8WVa9x8UHO", "twitter_id": 762328716, "screen_name": "fanlimeLBJ", "verified": false}'
+
+curl -H "Content-type: application/json" -X GET http://127.0.0.1:8000/recent -d '{"twitter_id": 169194713, "token": "169194713-T8JnqqMIFqIdDZu8bzEdAYBQ9lewerTUrdWPQkxO", "visible": true, "number": 10}'
+
+curl -H "Content-type: application/json" -X GET http://127.0.0.1:8000/playlists -d '{"twitter_id": 169194713, "token": "169194713-T8JnqqMIFqIdDZu8bzEdAYBQ9lewerTUrdWPQkxO"}'
 

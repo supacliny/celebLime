@@ -723,6 +723,90 @@ def api_stream_song():
         return not_json()
 
 
+# get the most recent songs by number and visibility
+@app.route("/recent", methods = ["GET"])
+def api_recent_list():
+
+    if request.headers["Content-Type"] == "application/json":
+
+        incoming = request.json
+
+        # partially validate JSON fields
+        try:
+            user_id = incoming["twitter_id"]
+            token = incoming["token"]
+            number = incoming["number"]
+        except KeyError:
+            return bad_request()
+
+        # check for authorization
+        if not is_authorized(token):
+            return not_authorized()
+
+        try:
+            visible = incoming["visible"]
+            most_recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id, "visible": visible}).limit(number).sort([("played_at", -1)])
+        except KeyError:
+            most_recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(number).sort([("played_at", -1)])
+
+        mru = []
+
+        for song in most_recent_songs_cursor:
+            song_id = str(song["song_id"])
+            mru.append(song_id)
+            
+        data = {"recent": mru}
+
+        data = json.dumps(data)
+
+        resp = Response(data, status=200, mimetype="application/json")
+        return resp
+    else:
+        return not_json()
+
+
+# get all the playlists for a user
+@app.route("/playlists", methods = ["GET"])
+def api_playlists():
+
+    if request.headers["Content-Type"] == "application/json":
+
+        incoming = request.json
+
+        # partially validate JSON fields
+        try:
+            user_id = incoming["twitter_id"]
+            token = incoming["token"]
+        except KeyError:
+            return bad_request()
+
+        # check for authorization
+        if not is_authorized(token):
+            return not_authorized()
+
+        try:
+            visible = incoming["visible"]
+            playlists_cursor = mongo.db.playlists.find({"twitter_id": user_id, "visible": visible})
+        except KeyError:
+            playlists_cursor = mongo.db.playlists.find({"twitter_id": user_id})
+
+        playlists = []
+
+        for playlist in playlists_cursor:
+            playlist["playlist_id"] = str(playlist["_id"])
+            playlist.pop("_id", None)
+            playlists.append(playlist)
+            
+        data = {"playlists": playlists}
+
+        data = json.dumps(data)
+
+        resp = Response(data, status=200, mimetype="application/json")
+        return resp
+    else:
+        return not_json()
+
+
 # publish/unpublish a playlist or streamed song
 @app.route("/publish", methods = ["PATCH"])
 def api_publish_playlist():

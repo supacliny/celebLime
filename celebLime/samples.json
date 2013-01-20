@@ -84,3 +84,5 @@ curl -H "Content-type: application/json" -X GET http://127.0.0.1:8000/recent -d 
 
 curl -H "Content-type: application/json" -X GET http://127.0.0.1:8000/playlists -d '{"twitter_id": 169194713, "token": "169194713-T8JnqqMIFqIdDZu8bzEdAYBQ9lewerTUrdWPQkxO"}'
 
+curl -H -k --insecure "Content-type: application/json" -X GET http://www.cvstechnology.ca/projects/celebLime/playlists -d '{"twitter_id": 169194713, "token": "169194713-T8JnqqMIFqIdDZu8bzEdAYBQ9lewerTUrdWPQkxO"}'
+

@@ -735,7 +735,6 @@ def api_recent_list():
         try:
             user_id = incoming["twitter_id"]
             token = incoming["token"]
-            number = incoming["number"]
         except KeyError:
             return bad_request()
 
@@ -744,10 +743,26 @@ def api_recent_list():
             return not_authorized()
 
         try:
-            visible = incoming["visible"]
-            most_recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id, "visible": visible}).limit(number).sort([("played_at", -1)])
+            limit = incoming["limit"]
         except KeyError:
-            most_recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(number).sort([("played_at", -1)])
+            limit = None
+
+        try:
+            visible = incoming["visible"]
+        except KeyError:
+            visible = None
+
+        if limit == None and visible == None:    
+            most_recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).sort([("played_at", -1)])
+
+        if limit != None and visible == None:   
+            most_recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(limit).sort([("played_at", -1)])
+
+        if limit == None and visible != None:
+            most_recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id, "visible": visible}).sort([("played_at", -1)])
+
+        if limit != None and visible != None:
+            most_recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id, "visible": visible}).limit(limit).sort([("played_at", -1)])
 
         mru = []
 

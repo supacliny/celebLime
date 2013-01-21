@@ -173,8 +173,6 @@ def register():
     except Exception:
         is_email_valid = True
 
-    mongo.db.users.ensure_index([("email",ASCENDING), ("username", ASCENDING)], unique=True, background=True)
-
     if len(name) > 0:
         name_signal = 1
     else:
@@ -217,6 +215,10 @@ def register():
         ip = request.access_route[0]
 
         user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website}
+
+        mongo.db.users.ensure_index([("email",ASCENDING), ("username", ASCENDING)], unique=True, background=True)
+        mongo.db.users.ensure_index([("facebook.username",ASCENDING), ("twitter.screen_name", ASCENDING)], unique=True, background=True)
+
         user_id = mongo.db.users.insert(user)
         login_user(username)
 
@@ -252,6 +254,8 @@ def fblverify():
         fb_name = user_details['name']
         fb_username = user_details['username']
         fb_email = user_details['email']
+        fb_id = user_details['id']
+        fb_pic = 'http://graph.facebook.com/' + fb_id + '/picture?type=large'
         user = get_user(fb_username, "facebook")
         if user:
             username = user["username"]
@@ -260,7 +264,7 @@ def fblverify():
             return redirect(url_for('user', username=username))
         else:
             session["facebook"] = user_details
-            return render_template('signup.html', name=fb_name, username=fb_username, email=fb_email)
+            return render_template('signup.html', name=fb_name, username=fb_username, email=fb_email, pic=fb_pic)
     except Exception, e:
         print e
         return redirect(url_for('login'))
@@ -285,6 +289,7 @@ def twlverify():
         tw_name = user_details['name']
         tw_username = user_details["screen_name"]
         user = get_user(tw_username, "twitter")
+        tw_pic = 'https://api.twitter.com/1/users/profile_image?screen_name=' + tw_username + '&size=reasonably_small'
         if user:
             username = user["username"]
             login_user(username)
@@ -292,7 +297,7 @@ def twlverify():
             return redirect(url_for('user', username=username))
         else:
             session["twitter"] = user_details        
-            return render_template('signup.html', name=tw_name, username=tw_username)
+            return render_template('signup.html', name=tw_name, username=tw_username, pic=tw_pic)
     except Exception, e:
         print e
         return redirect(url_for('login'))
@@ -370,6 +375,7 @@ def twsverify():
 # ]
 
 
+# UPLOAD FUNCTIONS [
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
@@ -387,11 +393,7 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename)
 
-
-
-
-
-
+# ]
 
 
 # AUXILLARY FUNCTIONS [

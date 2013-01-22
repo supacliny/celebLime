@@ -98,13 +98,13 @@
     <div class="row-fluid">
       <div class="span10">
         <h3>Profile: {{ user.name }}</h3>
-          <div class="box editme">{{ user.description }}</div>
+          <div class="profile-box editme">{{ user.description }}</div>
           {% if session.logged_in %}
           <div class="trigger"><button class="btn btn-small" type="button">Edit</button></div>
           {% endif %}
       </div>
       <div class="span2">
-        <div class="pic"><img src="{{ user.pic }}"/></div>
+        <div class="profile-pic"><img src="{{ user.pic }}"/></div>
       </div>     
     </div>
   </div>

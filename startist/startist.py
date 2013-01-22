@@ -218,7 +218,8 @@ def register():
         user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website, "description": description_default}
 
         mongo.db.users.ensure_index([("email",ASCENDING), ("username", ASCENDING)], unique=True, background=True)
-        mongo.db.users.ensure_index([("facebook.username",ASCENDING), ("twitter.screen_name", ASCENDING)], unique=True, background=True)
+        mongo.db.users.ensure_index([("facebook.username",ASCENDING)], sparse=True, background=True)
+        mongo.db.users.ensure_index([("twitter.screen_name",ASCENDING)], sparse=True, background=True)
 
         user_id = mongo.db.users.insert(user)
         login_user(username)
@@ -238,6 +239,18 @@ def update():
 
     data = {}
     data = json.dumps(data)
+    return data
+
+
+@app.route('/search', methods = ['POST'])
+def search():
+    search = request.json['search']
+    users = []
+    users_cursor = mongo.db.users.find()
+    for user in users_cursor:
+        user.pop("_id", None)
+        users.append(user)
+    data = json.dumps(users)
     return data
 
 

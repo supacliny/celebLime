@@ -22,7 +22,7 @@
 
         $(".icon-refresh").click(function() {
           var link = $("#link").val();
-          $(".thumbnail").html('<img style="height: 100px;" src="' + link + '"/>');
+          $(".profile-pic").html('<img style="height: 100px;" src="' + link + '"/>');
         });
 
         $('.register').submit(function(event) {
@@ -134,7 +134,7 @@
             <div><input type="password" name="password" class="span2" placeholder="Password"></div>
             <div class="password-error"></div>
             <div class="heading">Profile Picture</div>
-            <div class="thumbnail"><img src="{{ pic }}"/></div> 
+            <div class="profile-pic"><img src="{{ pic }}"/></div> 
             <div><input type="text" id="link" name="pic" class="span2" value="{{ pic }}" placeholder="Picture Link"><i class="space icon-refresh"></i></div>
             <div class="heading">Location</div>
             <div><select class="input-medium countries space" data-country="US"></select><input type="text" name="city" class="span2" placeholder="City"></div>

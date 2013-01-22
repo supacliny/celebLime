@@ -227,6 +227,19 @@ def register():
     return data
 
 
+# update user information
+@app.route('/update', methods = ['POST'])
+def update():
+    username = request.json['username']
+    update = request.json['update']
+
+    mongo.db.users.update({"username": username},{"$set": update})
+
+    data = {}
+    data = json.dumps(data)
+    return data
+
+
 @app.route('/user/<username>', methods = ['GET'])
 def user(username):
     user = get_user(username)

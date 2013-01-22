@@ -15,10 +15,54 @@
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script>
+      $(document).ready(function(){
+        $("div.trigger").toggle(
+            function(){
+              if ($("div.editme").children('input').length == 0) {
+                
+                  var location = $(this).parent();
+                  $(this).children("button").text("Finished");
 
+                  //Create the HTML to insert into the div. Escape any " characters 
+                  var inputbox = '<textarea class="inputbox">' + $("div.editme", location).text() + '</textarea>';
+                  
+                  //Insert the HTML into the div
+                  $("div.editme", location).html(inputbox);
+                  
+                  //Immediately give the input box focus. The user
+                  //will be expecting to immediately type in the input box,
+                  //and we need to give them that ability
+                  $("textarea.inputbox", location).focus();
+              }
+            },
+            
+            function(){
+                  var location = $(this).parent();
+                  $(this).children("button").text("Edit");
+                  var value = $("textarea.inputbox", location).val();
+                  $("div.editme", location).text(value);
+                  var url = '{{ url_for('update') }}';
+                  var username = '{{ user.username }}';
+                  data = JSON.stringify({"username": username, "update": {"description": value}});
+          jQuery.ajax({
+                  type: "POST",
+                  url: url,
+                  data: data,
+                  beforeSend: function() {},
+                  complete: function() {},
+                  success: function(data) {},
+                  dataType: "json",
+                  contentType: "application/json",
+                  processData: false
+                });
+
+
+            }
+          );
+        });
     </script>
   </head>
-    
+  
   <body>
 
   <div class="navbar navbar-fixed-top">
@@ -51,10 +95,19 @@
   </div>
 
   <div class="container-narrow">
-
-    <div class="jumbotron well">Hello {{ user.username }}</div>
-
-  </div> <!-- /container -->
+    <div class="row-fluid">
+      <div class="span10">
+        <h3>Profile: {{ user.name }}</h3>
+          <div class="box editme">{{ user.description }}</div>
+          {% if session.logged_in %}
+          <div class="trigger"><button class="btn btn-small" type="button">Edit</button></div>
+          {% endif %}
+      </div>
+      <div class="span2">
+        <div class="pic"><img src="{{ user.pic }}"/></div>
+      </div>     
+    </div>
+  </div>
 
   </body>
 </html>

@@ -37,7 +37,7 @@ body {
 
 /* custom container */
 .container-narrow {
-    margin: 0 auto;
+    margin: 50px auto;
     max-width: 900px;
 }
 .container-narrow > hr {
@@ -57,10 +57,7 @@ body {
     font-size: 50px;
     line-height: 1;
 }
-.jumbotron .btn {
-    font-size: 21px;
-    padding: 14px 24px;
-}
+
 
 /* Supporting marketing content */
 .marketing {
@@ -101,12 +98,8 @@ a:hover {
     text-align: center;
 }
 
-.adjust-join {
-    margin-left: 33%;
-}
-
-.adjust-login {
-    margin-left: 20%;
+.adjust {
+    margin-left: 35.5%;
 }
 
 .facebook {
@@ -254,11 +247,18 @@ a:hover {
     color: #a80000 ;
     padding-bottom: 10px;
 }
-.thumbnail {
+.profile-pic {
     width: 100px; 
     height: 100px; 
     margin-left: 372px; 
     margin-bottom: 10px;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+    display: block;
+    line-height: 20px;
+    padding: 4px;
+    transition: all 0.2s ease-in-out 0s;
 }
 
 /* lander image */
@@ -296,4 +296,35 @@ a:hover {
     margin-left: 180px;
     padding: 10px;
     color: #ffffff;
+}
+
+/* profile page */
+textarea {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  height: 200px;
+}
+
+.pic {
+    width: 100px; 
+    height: 100px; 
+    margin-top: 57px;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+    display: block;
+    line-height: 20px;
+    padding: 4px;
+    transition: all 0.2s ease-in-out 0s;
+}
+
+.box {
+    border: 1px solid #DDDDDD;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+    transition: all 0.2s ease-in-out 0s;
+    padding: 10px;
+    height: 200px;
 }

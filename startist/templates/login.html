@@ -78,7 +78,7 @@
     <div class="jumbotron well">
       <div class="login-container">
         <p class="lead"><a href="{{ url_for('home') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a></p>
-        <p><div class="adjust-login"><a class="btn btn-large btn-primary facebook" href="{{ url_for('facebook_login') }}">Login with Facebook</a><a class="btn btn-large btn-primary twitter" href="{{ url_for('twitter_login') }}">Login with Twitter</a></div></p><br><br><br>
+        <p><div class="adjust"><a class="btn btn-large btn-primary facebook" href="{{ url_for('facebook_login') }}">Facebook</a><a class="btn btn-large btn-primary twitter" href="{{ url_for('twitter_login') }}">Twitter</a></div></p><br><br><br>
         <hr>
         <form class="login" action="{{ url_for('signin') }}">
           <div class="heading">Username</div>

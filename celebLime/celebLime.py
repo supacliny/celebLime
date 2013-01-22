@@ -903,8 +903,11 @@ def api_get_song():
 
         song = mongo.db.songs.find_one({"_id": song_oid})
 
-        song["song_id"] = str(song["_id"])    
-        song.pop("_id", None)
+        if song:
+            song["song_id"] = str(song["_id"])    
+            song.pop("_id", None)
+        else:
+            song = {}
 
         data = json.dumps(song)
 

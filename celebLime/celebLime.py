@@ -888,6 +888,32 @@ def api_add_song():
         return not_json()
 
 
+# get a song via the api and return its metadata
+@app.route("/get", methods = ["GET"])
+def api_get_song():
+
+    if request.headers["Content-Type"] == "application/json":
+
+        try:
+            song_id = request.json["song_id"]    
+        except KeyError:
+            return bad_request()
+
+        song_oid = bson.objectid.ObjectId(song_id)
+
+        song = mongo.db.songs.find_one({"_id": song_oid})
+
+        song["song_id"] = str(song["_id"])    
+        song.pop("_id", None)
+
+        data = json.dumps(song)
+
+        resp = Response(data, status=201, mimetype="application/json")
+        return resp
+    else:
+        return not_json()
+
+
 def add_song(song):
 
     # determine if full song or just id

@@ -213,8 +213,9 @@ def register():
 
         current_time = int(time())
         ip = request.access_route[0]
+        description_default = "Say something nice about yourself."
 
-        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website}
+        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website, "description": description_default}
 
         mongo.db.users.ensure_index([("email",ASCENDING), ("username", ASCENDING)], unique=True, background=True)
         mongo.db.users.ensure_index([("facebook.username",ASCENDING), ("twitter.screen_name", ASCENDING)], unique=True, background=True)

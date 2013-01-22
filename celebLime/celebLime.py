@@ -911,7 +911,7 @@ def api_get_song():
 
         data = json.dumps(song)
 
-        resp = Response(data, status=201, mimetype="application/json")
+        resp = Response(data, status=200, mimetype="application/json")
         return resp
     else:
         return not_json()

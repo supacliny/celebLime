@@ -17,7 +17,6 @@
   <body>
     <div id="background-slides">
         <div class="slide"><img src="{{ url_for('static', filename='img/startisthomepage_0.jpg') }}"/></div>
-        <div class="slide"><img src="{{ url_for('static', filename='img/startisthomepage_01.jpg') }}"/></div> 
         <div class="slide"><img src="{{ url_for('static', filename='img/startisthomepage_1.jpg') }}"/></div>    
         <div class="slide"><img src="{{ url_for('static', filename='img/startisthomepage_2.jpg') }}"/></div>
         <div class="slide"><img src="{{ url_for('static', filename='img/startisthomepage_3.jpg') }}"/></div>  
@@ -71,11 +70,12 @@
   <script src="{{ url_for('static', filename='js/jquery.carouFredSel-5.1.3-packed.js') }}"></script>
   <script src="{{ url_for('static', filename='js/jquery.fsCarousel.1.0.js') }}"></script>
   <script>
-    $(function(){
-        $('#background-slides').fsCarousel();
-    });
-
     $(document).ready(function(){
+
+      $(function(){
+          $('#background-slides').fsCarousel();
+      });
+
       $(".email").submit(function(event) {
         event.preventDefault();                 
         var $form = $( this ),
@@ -86,6 +86,9 @@
                 type: "POST",
                 url: url,
                 data: jdata,
+                beforeSend: function() {
+                  $("input[placeholder]").val("validating your email...");  
+                },
                 success: function(data) {
                   signal = data.valid;
                   if (signal == 0)
@@ -94,18 +97,18 @@
                   }
                   if (signal == 1)
                   {
-                    $("input[placeholder]").val("Thanks, we will notify you soon.");
+                    $("input[placeholder]").val("Thanks, we'll notify you soon!");
                   }
                   if (signal == 2)
                   {
-                    $("input[placeholder]").val("Cheers, we already got you.");
+                    $("input[placeholder]").val("Hey, you've already signed up!");
                   }
+                  return;
                 },
                 dataType: "json",
                 contentType: "application/json",
                 processData: false
               });
-        $("input[placeholder]").val("validating your email...");  
       });
     });
   </script>

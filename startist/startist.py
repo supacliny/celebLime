@@ -15,7 +15,7 @@ import urlparse
 import os
 
 
-DEBUG = True
+DEBUG = False
 KEY = 'H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1'
 UPLOAD_FOLDER = os.path.realpath('.') + '/static/pics/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])

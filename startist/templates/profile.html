@@ -36,8 +36,8 @@
                 <li><a href="{{ url_for('logout') }}" id="logout">logout</a></li>
               {% endif %}
               </ul>
-              <form class="navbar-search">
-                <input type="text" class="search-query" placeholder="Search projects">
+              <form class="navbar-search" action="{{ url_for('search') }}">
+                <input type="text" name="search" class="search-query" placeholder="Search projects">
                 <div class="icon-search" style="background-image:url('{{ url_for('static', filename='img/glyphicons-halflings.png') }}');"></div>
               </form>
             </div>
@@ -107,12 +107,54 @@
 
   </div>
 
+  <div id="container">
+  </div>
+
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap-fileupload.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/jquery.tagsinput.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
   <script>
+    $(function(){
+      $('#container').isotope({
+        itemSelector: '.box',
+        resizesContainer: false
+      });
+    });
+
+    function shorten(string, limit)
+    {
+       return string = string.length > limit ? string.substring(0,limit) + "...": string;
+    }
+
     $(document).ready(function(){
+
+      $('.navbar-search').submit(function(event) {
+        event.preventDefault();
+        var content = '';
+        var $form = $( this ),
+            search = $form.find( 'input[name="search"]' ).val(),
+            url = $form.attr( 'action' );
+        jdata = JSON.stringify({"search": search});
+        jQuery.ajax({
+                type: "POST",
+                url: url,
+                data: jdata,
+                success: function(data) {
+                  var users = data;
+                  $.each(users, function(index, user) {
+                    var link = '{{ url_for("user", username=username) }}' + user.username;
+                    content += '<div class="box col2"><div class="thumbnail"><a href="' + link + '"><img src="' + user.pic + '"/></a></div><p>' + user.description + '</p></div>';
+                  });
+                  $(".container-narrow").html('');
+                  $("#container").html(content);
+                },  
+                dataType: "json",
+                contentType: "application/json",
+                processData: false
+              });
+          });
 
       $('#tags').tagsInput(
         {

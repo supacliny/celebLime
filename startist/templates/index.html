@@ -88,14 +88,14 @@
                     var link = '{{ url_for("user", username=username) }}' + user.username;
                     content += '<div class="box col2"><div class="thumbnail"><a href="' + link + '"><img src="' + user.pic + '"/></a></div><p>' + user.description + '</p></div>';
                   });
-                  $(".jumbotron").html('');
+                  $(".container-narrow").html('');
                   $("#container").html(content);
                 },  
                 dataType: "json",
                 contentType: "application/json",
                 processData: false
               });
-      });
+          });
     });
   </script>
   </body>

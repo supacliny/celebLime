@@ -44,7 +44,6 @@
     </div>
   </div>
 
-
   <div class="container-narrow">
     <div class="jumbotron">
       <img src="{{ url_for('static', filename='img/startisthomepage7.jpg') }}"/>
@@ -52,14 +51,16 @@
     </div>
   </div>
 
+  <div id="container">
+  </div>
 
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/jquery.masonry.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
   <script>
     $(function(){
-      $('#container').masonry({
+      $('#container').isotope({
         itemSelector: '.box',
-        columnWidth: 100
+        resizesContainer: false
       });
     });
 
@@ -87,7 +88,8 @@
                     var link = '{{ url_for("user", username=username) }}' + user.username;
                     content += '<div class="box col2"><div class="thumbnail"><a href="' + link + '"><img src="' + user.pic + '"/></a></div><p>' + user.description + '</p></div>';
                   });
-                  $(".jumbotron").html(content);
+                  $(".jumbotron").html('');
+                  $("#container").html(content);
                 },  
                 dataType: "json",
                 contentType: "application/json",

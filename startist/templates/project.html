@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Profile &middot; Startist</title>
+    <title>Project &middot; Startist</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="An online platform for talented users to collaborate on awesome projects">
     <meta name="author" content="cvstechnology">
@@ -12,7 +12,6 @@
     <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/startist.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/bootstrap-fileupload.css') }}" rel="stylesheet" type="text/css"/>
-    <link href="{{ url_for('static', filename='css/jquery.tagsinput.css') }}" rel="stylesheet" type="text/css"/>
   </head>
   
   <body>
@@ -48,128 +47,35 @@
 
   <div class="container-narrow">
     <div class="row-fluid">
-      <div class="span8">
-        <h3>Profile: {{ user.name }}</h3>
+      <div class="span10">
+        <h3>Project: {{ user.name }}</h3>
           <div class="profile-box editme">{{ user.description }}</div>
-          {% if session.logged_in and session.username == user.username %}
+          {% if session.logged_in %}
           <div class="trigger"><button class="btn btn-small" type="button">Edit</button></div>
           {% endif %}
       </div>
-      <div class="span4">
-        <div class="profile-summary">
-          <div class="profile-pic"><img src="{{ user.pic }}"/></div>
-          <br>
-          <div>Title:</div>
-          <div>Projects:</div>
-          <div>Partners:</div>
-          <div>Followers:</div>
-          <div>Following:</div>
-          <div>Follow +</div>
-          <div>Contact</div>
-          <div>Member Since:</div>
-        </div>  
+      <div class="span2">
+        <div class="profile-pic"><img src="{{ user.pic }}"/></div>
       </div>     
     </div>
     <br>
-<!--     <form class="fileupload fileupload-new" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}" target="submit-iframe">
-      <div class="fileupload-preview thumbnail" style="width: 200px; height: 200px;"></div>
+    <br>
+    <form class="fileupload fileupload-new" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}" target="submit-iframe">
+      <div class="fileupload-preview thumbnail" style="width: 200px; height: 150px;"></div>
         <div>
           <span class="btn btn-small btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file-input"/></span>
           <a href="#" class="smallspace btn btn-small fileupload-exists" data-dismiss="fileupload">Remove</a><button type="submit" class="smallspace btn btn-small fileupload-exists" id="upload-btn">Upload</button>
       </div>
       <iframe id="submit-iframe" name="submit-iframe" class="invisible"></iframe>
-    </form> -->
-    <hr>
-    <h3>Skills</h3>
-    <div class="skills">
-      <div class="skills-input">
-      {% if user.skills %}
-      {% for skill in user.skills %}  
-        <span>{{ skill }}</span>
-      {% endfor %}
-      {% else %}
-      <hint>Add Skills</hint>
-      {% endif %}
-      </div>
-      <div class="skills-input-edit" style="display:none;">
-        <input name="tags" id="tags" value=""/>
-      </div>    
-    </div>
-    {% if session.logged_in and session.username == user.username %}
-    <div class="edit"><button class="btn btn-small" type="button">Edit</button></div>
-    {% endif %}
-    <hr>
-    <h3>Portfolio</h3>
-    <hr>
-    <h3>Projects</h3>
-    <hr>
-    <h3>Following</h3>
-
+    </form>
+    
   </div>
 
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap-fileupload.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/jquery.tagsinput.js') }}"></script>
   <script>
     $(document).ready(function(){
-
-      $('#tags').tagsInput(
-        {
-          'height':'33px',
-          'width':'900px',
-          'minChars' : 1
-        });
-
-      $("div.edit").toggle( 
-        // skills-input
-        function() {
-          $(this).children("button").text("Finished");
-
-          var skills = '';
-          $('.skills-input span').each(function(){
-              skills += $(this).text();
-              skills += ','
-          });
-          $(".skills-input").hide();
-          $('#tags').importTags(skills);
-          $(".skills-input-edit").show();
-        },
-
-        // skills-input-edit
-        function() {
-          $(this).children("button").text("Edit");
-
-          var skills = $("#tags").val();
-          $(".skills-input-edit").hide();
-          $(".skills-input").show();
-          var content = '';
-          var array = skills.split(',');
-          if (array[0] == '')
-          {
-            array = [];
-            content += '<hint>Add Skills</hint>';
-          }
-          for (var i = 0; i < array.length; i++) {
-            content += '<span>' + array[i] + '</span>';
-          }
-          $('.skills-input').html(content);
-  
-          var url = '{{ url_for('update') }}';
-          var username = '{{ user.username }}';
-          data = JSON.stringify({"username": username, "update": {"skills": array}});
-          jQuery.ajax({
-                  type: "POST",
-                  url: url,
-                  data: data,
-                  beforeSend: function() {},
-                  success: function(data) {},
-                  dataType: "json",
-                  contentType: "application/json",
-                  processData: false
-                });
-          }
-        );
 
       $("div.trigger").toggle(
           function(){

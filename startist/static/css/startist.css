@@ -3,6 +3,12 @@ body {
     background-color: #FFFFFF;
 }
 
+hint {
+    display: block;
+    margin-top: 5px;
+    padding-left: 5px;
+}
+
 /* background gradient color of the top navigation bar */
 .navbar-inner {
     opacity: 0.8;
@@ -86,6 +92,10 @@ a:hover {
     margin-right: 10px;
 }
 
+.smallspace {
+    margin-left: 5px;
+    margin-right: 5px;
+}
 .leftspace {
     margin-left: 30px;
 }
@@ -308,8 +318,7 @@ textarea {
 }
 
 .profile-pic {
-    width: 100px; 
-    margin-top: 57px;
+    width: 98px; 
     border: 1px solid #DDDDDD;
     border-radius: 4px 4px 4px 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
@@ -317,6 +326,8 @@ textarea {
     line-height: 20px;
     padding: 4px;
     transition: all 0.2s ease-in-out 0s;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .profile-box {
@@ -326,10 +337,137 @@ textarea {
     transition: all 0.2s ease-in-out 0s;
     padding: 10px;
     height: 200px;
+    margin-bottom: 5px;
 }
 
-/* masonry */
+.profile-summary {
+    border: 1px solid #DDDDDD;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+    transition: all 0.2s ease-in-out 0s;
+    padding: 10px;
+    margin-top: 60px;
+}
+
+.skills-input { 
+    border:1px solid #CCC; 
+    background: #FFF; 
+    padding:5px; 
+    width:900px; 
+    height:33px; 
+    overflow-y: auto; 
+    border-radius: 4px 4px 4px 4px; 
+    margin-bottom: 5px;
+
+}
+
+.skills-input span { 
+    border: 1px solid #a5d24a; 
+    -moz-border-radius:2px; 
+    -webkit-border-radius:2px; 
+    display: block; 
+    float: left; 
+    padding: 5px; 
+    text-decoration:none; 
+    background: #cde69c; 
+    color: #638421; 
+    margin-right: 5px; 
+    margin-bottom:5px;
+    font-size:13px; 
+    border-radius: 4px 4px 4px 4px;
+}
+
+/* isotope */
+.box {
+  margin: 5px;
+  padding: 5px;
+  background: #D8D5D2;
+  font-size: 11px;
+  line-height: 1.4em;
+  float: left;
+  -webkit-border-radius: 5px;
+     -moz-border-radius: 5px;
+          border-radius: 5px;
+}
+
+.box h2 {
+  font-size: 14px;
+  font-weight: 200;
+}
+
+.col1 { width: 80px; }
+.col2 { width: 180px; }
+.col3 { width: 280px; }
+.col4 { width: 380px; }
+.col5 { width: 480px; }
+
 #container {
+  border: none;
+  padding: 5px;
+  margin: 50px auto;
+  max-width: 900px;
+}
+
+.thumbnail {
+    line-height: 20px;
+    text-align: center;
+}
+
+.isotope-item {
+  z-index: 2;
+}
+
+.isotope-hidden.isotope-item {
+  pointer-events: none;
+  z-index: 1;
+}
+
+.isotope,
+.isotope .isotope-item {
+  -webkit-transition-duration: 0.8s;
+     -moz-transition-duration: 0.8s;
+      -ms-transition-duration: 0.8s;
+       -o-transition-duration: 0.8s;
+          transition-duration: 0.8s;
+}
+
+.isotope {
+  -webkit-transition-property: height, width;
+     -moz-transition-property: height, width;
+      -ms-transition-property: height, width;
+       -o-transition-property: height, width;
+          transition-property: height, width;
+}
+
+.isotope .isotope-item {
+  -webkit-transition-property: -webkit-transform, opacity;
+     -moz-transition-property:    -moz-transform, opacity;
+      -ms-transition-property:     -ms-transform, opacity;
+       -o-transition-property:      -o-transform, opacity;
+          transition-property:         transform, opacity;
+}
+
+.isotope.no-transition,
+.isotope.no-transition .isotope-item,
+.isotope .isotope-item.no-transition {
+  -webkit-transition-duration: 0s;
+     -moz-transition-duration: 0s;
+      -ms-transition-duration: 0s;
+       -o-transition-duration: 0s;
+          transition-duration: 0s;
+}
+
+.isotope.infinite-scrolling {
+  -webkit-transition: none;
+     -moz-transition: none;
+      -ms-transition: none;
+       -o-transition: none;
+          transition: none;
+}
+
+
+/* masonry */
+/*#container {
   background: #FFF;
   padding: 5px;
   margin-bottom: 20px;
@@ -409,11 +547,11 @@ textarea {
 }
 
 
-/* disable transitions on container */
+/* disable transitions on container 
 .transitions-enabled.infinite-scroll.masonry {
   -webkit-transition-property: none;
      -moz-transition-property: none;
       -ms-transition-property: none;
        -o-transition-property: none;
           transition-property: none;
-}
+}*/

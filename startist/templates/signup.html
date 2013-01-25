@@ -13,91 +13,6 @@
     <link href="{{ url_for('static', filename='css/startist.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/bootstrap-formhelpers.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/bootstrap-formhelpers-countries.flags.css') }}" rel="stylesheet" type="text/css"/>
-
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap-formhelpers-countries.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap-formhelpers-countries.en_US.js') }}"></script>
-    <script>
-      $(document).ready(function(){
-
-        $(".icon-refresh").click(function() {
-          var link = $("#link").val();
-          $(".signup-pic").html('<img style="height: 100px;" src="' + link + '"/>');
-        });
-
-        $('.register').submit(function(event) {
-          event.preventDefault();
-          $('.name-error').html('');
-          $('.username-error').html('');                   
-          $('.email-error').html('');                 
-          $('.password-error').html('');                 
-                         
-          var $form = $( this ),
-              group = $form.find( 'input[name="group"]:checked' ).val(),
-              name = $form.find( 'input[name="name"]' ).val(),
-              username = $form.find( 'input[name="username"]' ).val(),
-              email = $form.find( 'input[name="email"]' ).val(),
-              password = $form.find( 'input[name="password"]' ).val(),
-              pic = $form.find( 'input[name="pic"]' ).val(),
-              country = $form.find(":selected").text(),
-              city = $form.find( 'input[name="city"]' ).val(),
-              title = $form.find( 'input[name="title"]' ).val(),
-              fields = $form.find( 'input[name="fields"]' ).val(),
-              website = $form.find( 'input[name="website"]' ).val(),
-              url = $form.attr( 'action' );
-          jdata = JSON.stringify({"group": group, "name": name, "username": username, "email": email, "password": password, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website});
-          jQuery.ajax({
-                  type: "POST",
-                  url: url,
-                  data: jdata,
-                  success: function(data) {
-                    if ((data.name == 1) && (data.username == 1) && (data.email == 1) && (data.password == 1)) 
-                    { 
-                      document.location.href = '{{ url_for("user", username=session.username) }}' + username;
-                    }
-                    else
-                    {
-                      if (data.name == 0)
-                      {
-                        $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
-                        $('.name-error').html('Name can not be empty.');
-                      }
-                      if (data.username == 0)
-                      {
-                        $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
-                        $('.username-error').html('Username can not be empty.');
-                      }
-                      if (data.username == 2)
-                      {
-                        $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
-                        $('.username-error').html('Username already exists.');
-                      }
-                      if (data.email == 0)
-                      {
-                        $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
-                        $('.email-error').html('Invalid email address.');
-                      }
-                      if (data.email == 2)
-                      {
-                        $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
-                        $('.email-error').html('Email address already exists.');
-                      }
-                      if (data.password == 0)
-                      {
-                        $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
-                        $('.password-error').html('Password must be at least 7 characters.');
-                      }
-                      return;
-                    }
-                  },
-                  dataType: "json",
-                  contentType: "application/json",
-                  processData: false
-                });
-          $('.register-button').html('<img src="{{ url_for("static", filename="img/loading.gif") }}"/>');
-        });
-      });
-    </script>
   </head>
     
   <body>
@@ -150,5 +65,91 @@
     </div>
   </div> <!-- /container -->
 
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap-formhelpers-countries.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap-formhelpers-countries.en_US.js') }}"></script>
+  <script>
+    $(document).ready(function(){
+
+      $(".icon-refresh").click(function() {
+        var link = $("#link").val();
+        $(".signup-pic").html('<img style="height: 100px;" src="' + link + '"/>');
+      });
+
+      $('.register').submit(function(event) {
+        event.preventDefault();
+        $('.name-error').html('');
+        $('.username-error').html('');                   
+        $('.email-error').html('');                 
+        $('.password-error').html('');                 
+                       
+        var $form = $( this ),
+            group = $form.find( 'input[name="group"]:checked' ).val(),
+            name = $form.find( 'input[name="name"]' ).val(),
+            username = $form.find( 'input[name="username"]' ).val(),
+            email = $form.find( 'input[name="email"]' ).val(),
+            password = $form.find( 'input[name="password"]' ).val(),
+            pic = $form.find( 'input[name="pic"]' ).val(),
+            country = $form.find(":selected").text(),
+            city = $form.find( 'input[name="city"]' ).val(),
+            title = $form.find( 'input[name="title"]' ).val(),
+            fields = $form.find( 'input[name="fields"]' ).val(),
+            website = $form.find( 'input[name="website"]' ).val(),
+            url = $form.attr( 'action' );
+        jdata = JSON.stringify({"group": group, "name": name, "username": username, "email": email, "password": password, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website});
+        jQuery.ajax({
+                type: "POST",
+                url: url,
+                data: jdata,
+                beforeSend: function() {
+                  $('.register-button').html('<img src="{{ url_for("static", filename="img/loading.gif") }}"/>');
+                },
+                success: function(data) {
+                  if ((data.name == 1) && (data.username == 1) && (data.email == 1) && (data.password == 1)) 
+                  { 
+                    document.location.href = '{{ url_for("user", username=session.username) }}' + username;
+                  }
+                  else
+                  {
+                    if (data.name == 0)
+                    {
+                      $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
+                      $('.name-error').html('Name can not be empty.');
+                    }
+                    if (data.username == 0)
+                    {
+                      $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
+                      $('.username-error').html('Username can not be empty.');
+                    }
+                    if (data.username == 2)
+                    {
+                      $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
+                      $('.username-error').html('Username already exists.');
+                    }
+                    if (data.email == 0)
+                    {
+                      $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
+                      $('.email-error').html('Invalid email address.');
+                    }
+                    if (data.email == 2)
+                    {
+                      $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
+                      $('.email-error').html('Email address already exists.');
+                    }
+                    if (data.password == 0)
+                    {
+                      $('.register-button').html('<button type="submit" class="btn btn-primary">Create New Account</button>');
+                      $('.password-error').html('Password must be at least 7 characters.');
+                    }
+                    return;
+                  }
+                },
+                dataType: "json",
+                contentType: "application/json",
+                processData: false
+              });
+      });
+    });
+  </script>
   </body>
 </html>

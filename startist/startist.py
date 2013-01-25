@@ -15,7 +15,7 @@ import urlparse
 import os
 
 
-DEBUG = False
+DEBUG = True
 KEY = 'H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1'
 UPLOAD_FOLDER = os.path.realpath('.') + '/static/pics/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -214,8 +214,9 @@ def register():
         current_time = int(time())
         ip = request.access_route[0]
         description_default = "Say something nice about yourself."
+        skills = []
 
-        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website, "description": description_default}
+        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website, "description": description_default, "skills": skills}
 
         mongo.db.users.ensure_index([("email",ASCENDING), ("username", ASCENDING)], unique=True, background=True)
         mongo.db.users.ensure_index([("facebook.username",ASCENDING)], sparse=True, background=True)
@@ -242,6 +243,7 @@ def update():
     return data
 
 
+# search for partners and projects
 @app.route('/search', methods = ['POST'])
 def search():
     search = request.json['search']
@@ -254,10 +256,18 @@ def search():
     return data
 
 
+# partners/users
 @app.route('/user/<username>', methods = ['GET'])
 def user(username):
     user = get_user(username)
     return render_template("profile.html", user=user)
+
+
+# projects
+@app.route('/project/<projectname>', methods = ['GET'])
+def project(projectname):
+    user = get_user(username)
+    return render_template("project.html", user=user)
 
 
 # SOCIAL MEDIA LOGIN [
@@ -410,9 +420,8 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
-    return ''
+            #return redirect(url_for('uploaded_file',filename=filename))
+    return 'HELLO!'
 
 
 @app.route('/uploads/<filename>')

@@ -724,7 +724,7 @@ def api_stream_song():
 
 
 # get the most recent songs by number and visibility
-@app.route("/recent", methods = ["GET"])
+@app.route("/recent", methods = ["GET", "POST"])
 def api_recent_list():
 
     if request.headers["Content-Type"] == "application/json":
@@ -781,7 +781,7 @@ def api_recent_list():
 
 
 # get all the playlists for a user
-@app.route("/playlists", methods = ["GET"])
+@app.route("/playlists", methods = ["GET", "POST"])
 def api_playlists():
 
     if request.headers["Content-Type"] == "application/json":
@@ -889,7 +889,7 @@ def api_add_song():
 
 
 # get a song via the api and return its metadata
-@app.route("/get", methods = ["GET"])
+@app.route("/get", methods = ["GET", "POST"])
 def api_get_song():
 
     if request.headers["Content-Type"] == "application/json":

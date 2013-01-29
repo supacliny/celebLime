@@ -59,7 +59,7 @@
     <br>
     <div id="picture" class="upload-media">
       <h4>Upload an image to your portfolio:</h4>
-      <form class="fileupload fileupload-new" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}" target="submit-iframe">
+      <form class="fileupload fileupload-new" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}">
         <div class="fileupload-preview thumbnail" style="width: 200px; height: 200px;"></div>
           <div>
             <span class="btn btn-small btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file-input"/></span>
@@ -254,7 +254,7 @@
             labels += ','
         });
         $(this).parent().children('.labels-input').hide();
-        $(this).parent().children('.tags').importTags(labels);
+        $(this).parent().find('.tags').importTags(labels);
         $(this).parent().children('.labels-input-edit').show();
       },
 

@@ -441,7 +441,6 @@ def twsverify():
 # UPLOAD FUNCTIONS [
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    print request
     username = session["username"]
     if request.method == 'POST':
         file = request.files['file']
@@ -453,7 +452,7 @@ def upload_file():
             mongo.db.users.update({"username": username},{"$push": {"portfolio.pictures": {"id":str(file_id)}}})
 
             #return redirect(url_for('uploaded_file',filename=filename))
-    return 'HELLO!'
+    return redirect(url_for('portfolio', username=username))
 
 
 # serve files

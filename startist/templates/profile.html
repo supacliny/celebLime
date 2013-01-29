@@ -100,8 +100,10 @@
     {% endif %}
     <hr>
     <h3>Portfolio</h3>
+    <a href="{{ url_for('portfolio', username=user.username) }}"><div class="thumbnail dash" style="width: 100px; height: 100px;"><p>Add Portfolio</p></div></a>
     <hr>
     <h3>Projects</h3>
+    <div class="thumbnail dash" style="width: 100px; height: 100px;"><p>Add Project</p></div>
     <hr>
     <h3>Following</h3>
 
@@ -199,7 +201,9 @@
   
           var url = '{{ url_for('update') }}';
           var username = '{{ user.username }}';
-          data = JSON.stringify({"username": username, "update": {"skills": array}});
+          var search = JSON.stringify({"username": username});
+          var update = JSON.stringify({"skills": array});
+          data = JSON.stringify({"search": search, "update": update});
           jQuery.ajax({
                   type: "POST",
                   url: url,
@@ -240,18 +244,19 @@
                 $("div.editme", location).text(value);
                 var url = '{{ url_for('update') }}';
                 var username = '{{ user.username }}';
-                data = JSON.stringify({"username": username, "update": {"description": value}});
-        jQuery.ajax({
-                type: "POST",
-                url: url,
-                data: data,
-                beforeSend: function() {},
-                complete: function() {},
-                success: function(data) {},
-                dataType: "json",
-                contentType: "application/json",
-                processData: false
-              });
+                var search = JSON.stringify({"username": username});
+                var update = JSON.stringify({"description": value});
+                data = JSON.stringify({"search": search, "update": update});
+                jQuery.ajax({
+                  type: "POST",
+                  url: url,
+                  data: data,
+                  beforeSend: function() {},
+                  success: function(data) {},
+                  dataType: "json",
+                  contentType: "application/json",
+                  processData: false
+                });
           }
         );
 
@@ -271,7 +276,6 @@
         //           url: url,
         //           data: jdata,
         //           beforeSend: function() {},
-        //           complete: function() {},
         //           success: function(data) {},
         //           dataType: "json",
         //           contentType: "application/json",

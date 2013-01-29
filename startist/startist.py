@@ -1,4 +1,4 @@
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, Response, jsonify
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, Response, jsonify, make_response
 from flask.ext.pymongo import PyMongo
 from flask import send_from_directory
 from pymongo import ASCENDING
@@ -9,11 +9,12 @@ from time import mktime
 from time import time
 import tweepy
 import json
+import bson
 import re
 import requests
 import urlparse
 import os
-
+import gridfs
 
 DEBUG = False
 KEY = 'H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1'
@@ -25,6 +26,8 @@ app.config.from_object(__name__)
 app.config['SECRET_KEY'] = KEY
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 mongo = PyMongo(app)
+with app.test_request_context():
+    fs = gridfs.GridFS(mongo.db)
 
 if DEBUG:
     FB_SIGNUP_REDIRECT = 'http://localhost:8000/fbsverify'
@@ -233,10 +236,15 @@ def register():
 # update user information
 @app.route('/update', methods = ['POST'])
 def update():
-    username = request.json['username']
+    search = request.json['search']
     update = request.json['update']
 
-    mongo.db.users.update({"username": username},{"$set": update})
+    # TODO: check if username is logged in current session!
+
+    search = json.loads(search)
+    update = json.loads(update)
+
+    mongo.db.users.update(search, {"$set": update})
 
     data = {}
     data = json.dumps(data)
@@ -256,6 +264,17 @@ def search():
     return data
 
 
+# get user images for portfolio
+@app.route('/get_portfolio', methods = ['POST'])
+def get_portfolio():
+    username = request.json['username']
+    user = get_user(username)
+    portfolio = user["portfolio"]
+    data = {"portfolio": portfolio}
+    data = json.dumps(data)
+    return data
+
+
 # partners/users
 @app.route('/user/<username>', methods = ['GET'])
 def user(username):
@@ -268,6 +287,13 @@ def user(username):
 def project(projectname):
     user = get_user(username)
     return render_template("project.html", user=user)
+
+
+# portfolios
+@app.route('/user/<username>/portfolio', methods = ['GET'])
+def portfolio(username):
+    user = get_user(username)
+    return render_template("portfolio.html", user=user)
 
 
 # SOCIAL MEDIA LOGIN [
@@ -415,20 +441,30 @@ def twsverify():
 # UPLOAD FUNCTIONS [
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
+    print request
+    username = session["username"]
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file_id = fs.put(file, filename=filename)
+
+            mongo.db.users.update({"username": username},{"$push": {"portfolio.pictures": {"id":str(file_id)}}})
+
             #return redirect(url_for('uploaded_file',filename=filename))
     return 'HELLO!'
 
 
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
-
+# serve files
+@app.route('/image/<id>')
+def get_image(id):
+    id = str(id)
+    file_oid = bson.objectid.ObjectId(id)
+    file = fs.get(file_oid).read()
+    response = make_response(file)
+    response.headers['Content-Type'] = 'image/jpeg'
+    return response
 # ]
 
 

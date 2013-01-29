@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Portfolio &middot; Startist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An online platform for talented users to collaborate on awesome projects">
+    <meta name="author" content="cvstechnology">
+
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="shortcut icon" type="image/x-icon"/>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/startist.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/bootstrap-fileupload.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/jquery.tagsinput.css') }}" rel="stylesheet" type="text/css"/>
+  </head>
+  
+  <body>
+
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <a href="{{ url_for('home') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a>
+        <div class="lander">
+          <div class="nav-collapse collapse pull-right">
+              <ul class="nav">
+              {% if not session.logged_in %}
+                <li><a href="/login" data-toggle="modal">login</a></li>
+                <li><a href="/join" data-toggle="modal">join</a></li>
+              {% else %}
+                <li><a href="{{ url_for('logout') }}" id="logout">logout</a></li>
+              {% endif %}
+              </ul>
+              <form class="navbar-search">
+                <input type="text" class="search-query" placeholder="Search projects">
+                <div class="icon-search" style="background-image:url('{{ url_for('static', filename='img/glyphicons-halflings.png') }}');"></div>
+              </form>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-narrow">
+
+    {% if session.logged_in and session.username == user.username %}
+    <h3>Upload Media</h3>
+
+    <div>
+      <input type="radio" name="group" value="picture" checked="yes"><i class="space icon-camera"></i><div class="heading rightspace">Picture</div>
+      <input type="radio" name="group" value="youtube"><i class="space icon-play"></i><div class="heading rightspace">YouTube</div>
+      <input type="radio" name="group" value="soundcloud"><i class="space icon-music"></i><div class="heading">Soundcloud</div>
+    </div>
+    <br>
+    <div id="picture" class="upload-media">
+      <h4>Upload an image to your portfolio:</h4>
+      <form class="fileupload fileupload-new" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}" target="submit-iframe">
+        <div class="fileupload-preview thumbnail" style="width: 200px; height: 200px;"></div>
+          <div>
+            <span class="btn btn-small btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file-input"/></span>
+            <a href="#" class="smallspace btn btn-small fileupload-exists" data-dismiss="fileupload">Remove</a><button type="submit" class="smallspace btn btn-small fileupload-exists" id="upload-btn">Upload</button>
+        </div>
+        <iframe id="submit-iframe" name="submit-iframe" class="invisible"></iframe>
+      </form>
+    </div>
+
+    <div id="youtube" class="upload-media" style="display: none;">
+      <h4>Link to a youtube video in your portfolio</h4>
+      <input name="youtube" value="youtube link"/>
+    </div>
+    
+    <div id="soundcloud" class="upload-media" style="display: none;">
+      <h4>Link to a soundcloud clip in your portfolio</h4>
+      <input name="soundcloud" value="soundcloud link"/>
+    </div>  
+    {% endif %}
+
+    <section id="options">
+        <h3>Filters</h3>
+        <ul id="filters" class="option-set clearfix" data-option-key="filter">
+          <li><a href="#filter" data-option-value="*" class="selected">show all</a></li>
+          <li><a href="#filter" data-option-value=".pictures">pictures</a></li>
+          <li><a href="#filter" data-option-value=".videos">videos</a></li>
+          <li><a href="#filter" data-option-value=".soundcloud">soundcloud</a></li>
+        </ul>
+    </section> <!-- #options --> 
+  </div>
+
+  <div id="container">
+    {% for photo in user.portfolio.pictures %}
+    <div class="box col2" data-category="pictures" id="{{ photo.id }}">
+      <div class="box-container">
+        
+        <div class="thumbnail">
+          <img src="{{ url_for('get_image', id=photo.id) }}"/>
+        </div>
+
+        <div class="caption" style="display: none;">
+            {% if photo.caption %}
+            <div class="caption-input">{{ photo.caption }}</div>
+            {% else %}
+            <div class="caption-input">Add a caption</div>
+            {% endif %}
+            {% if session.logged_in and session.username == user.username %}
+            <button class="btn btn-small trigger" type="button">Edit</button>
+            {% endif %}
+        </div>
+
+        <div class="labels" style="display: none;">
+            <div class="labels-input">
+            {% if photo.labels %}
+            {% for label in photo.labels %}  
+              <span>{{ label }}</span>
+            {% endfor %}
+            {% else %}
+            <hint>Add Labels</hint>
+            {% endif %}
+            </div>
+            <div class="labels-input-edit" style="display:none;">
+              <input name="tags" class="tags" value=""/>
+            </div>
+            {% if session.logged_in and session.username == user.username %}
+            <button class="btn btn-small edit" type="button">Edit</button>
+            {% endif %}
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap-fileupload.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.tagsinput.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
+  <script>
+   $(function(){
+      
+      var $container = $('#container');
+
+      $container.imagesLoaded(function() {
+        $container.isotope({
+            itemSelector : '.box'
+        });
+      });
+
+    $items = $('.box'); // to be able to reference methods on every .item
+
+    $('.tags').tagsInput(
+      {
+        'height':'33px',
+        'width':'338px',
+        'minChars' : 1
+      });
+
+    $('.box-container').click(function () { // do not register the .item as usual, but any other element within it
+
+        var $previousSelected = $(this).parent('.selected'); // necessary for switching
+
+        // shrink box!
+        if ($(this).parent().hasClass('selected')) { // now, we have to use $(this).parent() because .header is inside .item
+
+            $(this).children('.caption').hide();
+            $(this).children('.labels').hide();
+
+            $(this).parent().removeClass('selected');
+            $(this).parent().children('.maximised').hide();
+            $(this).parent().children('.minimised').show();
+
+        } 
+        // expand box!
+        else {
+
+            $(this).children('.caption').show();
+            $(this).children('.labels').show();
+
+            $previousSelected.removeClass('selected');
+            $previousSelected.children('.minimised').show();
+            $previousSelected.children('.maximised').hide();
+
+            $(this).parent().addClass('selected');
+            $(this).parent().children('.minimised').hide();
+            $(this).parent().children('.maximised').show();
+
+        }
+        $container.isotope('reLayout');
+    });
+
+    $('.trigger').toggle(
+        function(){
+          if ($('.caption-input').children('input').length == 0) {
+            var location = $(this).parent();
+            $(this).parent().find('button').text("Finished");
+
+            //Create the HTML to insert into the div. Escape any " characters 
+            var inputbox = '<input class="inputbox" value="' + $('.caption-input', location).text() + '">';
+            
+            //Insert the HTML into the div
+            $('.caption-input', location).html(inputbox);
+            
+            //Immediately give the input box focus. The user
+            //will be expecting to immediately type in the input box,
+            //and we need to give them that ability
+            $('input.inputbox', location).focus();
+          }
+        },
+        
+        function(){
+
+          var location = $(this).parent();
+          var currentId = $(this).parent().parent().parent().attr('id');
+          $(this).parent().find('button').text("Edit");
+          var value = $('input.inputbox', location).val();
+          if (value == '')
+          {
+            $('.caption-input', location).text('Add a caption');
+            return;
+          }
+          $('.caption-input', location).text(value);
+          var url = '{{ url_for('update') }}';
+          var username = '{{ user.username }}';
+          var search = JSON.stringify({"username": username, "portfolio.pictures.id": currentId});
+          var update = JSON.stringify({"portfolio.pictures.$.caption": value});
+          data = JSON.stringify({"search": search, "update": update});
+          jQuery.ajax({
+                  type: "POST",
+                  url: url,
+                  data: data,
+                  beforeSend: function() {},
+                  success: function(data) {},
+                  dataType: "json",
+                  contentType: "application/json",
+                  processData: false
+                });
+        }
+    );
+
+    $('.edit').toggle( 
+
+      // labels-input
+      function(event) {
+
+        event.stopPropagation();
+        $(this).text("Finished");
+        var labels = '';
+        $(this).parent().find('.labels-input span').each(function(){
+            labels += $(this).text();
+            labels += ','
+        });
+        $(this).parent().children('.labels-input').hide();
+        $(this).parent().children('.tags').importTags(labels);
+        $(this).parent().children('.labels-input-edit').show();
+      },
+
+      // labels-input-edit
+      function(event) {
+
+        event.stopPropagation();
+        $(this).text("Edit");
+        var currentId = $(this).parent().parent().parent().attr('id');
+        var labels = $(this).parent().find('.tags').val();
+        $(this).parent().children('.labels-input-edit').hide();
+        $(this).parent().children('.labels-input').show();
+        var content = '';
+        var array = labels.split(',');
+        if (array[0] == '')
+        {
+          array = [];
+          content += '<hint>Add Labels</hint>';
+        }
+        for (var i = 0; i < array.length; i++) {
+          content += '<span>' + array[i] + '</span>';
+        }
+        $(this).parent().children('.labels-input').html(content);
+        var url = '{{ url_for('update') }}';
+        var username = '{{ user.username }}';
+        var search = JSON.stringify({"username": username, "portfolio.pictures.id": currentId});
+        var update = JSON.stringify({"portfolio.pictures.$.labels": array});
+        data = JSON.stringify({"search": search, "update": update});
+        jQuery.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                beforeSend: function() {},
+                success: function(data) {},
+                dataType: "json",
+                contentType: "application/json",
+                processData: false
+              });
+        }
+      );
+
+
+      $('.labels-input-edit').click( function(event) {
+        event.stopPropagation();
+      });
+
+      $('.caption-input').click( function(event) {
+        event.stopPropagation();
+      });
+
+      // add randomish size classes
+      $container.find('.box').each(function(){
+        var $this = $(this),
+            number = parseInt( $this.find('.number').text(), 10 );
+        if ( number % 7 % 2 === 1 ) {
+          $this.addClass('width2');
+        }
+        if ( number % 3 === 0 ) {
+          $this.addClass('height2');
+        }
+      });
+
+     // change size of clicked element
+      $container.delegate( '.box', 'click', function(){
+        $(this).toggleClass('large');
+        $container.isotope('reLayout');
+      });
+
+      // toggle variable sizes of all elements
+      $('#toggle-sizes').find('a').click(function(){
+        $container
+          .toggleClass('variable-sizes')
+          .isotope('reLayout');
+        return false;
+      });
+      
+      var $optionSets = $('#options .option-set'),
+          $optionLinks = $optionSets.find('a');
+
+      $optionLinks.click(function(){
+        var $this = $(this);
+        // don't proceed if already selected
+        if ( $this.hasClass('selected') ) {
+          return false;
+        }
+        var $optionSet = $this.parents('.option-set');
+        $optionSet.find('.selected').removeClass('selected');
+        $this.addClass('selected');
+  
+        // make option object dynamically, i.e. { filter: '.my-filter-class' }
+        var options = {},
+            key = $optionSet.attr('data-option-key'),
+            value = $this.attr('data-option-value');
+        // parse 'false' as false boolean
+        value = value === 'false' ? false : value;
+        options[ key ] = value;
+        if ( key === 'layoutMode' && typeof changeLayoutMode === 'function' ) {
+          // changes in layout modes need extra logic
+          changeLayoutMode( $this, options )
+        } else {
+          // otherwise, apply new options
+          $container.isotope( options );
+        }
+        
+        return false;
+      });
+    });
+
+    $(document).ready(function(){
+ 
+        $("input[name$='group']").click(function() {
+            var checked = $(this).val();
+            $(".upload-media").hide();
+            $("#"+checked).show();
+        }); 
+
+        $('#submit-iframe').load(function() {
+                // var url = '{{ url_for('get_portfolio') }}';
+                // var username = '{{ user.username }}';
+                // data = JSON.stringify({"username": username});
+                // var content = '';
+                // jQuery.ajax({
+                //         type: "POST",
+                //         url: url,
+                //         data: data,
+                //         success: function(data) {
+                //           var photos = data.portfolio.pictures;
+                //           $.each(photos, function(index, photo) {
+                //               var link = '/image/' + photo;
+                //               content += '<div class="box col2 pictures" data-category="pictures"><div class="thumbnail"><img src="' + link + '"/></div><div class="labels-input-edit" style="display:none;"><input name="tags" id="tags" value=""/></div></div>';
+                //           });
+                //           $("#container").html(content);
+                //           },
+                //         dataType: "json",
+                //         contentType: "application/json",
+                //         processData: false
+                //      });
+ 
+        });
+
+      // <div class="labels">
+      //     <div class="labels-input">
+      //     {% if user.skills %}
+      //     {% for skill in user.skills %}  
+      //       <span>{{ skill }}</span>
+      //     {% endfor %}
+      //     {% else %}
+      //     <hint>Add Labels</hint>
+      //     {% endif %}
+      //     </div>
+      //       <div class="labels-input-edit" style="display:none;">
+      //       <input name="tags" id="tags" value=""/>
+      //     </div>    
+      // </div>
+      // {% if session.logged_in and session.username == user.username %}
+      // <div class="edit"><button class="btn btn-small" type="button">Edit</button></div>
+      // {% endif %}
+
+
+        // $('.fileupload').submit(function(event) {
+        //   event.preventDefault();
+        //   var $form = $( this ),
+        //       file = $form.find( 'input[name="file"]' ).val(),
+        //       url = $form.attr( 'action' );
+        //   var username = '{{ user.username }}';    
+        //   jdata = JSON.stringify({"username": username, "file": file});
+        //   jQuery.ajax({
+        //           type: "POST",
+        //           url: url,
+        //           data: jdata,
+        //           beforeSend: function() {
+        //             $('#upload-btn').html('<img src="{{ url_for("static", filename="img/loading.gif") }}"/>');
+        //           },
+        //           success: function(data) {},
+        //           dataType: "json",
+        //           contentType: "application/json",
+        //           processData: false
+        //         });
+          
+        // });
+
+        // var json = $.parseJSON($("#hiddeniframe").contents().text());
+
+      });
+  </script>
+
+  </body>
+</html>

@@ -71,7 +71,10 @@
 
     <div id="youtube" class="upload-media" style="display: none;">
       <h4>Link to a youtube video in your portfolio</h4>
-      <input name="youtube" value="youtube link"/>
+      <form class="youtube" method="post" action="{{ url_for('submit') }}">
+        <input name="youtube" value="youtube link"/>
+        <button type="submit" class="smallspace btn btn-small" id="youtube-btn">Submit</button>
+      </form>
     </div>
     
     <div id="soundcloud" class="upload-media" style="display: none;">
@@ -92,17 +95,26 @@
   </div>
 
   <div id="container">
-    {% for photo in user.portfolio.pictures %}
-    <div class="box col2 pictures" data-category="pictures" id="{{ photo.id }}">
+    {% if user.portfolio %}
+    {% for file in user.portfolio.media %}
+    <div class="box col2 {{ file.class }}" data-category="{{ file.class }}" id="{{ file.id }}">
       <div class="box-container">
         
+        {% if file.class == "pictures" %}
         <div class="thumbnail">
-          <img src="{{ url_for('get_image', id=photo.id) }}"/>
+          <img src="{{ url_for('get_image', id=file.id) }}"/>
         </div>
+        {% endif %}
+
+        {% if file.class == "videos" %}
+        <div class="thumbnail">
+          <img src="http://img.youtube.com/vi/{{ file.id }}/0.jpg"/>
+        </div>
+        {% endif %}
 
         <div class="caption" style="display: none;">
-            {% if photo.caption %}
-            <div class="caption-input">{{ photo.caption }}</div>
+            {% if file.caption %}
+            <div class="caption-input">{{ file.caption }}</div>
             {% else %}
             <div class="caption-input">Add a caption</div>
             {% endif %}
@@ -113,8 +125,8 @@
 
         <div class="labels" style="display: none;">
             <div class="labels-input">
-            {% if photo.labels %}
-            {% for label in photo.labels %}  
+            {% if file.labels %}
+            {% for label in file.labels %}  
               <span>{{ label }}</span>
             {% endfor %}
             {% else %}
@@ -132,6 +144,7 @@
       </div>
     </div>
     {% endfor %}
+    {% endif %}
   </div>
 
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
@@ -146,7 +159,9 @@
 
       $container.imagesLoaded(function() {
         $container.isotope({
-            itemSelector : '.box'
+            itemSelector : '.box',
+            transformsEnabled: false,
+            containerStyle: { position: 'relative' }
         });
       });
 
@@ -166,6 +181,14 @@
         // shrink box!
         if ($(this).parent().hasClass('selected')) { // now, we have to use $(this).parent() because .header is inside .item
 
+            var category = $(this).parent().attr('data-category');
+            if (category == 'videos'){
+              var video_id = $(this).parent().attr('id');
+              var content = '<img src="http://img.youtube.com/vi/' +  video_id + '/0.jpg"/>';
+              $(this).children('.thumbnail').html(content);
+              $(this).parent().addClass('col2');
+            }
+
             $(this).children('.caption').hide();
             $(this).children('.labels').hide();
 
@@ -176,6 +199,14 @@
         } 
         // expand box!
         else {
+
+            var category = $(this).parent().attr('data-category');
+            if (category == 'videos'){
+              var video_id = $(this).parent().attr('id');
+              var content = '<iframe class="youtube-player" type="text/html" width="340" height="300" src="http://www.youtube.com/embed/' + video_id + '" frameborder="0"></iframe>';
+              $(this).children('.thumbnail').html(content);
+              $(this).parent().addClass('large');
+            }
 
             $(this).children('.caption').show();
             $(this).children('.labels').show();
@@ -225,8 +256,8 @@
           $('.caption-input', location).text(value);
           var url = '{{ url_for('update') }}';
           var username = '{{ user.username }}';
-          var search = JSON.stringify({"username": username, "portfolio.pictures.id": currentId});
-          var update = JSON.stringify({"portfolio.pictures.$.caption": value});
+          var search = JSON.stringify({"username": username, "portfolio.media.id": currentId});
+          var update = JSON.stringify({"portfolio.media.$.caption": value});
           data = JSON.stringify({"search": search, "update": update});
           jQuery.ajax({
                   type: "POST",
@@ -280,8 +311,8 @@
         $(this).parent().children('.labels-input').html(content);
         var url = '{{ url_for('update') }}';
         var username = '{{ user.username }}';
-        var search = JSON.stringify({"username": username, "portfolio.pictures.id": currentId});
-        var update = JSON.stringify({"portfolio.pictures.$.labels": array});
+        var search = JSON.stringify({"username": username, "portfolio.media.id": currentId});
+        var update = JSON.stringify({"portfolio.media.$.labels": array});
         data = JSON.stringify({"search": search, "update": update});
         jQuery.ajax({
                 type: "POST",

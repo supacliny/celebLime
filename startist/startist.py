@@ -446,12 +446,10 @@ def upload_file():
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             file_id = fs.put(file, filename=filename)
 
-            mongo.db.users.update({"username": username},{"$push": {"portfolio.pictures": {"id":str(file_id)}}})
+            mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "pictures", "id":str(file_id)}}}, upsert=True)
 
-            #return redirect(url_for('uploaded_file',filename=filename))
     return redirect(url_for('portfolio', username=username))
 
 
@@ -464,6 +462,26 @@ def get_image(id):
     response = make_response(file)
     response.headers['Content-Type'] = 'image/jpeg'
     return response
+
+
+@app.route('/submit', methods=['GET', 'POST'])
+def submit():
+    username = session["username"]
+    if request.method == 'POST':
+        try:
+            youtube_link = request.form['youtube']
+            url_data = urlparse.urlparse(youtube_link)
+            query = urlparse.parse_qs(url_data.query)
+            file_id = query["v"][0]
+
+            mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "videos", "id": str(file_id)}}}, upsert=True)
+
+        except Exception:
+            return redirect(url_for('portfolio', username=username))
+
+    return redirect(url_for('portfolio', username=username))
+
+
 # ]
 
 

@@ -469,19 +469,24 @@ def submit():
     username = session["username"]
     if request.method == 'POST':
         try:
-            youtube_link = request.form['youtube']
-            url_data = urlparse.urlparse(youtube_link)
-            query = urlparse.parse_qs(url_data.query)
-            file_id = query["v"][0]
-
-            mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "videos", "id": str(file_id)}}}, upsert=True)
-
-        except Exception:
+            link = request.form['link']
+            if 'youtube' in link:
+                url_data = urlparse.urlparse(link)
+                query = urlparse.parse_qs(url_data.query)
+                file_id = query["v"][0]
+                mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "videos", "id": str(file_id)}}}, upsert=True)
+            if 'soundcloud' in link:
+                path = urlparse.urlparse(link).path
+                response = requests.get('http://soundcloud.com/oembed?format=json&url=https://soundcloud.com' + str(path) + '&iframe=true&callback=')
+                result = response.json()
+                html = result['html']
+                thumbnail = result['thumbnail_url']
+                mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "soundcloud", "id": str(path), "iframe": html, "thumbnail": thumbnail}}}, upsert=True)
+        except Exception, e:
+            print e
             return redirect(url_for('portfolio', username=username))
 
     return redirect(url_for('portfolio', username=username))
-
-
 # ]
 
 

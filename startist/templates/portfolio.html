@@ -56,7 +56,7 @@
       <input type="radio" name="group" value="youtube"><i class="space icon-play"></i><div class="heading rightspace">YouTube</div>
       <input type="radio" name="group" value="soundcloud"><i class="space icon-music"></i><div class="heading">Soundcloud</div>
     </div>
-    <br>
+    <hr>
     <div id="picture" class="upload-media">
       <h4>Upload an image to your portfolio:</h4>
       <form class="fileupload fileupload-new" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}">
@@ -72,17 +72,20 @@
     <div id="youtube" class="upload-media" style="display: none;">
       <h4>Link to a youtube video in your portfolio</h4>
       <form class="youtube" method="post" action="{{ url_for('submit') }}">
-        <input name="youtube" value="youtube link"/>
-        <button type="submit" class="smallspace btn btn-small" id="youtube-btn">Submit</button>
+        <input type="text" name="link" placeholder="youtube link"/>
+        <button type="submit" class="bottomspace smallspace btn btn-small">Submit</button>
       </form>
     </div>
     
     <div id="soundcloud" class="upload-media" style="display: none;">
       <h4>Link to a soundcloud clip in your portfolio</h4>
-      <input name="soundcloud" value="soundcloud link"/>
-    </div>  
+      <form class="soundcloud" method="post" action="{{ url_for('submit') }}">
+        <input type="text" name="link" placeholder="soundcloud link"/>
+        <button type="submit" class="bottomspace smallspace btn btn-small">Submit</button>
+      </form>
+    </div>
     {% endif %}
-
+    <hr>
     <section id="options">
         <h3>Filters</h3>
         <ul id="filters" class="option-set clearfix" data-option-key="filter">
@@ -112,6 +115,16 @@
         </div>
         {% endif %}
 
+        {% if file.class == "soundcloud" %}
+        <div class="thumbnail">
+          <div class="soundcloud_thumbnail">
+            <img src="{{ file.thumbnail }}"/>
+          </div>
+          <div class="soundcloud_iframe" style="display: none;">
+            {{ file.iframe | safe() }}
+          </div>
+        </div>
+        {% else %}
         <div class="caption" style="display: none;">
             {% if file.caption %}
             <div class="caption-input">{{ file.caption }}</div>
@@ -140,7 +153,7 @@
             <button class="btn btn-small edit" type="button">Edit</button>
             {% endif %}
         </div>
-
+        {% endif %}
       </div>
     </div>
     {% endfor %}
@@ -153,111 +166,171 @@
   <script src="{{ url_for('static', filename='js/jquery.tagsinput.js') }}"></script>
   <script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
   <script>
-   $(function(){
-      
-      var $container = $('#container');
+    $(document).ready(function(){
 
-      $container.imagesLoaded(function() {
-        $container.isotope({
-            itemSelector : '.box',
-            transformsEnabled: false,
-            containerStyle: { position: 'relative' }
-        });
-      });
-
-    $items = $('.box'); // to be able to reference methods on every .item
-
-    $('.tags').tagsInput(
-      {
-        'height':'33px',
-        'width':'338px',
-        'minChars' : 1
-      });
-
-    $('.box-container').click(function () { // do not register the .item as usual, but any other element within it
-
-        var $previousSelected = $(this).parent('.selected'); // necessary for switching
-
-        // shrink box!
-        if ($(this).parent().hasClass('selected')) { // now, we have to use $(this).parent() because .header is inside .item
-
-            var category = $(this).parent().attr('data-category');
-            if (category == 'videos'){
-              var video_id = $(this).parent().attr('id');
-              var content = '<img src="http://img.youtube.com/vi/' +  video_id + '/0.jpg"/>';
-              $(this).children('.thumbnail').html(content);
-              $(this).parent().addClass('col2');
-            }
-
-            $(this).children('.caption').hide();
-            $(this).children('.labels').hide();
-
-            $(this).parent().removeClass('selected');
-            $(this).parent().children('.maximised').hide();
-            $(this).parent().children('.minimised').show();
-
-        } 
-        // expand box!
-        else {
-
-            var category = $(this).parent().attr('data-category');
-            if (category == 'videos'){
-              var video_id = $(this).parent().attr('id');
-              var content = '<iframe class="youtube-player" type="text/html" width="340" height="300" src="http://www.youtube.com/embed/' + video_id + '" frameborder="0"></iframe>';
-              $(this).children('.thumbnail').html(content);
-              $(this).parent().addClass('large');
-            }
-
-            $(this).children('.caption').show();
-            $(this).children('.labels').show();
-
-            $previousSelected.removeClass('selected');
-            $previousSelected.children('.minimised').show();
-            $previousSelected.children('.maximised').hide();
-
-            $(this).parent().addClass('selected');
-            $(this).parent().children('.minimised').hide();
-            $(this).parent().children('.maximised').show();
-
-        }
-        $container.isotope('reLayout');
-    });
-
-    $('.trigger').toggle(
-        function(){
-          if ($('.caption-input').children('input').length == 0) {
-            var location = $(this).parent();
-            $(this).parent().find('button').text("Finished");
-
-            //Create the HTML to insert into the div. Escape any " characters 
-            var inputbox = '<input class="inputbox" value="' + $('.caption-input', location).text() + '">';
-            
-            //Insert the HTML into the div
-            $('.caption-input', location).html(inputbox);
-            
-            //Immediately give the input box focus. The user
-            //will be expecting to immediately type in the input box,
-            //and we need to give them that ability
-            $('input.inputbox', location).focus();
-          }
-        },
+     $(function(){
         
-        function(){
+        var $container = $('#container');
 
-          var location = $(this).parent();
-          var currentId = $(this).parent().parent().parent().attr('id');
-          $(this).parent().find('button').text("Edit");
-          var value = $('input.inputbox', location).val();
-          if (value == '')
-          {
-            $('.caption-input', location).text('Add a caption');
-            return;
+        $container.imagesLoaded(function() {
+          $container.isotope({
+              itemSelector : '.box',
+              transformsEnabled: false,
+              containerStyle: { position: 'relative' }
+          });
+        });
+
+      $('.tags').tagsInput(
+        {
+          'height':'33px',
+          'width':'338px',
+          'minChars' : 1
+        });
+
+      $('.box-container').click(function () { // do not register the .item as usual, but any other element within it
+
+          var $previousSelected = $(this).parent('.selected'); // necessary for switching
+
+          // shrink box!
+          if ($(this).parent().hasClass('selected')) { // now, we have to use $(this).parent() because .header is inside .item
+
+              var category = $(this).parent().attr('data-category');
+              if (category == 'videos'){
+                var video_id = $(this).parent().attr('id');
+                var content = '<img src="http://img.youtube.com/vi/' +  video_id + '/0.jpg"/>';
+                $(this).children('.thumbnail').html(content);
+              }
+
+              if (category == 'soundcloud'){
+                $(this).children().children('.soundcloud_iframe').hide(); 
+                $(this).children().children('.soundcloud_thumbnail').show(); 
+                $(this).parent().removeClass('larger'); 
+              }
+
+              $(this).children('.caption').hide();
+              $(this).children('.labels').hide();
+              $(this).parent().removeClass('large');
+              $(this).parent().removeClass('selected');
+              $(this).parent().addClass('col2');
+          } 
+          // expand box!
+          else {
+
+              var category = $(this).parent().attr('data-category');
+              if (category == 'videos'){
+                var video_id = $(this).parent().attr('id');
+                var content = '<iframe class="youtube-player" type="text/html" width="340" height="300" src="http://www.youtube.com/embed/' + video_id + '" frameborder="0"></iframe>';
+                $(this).children('.thumbnail').html(content);
+              }
+
+              if (category == 'soundcloud'){
+                $(this).children().children('.soundcloud_thumbnail').hide(); 
+                $(this).children().children('.soundcloud_iframe').show();
+                $(this).parent().addClass('larger'); 
+              }
+
+
+              $(this).children('.caption').show();
+              $(this).children('.labels').show();
+
+              $previousSelected.removeClass('selected');
+              $(this).parent().removeClass('col2');
+              $(this).parent().addClass('large');
+              $(this).parent().addClass('selected');   
           }
-          $('.caption-input', location).text(value);
+          $container.isotope('reLayout');
+      });
+
+      $('.trigger').toggle(
+          function(){
+            if ($('.caption-input').children('input').length == 0) {
+              var location = $(this).parent();
+              $(this).parent().find('button').text("Finished");
+
+              //Create the HTML to insert into the div. Escape any " characters 
+              var inputbox = '<input class="inputbox" value="' + $('.caption-input', location).text() + '">';
+              
+              //Insert the HTML into the div
+              $('.caption-input', location).html(inputbox);
+              
+              //Immediately give the input box focus. The user
+              //will be expecting to immediately type in the input box,
+              //and we need to give them that ability
+              $('input.inputbox', location).focus();
+            }
+          },
+          
+          function(){
+
+            var location = $(this).parent();
+            var currentId = $(this).parent().parent().parent().attr('id');
+            $(this).parent().find('button').text("Edit");
+            var value = $('input.inputbox', location).val();
+            if (value == '')
+            {
+              $('.caption-input', location).text('Add a caption');
+              return;
+            }
+            $('.caption-input', location).text(value);
+            var url = '{{ url_for('update') }}';
+            var username = '{{ user.username }}';
+            var search = JSON.stringify({"username": username, "portfolio.media.id": currentId});
+            var update = JSON.stringify({"portfolio.media.$.caption": value});
+            data = JSON.stringify({"search": search, "update": update});
+            jQuery.ajax({
+                    type: "POST",
+                    url: url,
+                    data: data,
+                    beforeSend: function() {},
+                    success: function(data) {},
+                    dataType: "json",
+                    contentType: "application/json",
+                    processData: false
+                  });
+          }
+      );
+
+      $('.edit').toggle( 
+
+        // labels-input
+        function(event) {
+
+          event.stopPropagation();
+          $(this).text("Finished");
+          var labels = '';
+          $(this).parent().find('.labels-input span').each(function(){
+              labels += $(this).text();
+              labels += ','
+          });
+          $(this).parent().children('.labels-input').hide();
+          $(this).parent().find('.tags').importTags(labels);
+          $(this).parent().children('.labels-input-edit').show();
+        },
+
+        // labels-input-edit
+        function(event) {
+
+          event.stopPropagation();
+          $(this).text("Edit");
+          var currentId = $(this).parent().parent().parent().attr('id');
+          var labels = $(this).parent().find('.tags').val();
+          $(this).parent().children('.labels-input-edit').hide();
+          $(this).parent().children('.labels-input').show();
+          var content = '';
+          var array = labels.split(',');
+          if (array[0] == '')
+          {
+            array = [];
+            content += '<hint>Add Labels</hint>';
+          }
+          for (var i = 0; i < array.length; i++) {
+            content += '<span>' + array[i] + '</span>';
+          }
+          $(this).parent().children('.labels-input').html(content);
           var url = '{{ url_for('update') }}';
           var username = '{{ user.username }}';
           var search = JSON.stringify({"username": username, "portfolio.media.id": currentId});
-          var update = JSON.stringify({"portfolio.media.$.caption": value});
+          var update = JSON.stringify({"portfolio.media.$.labels": array});
           data = JSON.stringify({"search": search, "update": update});
           jQuery.ajax({
                   type: "POST",
@@ -269,207 +342,86 @@
                   contentType: "application/json",
                   processData: false
                 });
-        }
-    );
+          }
+        );
 
-    $('.edit').toggle( 
 
-      // labels-input
-      function(event) {
-
-        event.stopPropagation();
-        $(this).text("Finished");
-        var labels = '';
-        $(this).parent().find('.labels-input span').each(function(){
-            labels += $(this).text();
-            labels += ','
+        $('.labels-input-edit').click( function(event) {
+          event.stopPropagation();
         });
-        $(this).parent().children('.labels-input').hide();
-        $(this).parent().find('.tags').importTags(labels);
-        $(this).parent().children('.labels-input-edit').show();
-      },
 
-      // labels-input-edit
-      function(event) {
+        $('.caption-input').click( function(event) {
+          event.stopPropagation();
+        });
 
-        event.stopPropagation();
-        $(this).text("Edit");
-        var currentId = $(this).parent().parent().parent().attr('id');
-        var labels = $(this).parent().find('.tags').val();
-        $(this).parent().children('.labels-input-edit').hide();
-        $(this).parent().children('.labels-input').show();
-        var content = '';
-        var array = labels.split(',');
-        if (array[0] == '')
-        {
-          array = [];
-          content += '<hint>Add Labels</hint>';
-        }
-        for (var i = 0; i < array.length; i++) {
-          content += '<span>' + array[i] + '</span>';
-        }
-        $(this).parent().children('.labels-input').html(content);
-        var url = '{{ url_for('update') }}';
-        var username = '{{ user.username }}';
-        var search = JSON.stringify({"username": username, "portfolio.media.id": currentId});
-        var update = JSON.stringify({"portfolio.media.$.labels": array});
-        data = JSON.stringify({"search": search, "update": update});
-        jQuery.ajax({
-                type: "POST",
-                url: url,
-                data: data,
-                beforeSend: function() {},
-                success: function(data) {},
-                dataType: "json",
-                contentType: "application/json",
-                processData: false
-              });
-        }
-      );
-
-
-      $('.labels-input-edit').click( function(event) {
-        event.stopPropagation();
-      });
-
-      $('.caption-input').click( function(event) {
-        event.stopPropagation();
-      });
-
-      // add randomish size classes
-      $container.find('.box').each(function(){
-        var $this = $(this),
-            number = parseInt( $this.find('.number').text(), 10 );
-        if ( number % 7 % 2 === 1 ) {
-          $this.addClass('width2');
-        }
-        if ( number % 3 === 0 ) {
-          $this.addClass('height2');
-        }
-      });
-
-     // change size of clicked element
-      $container.delegate( '.box', 'click', function(){
-        $(this).toggleClass('large');
-        $container.isotope('reLayout');
-      });
-
-      // toggle variable sizes of all elements
-      $('#toggle-sizes').find('a').click(function(){
-        $container
-          .toggleClass('variable-sizes')
-          .isotope('reLayout');
-        return false;
-      });
-      
-      var $optionSets = $('#options .option-set'),
-          $optionLinks = $optionSets.find('a');
-
-      $optionLinks.click(function(){
-        var $this = $(this);
-        // don't proceed if already selected
-        if ( $this.hasClass('selected') ) {
-          return false;
-        }
-        var $optionSet = $this.parents('.option-set');
-        $optionSet.find('.selected').removeClass('selected');
-        $this.addClass('selected');
-  
-        // make option object dynamically, i.e. { filter: '.my-filter-class' }
-        var options = {},
-            key = $optionSet.attr('data-option-key'),
-            value = $this.attr('data-option-value');
-        // parse 'false' as false boolean
-        value = value === 'false' ? false : value;
-        options[ key ] = value;
-        if ( key === 'layoutMode' && typeof changeLayoutMode === 'function' ) {
-          // changes in layout modes need extra logic
-          changeLayoutMode( $this, options )
-        } else {
-          // otherwise, apply new options
-          $container.isotope( options );
-        }
+       // change size of clicked element
+        // $container.delegate( '.box', 'click', function(){
+        //   $(this).toggleClass('large');
+        //   $container.isotope('reLayout');
+        // });
         
-        return false;
+        var $optionSets = $('#options .option-set'),
+            $optionLinks = $optionSets.find('a');
+
+        $optionLinks.click(function(){
+          var $this = $(this);
+          // don't proceed if already selected
+          if ( $this.hasClass('selected') ) {
+            return false;
+          }
+          var $optionSet = $this.parents('.option-set');
+          $optionSet.find('.selected').removeClass('selected');
+          $this.addClass('selected');
+    
+          // make option object dynamically, i.e. { filter: '.my-filter-class' }
+          var options = {},
+              key = $optionSet.attr('data-option-key'),
+              value = $this.attr('data-option-value');
+          // parse 'false' as false boolean
+          value = value === 'false' ? false : value;
+          options[ key ] = value;
+          if ( key === 'layoutMode' && typeof changeLayoutMode === 'function' ) {
+            // changes in layout modes need extra logic
+            changeLayoutMode( $this, options )
+          } else {
+            // otherwise, apply new options
+            $container.isotope( options );
+          }
+          
+          return false;
+        });
+      });
+
+      $("input[name$='group']").click(function() {
+          var checked = $(this).val();
+          $(".upload-media").hide();
+          $("#"+checked).show();
+      }); 
+
+      $('#submit-iframe').load(function() {
+              // var url = '{{ url_for('get_portfolio') }}';
+              // var username = '{{ user.username }}';
+              // data = JSON.stringify({"username": username});
+              // var content = '';
+              // jQuery.ajax({
+              //         type: "POST",
+              //         url: url,
+              //         data: data,
+              //         success: function(data) {
+              //           var photos = data.portfolio.pictures;
+              //           $.each(photos, function(index, photo) {
+              //               var link = '/image/' + photo;
+              //               content += '<div class="box col2 pictures" data-category="pictures"><div class="thumbnail"><img src="' + link + '"/></div><div class="labels-input-edit" style="display:none;"><input name="tags" id="tags" value=""/></div></div>';
+              //           });
+              //           $("#container").html(content);
+              //           },
+              //         dataType: "json",
+              //         contentType: "application/json",
+              //         processData: false
+              //      });
+
       });
     });
-
-    $(document).ready(function(){
- 
-        $("input[name$='group']").click(function() {
-            var checked = $(this).val();
-            $(".upload-media").hide();
-            $("#"+checked).show();
-        }); 
-
-        $('#submit-iframe').load(function() {
-                // var url = '{{ url_for('get_portfolio') }}';
-                // var username = '{{ user.username }}';
-                // data = JSON.stringify({"username": username});
-                // var content = '';
-                // jQuery.ajax({
-                //         type: "POST",
-                //         url: url,
-                //         data: data,
-                //         success: function(data) {
-                //           var photos = data.portfolio.pictures;
-                //           $.each(photos, function(index, photo) {
-                //               var link = '/image/' + photo;
-                //               content += '<div class="box col2 pictures" data-category="pictures"><div class="thumbnail"><img src="' + link + '"/></div><div class="labels-input-edit" style="display:none;"><input name="tags" id="tags" value=""/></div></div>';
-                //           });
-                //           $("#container").html(content);
-                //           },
-                //         dataType: "json",
-                //         contentType: "application/json",
-                //         processData: false
-                //      });
- 
-        });
-
-      // <div class="labels">
-      //     <div class="labels-input">
-      //     {% if user.skills %}
-      //     {% for skill in user.skills %}  
-      //       <span>{{ skill }}</span>
-      //     {% endfor %}
-      //     {% else %}
-      //     <hint>Add Labels</hint>
-      //     {% endif %}
-      //     </div>
-      //       <div class="labels-input-edit" style="display:none;">
-      //       <input name="tags" id="tags" value=""/>
-      //     </div>    
-      // </div>
-      // {% if session.logged_in and session.username == user.username %}
-      // <div class="edit"><button class="btn btn-small" type="button">Edit</button></div>
-      // {% endif %}
-
-
-        // $('.fileupload').submit(function(event) {
-        //   event.preventDefault();
-        //   var $form = $( this ),
-        //       file = $form.find( 'input[name="file"]' ).val(),
-        //       url = $form.attr( 'action' );
-        //   var username = '{{ user.username }}';    
-        //   jdata = JSON.stringify({"username": username, "file": file});
-        //   jQuery.ajax({
-        //           type: "POST",
-        //           url: url,
-        //           data: jdata,
-        //           beforeSend: function() {
-        //             $('#upload-btn').html('<img src="{{ url_for("static", filename="img/loading.gif") }}"/>');
-        //           },
-        //           success: function(data) {},
-        //           dataType: "json",
-        //           contentType: "application/json",
-        //           processData: false
-        //         });
-          
-        // });
-
-        // var json = $.parseJSON($("#hiddeniframe").contents().text());
-
-      });
   </script>
 
   </body>

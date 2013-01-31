@@ -87,8 +87,11 @@
         <button type="submit" class="bottomspace smallspace btn btn-small">Submit</button>
       </form>
     </div>
-    {% endif %}
     <hr>
+    {% else %}
+    <h1><a href="{{ url_for('user', username=user.username) }}">{{ user.name }}</a></h1>
+    {% endif %}
+
     <section id="options">
         <h3>Filters</h3>
         <ul id="filters" class="option-set clearfix" data-option-key="filter">

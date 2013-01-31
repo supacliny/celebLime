@@ -252,7 +252,9 @@
                 var location = $(this).parent();
                 $(this).children("button").text("Edit");
                 var value = $("textarea.inputbox", location).val();
-                $("div.editme", location).text(value);
+                var newvalue = value;
+                newvalue = newvalue.replace(/\r?\n/g, "<br>\n");
+                $("div.editme", location).html(newvalue);
                 var url = '{{ url_for('update') }}';
                 var username = '{{ user.username }}';
                 var search = JSON.stringify({"username": username});

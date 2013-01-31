@@ -626,7 +626,6 @@ def nl2br(eval_ctx, value):
         result = Markup(result)
 
     result = re.sub('\&lt;br\&gt;', '', result)
-    print result
     return result
 # ]
 

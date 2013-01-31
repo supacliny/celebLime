@@ -26,18 +26,25 @@
         <a href="{{ url_for('home') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a>
         <div class="lander">
           <div class="nav-collapse collapse pull-right">
+              <form class="navbar-search" action="{{ url_for('search') }}">
+                <input type="text" name="search" class="search-query" placeholder="Search projects">
+                <div class="icon-search" style="background-image:url('{{ url_for('static', filename='img/glyphicons-halflings.png') }}');"></div>
+              </form>
               <ul class="nav">
               {% if not session.logged_in %}
                 <li><a href="/login" data-toggle="modal">login</a></li>
                 <li><a href="/join" data-toggle="modal">join</a></li>
               {% else %}
-                <li><a href="{{ url_for('logout') }}" id="logout">logout</a></li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ session.name }} <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('user', username=session.username) }}">Profile</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                  </ul>
+                </li>
               {% endif %}
               </ul>
-              <form class="navbar-search" action="{{ url_for('search') }}">
-                <input type="text" name="search" class="search-query" placeholder="Search projects">
-                <div class="icon-search" style="background-image:url('{{ url_for('static', filename='img/glyphicons-halflings.png') }}');"></div>
-              </form>
             </div>
         </div>
       </div>
@@ -55,6 +62,7 @@
   </div>
 
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
   <script>
     $(function(){

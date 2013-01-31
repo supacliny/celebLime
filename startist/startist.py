@@ -141,6 +141,7 @@ def login():
 def logout():
     session.pop("logged_in", None)
     session.pop("username", None)
+    session.pop("name", None)
     return redirect(url_for('home'))
 
 
@@ -584,6 +585,7 @@ def login_user(username):
     current_time = int(time())
     ip = request.access_route[0]
     user = mongo.db.users.find_one({"username": username})
+    session["name"] = user["name"]
     logins = user["logins"] + 1
     mongo.db.users.update({"username": username}, {"$set": {"logins": logins, "last_login_at": current_time, "ip": ip}})
 

@@ -33,13 +33,16 @@
                 <li><a href="/login" data-toggle="modal">login</a></li>
                 <li><a href="/join" data-toggle="modal">join</a></li>
               {% else %}
-                <li><a href="{{ url_for('logout') }}" id="logout">logout</a></li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ session.name }} <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('user', username=session.username) }}">Profile</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                  </ul>
+                </li>
               {% endif %}
               </ul>
-              <form class="navbar-search" action="{{ url_for('search') }}">
-                <input type="text" name="search" class="search-query" placeholder="Search projects">
-                <div class="icon-search" style="background-image:url('{{ url_for('static', filename='img/glyphicons-halflings.png') }}');"></div>
-              </form>
             </div>
         </div>
       </div>
@@ -100,7 +103,15 @@
     {% endif %}
     <hr>
     <h3>Portfolio</h3>
+    {% if session.logged_in and session.username == user.username %}
+    {% if user.portfolio %}
+    <a href="{{ url_for('portfolio', username=user.username) }}"><div class="thumbnail dash" style="width: 100px; height: 100px;"><p>Edit Portfolio</p></div></a>
+    {% else %}
     <a href="{{ url_for('portfolio', username=user.username) }}"><div class="thumbnail dash" style="width: 100px; height: 100px;"><p>Add Portfolio</p></div></a>
+    {% endif %}
+    {% else %}
+    <a href="{{ url_for('portfolio', username=user.username) }}"><div class="thumbnail dash" style="width: 100px; height: 100px;"><p>View Portfolio</p></div></a>
+    {% endif %}
     <hr>
     <h3>Projects</h3>
     <div class="thumbnail dash" style="width: 100px; height: 100px;"><p>Add Project</p></div>

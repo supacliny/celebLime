@@ -12,6 +12,7 @@
     <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/startist.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/bootstrap-fileupload.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/jquery.tagsinput.css') }}" rel="stylesheet" type="text/css"/>
   </head>
   
   <body>
@@ -32,13 +33,16 @@
                 <li><a href="/login" data-toggle="modal">login</a></li>
                 <li><a href="/join" data-toggle="modal">join</a></li>
               {% else %}
-                <li><a href="{{ url_for('logout') }}" id="logout">logout</a></li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ session.name }} <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('user', username=session.username) }}">Profile</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                  </ul>
+                </li>
               {% endif %}
               </ul>
-              <form class="navbar-search">
-                <input type="text" class="search-query" placeholder="Search projects">
-                <div class="icon-search" style="background-image:url('{{ url_for('static', filename='img/glyphicons-halflings.png') }}');"></div>
-              </form>
             </div>
         </div>
       </div>
@@ -47,80 +51,234 @@
 
   <div class="container-narrow">
     <div class="row-fluid">
-      <div class="span10">
-        <h3>Project: {{ user.name }}</h3>
-          <div class="profile-box editme">{{ user.description }}</div>
-          {% if session.logged_in %}
-          <div class="trigger"><button class="btn btn-small" type="button">Edit</button></div>
+      <div class="span8">
+        <div class="project-name">{{ project.name }}</div>
+          {% if session.logged_in and session.username == user.username %}
+          <button class="btn btn-small project-name-trigger" type="button">Edit</button>
           {% endif %}
+          <form class="fileupload fileupload-new topspace" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}" target="submit-iframe">
+          <div class="fileupload-preview thumbnail" style="width: 100%; height: 370px"><img src="{{ url_for('get_image', id=project.pic) }}"/></div>
+            <div>
+              <span class="btn btn-small btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file-input"/><input type="hidden" name="type" value="project" /></span>
+              <a href="#" class="smallspace btn btn-small fileupload-exists" data-dismiss="fileupload">Remove</a><button type="submit" class="smallspace btn btn-small fileupload-exists" id="upload-btn">Upload</button>
+          </div>
+          <iframe id="submit-iframe" name="submit-iframe" class="invisible"></iframe>
+          </form>
       </div>
-      <div class="span2">
-        <div class="profile-pic"><img src="{{ user.pic }}"/></div>
+      <div class="span4">
+        <div class="project-summary">
+          <div class="profile-pic"><img src="{{ user.pic }}"/></div>
+          <br>
+          <div>Title:</div>
+          <div>Projects:</div>
+          <div>Partners:</div>
+          <div>Followers:</div>
+          <div>Following:</div>
+          <div>Follow +</div>
+          <div>Contact</div>
+          <div>Member Since:</div>
+        </div>  
       </div>     
     </div>
-    <br>
-    <br>
-    <form class="fileupload fileupload-new" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}" target="submit-iframe">
-      <div class="fileupload-preview thumbnail" style="width: 200px; height: 150px;"></div>
-        <div>
-          <span class="btn btn-small btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file-input"/></span>
-          <a href="#" class="smallspace btn btn-small fileupload-exists" data-dismiss="fileupload">Remove</a><button type="submit" class="smallspace btn btn-small fileupload-exists" id="upload-btn">Upload</button>
+    <div class="row-fluid">
+      <div class="project-description">{{ project.description | nl2br }}</div>
+      {% if session.logged_in and session.username == user.username %}
+      <button class="btn btn-small project-description-trigger" type="button">Edit</button>
+      {% endif %}
+    </div>  
+    <div class="row-fluid">
+      <div class="project-skills">
+      {% if project.skills %}
+      {% for skill in project.skills %}  
+        <span>{{ skill }}</span>
+      {% endfor %}
+      {% else %}
+      <hint>Add Skills</hint>
+      {% endif %}
       </div>
-      <iframe id="submit-iframe" name="submit-iframe" class="invisible"></iframe>
-    </form>
-    
+      <div class="skills-input-edit" style="display:none;">
+        <input name="tags" id="tags" value=""/>
+      </div> 
+      {% if session.logged_in and session.username == user.username %}
+      <button class="btn btn-small project-skills-trigger" type="button">Edit</button>
+      {% endif %}   
+    </div>
+    <hr>
   </div>
 
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap-fileupload.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.tagsinput.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
   <script>
+    $(function(){
+      $('#container').isotope({
+        itemSelector: '.box',
+        resizesContainer: false
+      });
+    });
+
+    function shorten(string, limit)
+    {
+       return string = string.length > limit ? string.substring(0,limit) + "...": string;
+    }
+
     $(document).ready(function(){
 
-      $("div.trigger").toggle(
+      $('.project-name-trigger').toggle(
           function(){
-            if ($("div.editme").children('input').length == 0) {
+            if ($('.project-name').children('input').length == 0) {
               
                 var location = $(this).parent();
-                $(this).children("button").text("Finished");
+                $(this).text("Finished");
 
                 //Create the HTML to insert into the div. Escape any " characters 
-                var inputbox = '<textarea class="inputbox">' + $("div.editme", location).text() + '</textarea>';
+                var inputbox = '<input class="project-name-input"' + $('.project-name', location).text() + '>';
                 
                 //Insert the HTML into the div
-                $("div.editme", location).html(inputbox);
+                $('.project-name', location).html(inputbox);
                 
                 //Immediately give the input box focus. The user
                 //will be expecting to immediately type in the input box,
                 //and we need to give them that ability
-                $("textarea.inputbox", location).focus();
+                $('input.project-name-input', location).focus();
             }
           },
           
           function(){
                 var location = $(this).parent();
-                $(this).children("button").text("Edit");
-                var value = $("textarea.inputbox", location).val();
-                $("div.editme", location).text(value);
+                $(this).text("Edit");
+                var value = $('input.project-name-input', location).val();
+                var newvalue = value;
+                newvalue = newvalue.replace(/\r?\n/g, "<br>\n");
+                $('.project-name', location).html(newvalue);
                 var url = '{{ url_for('update') }}';
                 var username = '{{ user.username }}';
-                data = JSON.stringify({"username": username, "update": {"description": value}});
-        jQuery.ajax({
-                type: "POST",
-                url: url,
-                data: data,
-                beforeSend: function() {},
-                complete: function() {},
-                success: function(data) {},
-                dataType: "json",
-                contentType: "application/json",
-                processData: false
-              });
+                var project_id = '{{ project.id }}';
+                var search = JSON.stringify({"username": username, "projects.id": project_id});
+                var update = JSON.stringify({"projects.$.name": value});
+                data = JSON.stringify({"search": search, "update": update});
+                jQuery.ajax({
+                  type: "POST",
+                  url: url,
+                  data: data,
+                  beforeSend: function() {},
+                  success: function(data) {},
+                  dataType: "json",
+                  contentType: "application/json",
+                  processData: false
+                });
           }
         );
 
+      $('.project-description-trigger').toggle(
+          function(){
+            if ($('.project-description').children('input').length == 0) {
+              
+                var location = $(this).parent();
+                $(this).text("Finished");
+
+                //Create the HTML to insert into the div. Escape any " characters 
+                var inputbox = '<textarea class="project-description-input" style="height: 200px;">' + $('.project-description', location).text() + '</textarea>';
+                
+                //Insert the HTML into the div
+                $('.project-description', location).html(inputbox);
+                
+                //Immediately give the input box focus. The user
+                //will be expecting to immediately type in the input box,
+                //and we need to give them that ability
+                $('textarea.project-description-input', location).focus();
+            }
+          },
+          
+          function(){
+                var location = $(this).parent();
+                $(this).text("Edit");
+                var value = $('textarea.project-description-input', location).val();
+                var newvalue = value;
+                newvalue = newvalue.replace(/\r?\n/g, "<br>\n");
+                $('.project-description', location).html(newvalue);
+                var url = '{{ url_for('update') }}';
+                var username = '{{ user.username }}';
+                var search = JSON.stringify({"username": username});
+                var update = JSON.stringify({"description": value});
+                alert(value);
+                // data = JSON.stringify({"search": search, "update": update});
+                // jQuery.ajax({
+                //   type: "POST",
+                //   url: url,
+                //   data: data,
+                //   beforeSend: function() {},
+                //   success: function(data) {},
+                //   dataType: "json",
+                //   contentType: "application/json",
+                //   processData: false
+                // });
+          }
+        );
+
+      $('#tags').tagsInput(
+        {
+          'height':'32px',
+          'width':'900px',
+          'minChars' : 1
+        });
+
+      $('.project-skills-trigger').toggle( 
+        function() {
+          $(this).text("Finished");
+
+          var skills = '';
+          $('.project-skills span').each(function(){
+              skills += $(this).text();
+              skills += ','
+          });
+          $('.project-skills').hide();
+          $('#tags').importTags(skills);
+          $(".skills-input-edit").show();
+        },
+
+        function() {
+          $(this).text("Edit");
+
+          var skills = $("#tags").val();
+          $(".skills-input-edit").hide();
+          $('.project-skills').show();
+          var content = '';
+          var array = skills.split(',');
+          if (array[0] == '')
+          {
+            array = [];
+            content += '<hint>Add Project Skills</hint>';
+          }
+          for (var i = 0; i < array.length; i++) {
+            content += '<span>' + array[i] + '</span>';
+          }
+          $('.project-skills').html(content);
+  
+          var url = '{{ url_for('update') }}';
+          var username = '{{ user.username }}';
+          var search = JSON.stringify({"username": username});
+          var update = JSON.stringify({"skills": array});
+          data = JSON.stringify({"search": search, "update": update});
+          // jQuery.ajax({
+          //         type: "POST",
+          //         url: url,
+          //         data: data,
+          //         beforeSend: function() {},
+          //         success: function(data) {},
+          //         dataType: "json",
+          //         contentType: "application/json",
+          //         processData: false
+          //       });
+          }
+        );
+
+
+
         $('#submit-iframe').load(function() {
-            alert("the iframe has been loaded");
+            // alert("the iframe has been loaded");
         });
 
         // $('.fileupload').submit(function(event) {
@@ -135,7 +293,6 @@
         //           url: url,
         //           data: jdata,
         //           beforeSend: function() {},
-        //           complete: function() {},
         //           success: function(data) {},
         //           dataType: "json",
         //           contentType: "application/json",

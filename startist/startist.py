@@ -278,21 +278,28 @@ def get_portfolio():
 
 
 # partners/users
-@app.route('/user/<username>', methods = ['GET'])
+@app.route('/profile/<username>', methods = ['GET'])
 def user(username):
     user = get_user(username)
     return render_template("profile.html", user=user)
 
 
 # projects
-@app.route('/project/<projectname>', methods = ['GET'])
-def project(projectname):
+@app.route('/profile/<username>/<project_id>', methods = ['GET'])
+def project(username, project_id):
     user = get_user(username)
-    return render_template("project.html", user=user)
+    project = get_project(username, project_id)
+    return render_template("project.html", user=user, project=project)
+
+
+@app.route('/profile/<username>/create', methods = ['GET'])
+def create_project(username):
+    user = get_user(username)
+    return render_template("create-project.html", user=user)
 
 
 # portfolios
-@app.route('/user/<username>/portfolio', methods = ['GET'])
+@app.route('/profile/<username>/portfolio', methods = ['GET'])
 def portfolio(username):
     user = get_user(username)
     return render_template("portfolio.html", user=user)
@@ -449,10 +456,31 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_id = fs.put(file, filename=filename)
-
             mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "pictures", "id":str(file_id)}}}, upsert=True)
 
     return redirect(url_for('portfolio', username=username))
+
+
+@app.route('/create', methods=['GET', 'POST'])
+def launch_project():
+    username = session["username"]
+    name = request.form["project-name"]
+    description = request.form["project-description"]
+    skills = request.form["project-skills"]
+    id = name
+    id = re.sub('[^0-9a-zA-Z ]+', '', id)
+    id = id.replace (" ", "-").lower()
+    skills = skills.split(',')
+    if request.method == 'POST':
+        file = request.files['file']
+        file_id = 0
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_id = fs.put(file, filename=filename)
+
+        mongo.db.users.update({"username": username},{"$push": {"projects": {"id": id, "name": name, "description": description, "skills": skills, "pic":str(file_id)}}}, upsert=True)
+
+    return redirect(url_for('project', username=username, project_id=id))
 
 
 # serve files
@@ -572,14 +600,6 @@ def twitter_verify(verifier):
     return user_details
 
 
-def get_account(username):
-    user = mongo.db.users.find_one({"username": username})
-    if user:
-        return True
-    else:
-        return False
-
-
 def login_user(username):
     session["logged_in"] = True
     session["username"] = username
@@ -599,6 +619,18 @@ def get_user(username, ext=None):
     if ext == "facebook":
         return mongo.db.users.find_one({"facebook.username": username})
     else:
+        return {}
+
+
+def get_project(username, project_id):
+    user = mongo.db.users.find_one({"username": username})
+    try:
+        projects = user['projects']
+        for index, project in enumerate(projects):
+            if project['id'] == project_id:
+                return projects[index]
+        return {}
+    except Exception:
         return {}
 
 

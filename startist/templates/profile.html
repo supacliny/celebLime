@@ -114,7 +114,13 @@
     {% endif %}
     <hr>
     <h3>Projects</h3>
-    <div class="thumbnail dash" style="width: 100px; height: 100px;"><p>Add Project</p></div>
+    {% if user.projects %}
+    {% for project in user.projects %}
+    <a href="{{ url_for('project', username=user.username, project_id=project.id) }}"><div class="thumbnail dash" style="width: 100px; height: 100px; float: left; margin-right: 10px;"><p>Edit {{ project.name }}</p></div></a>
+    {% endfor %}
+    {% endif %}
+    <a href="{{ url_for('create_project', username=user.username) }}"><div class="thumbnail dash" style="width: 100px; height: 100px; float: left; margin-right: 10px;"><p>Add Project</p></div></a>
+    <div style="clear: both;"></div>
     <hr>
     <h3>Following</h3>
 
@@ -171,7 +177,7 @@
 
       $('#tags').tagsInput(
         {
-          'height':'33px',
+          'height':'32px',
           'width':'900px',
           'minChars' : 1
         });
@@ -236,7 +242,7 @@
                 $(this).children("button").text("Finished");
 
                 //Create the HTML to insert into the div. Escape any " characters 
-                var inputbox = '<textarea class="inputbox">' + $("div.editme", location).text() + '</textarea>';
+                var inputbox = '<textarea class="inputbox" style="height: 300px;">' + $("div.editme", location).text() + '</textarea>';
                 
                 //Insert the HTML into the div
                 $("div.editme", location).html(inputbox);

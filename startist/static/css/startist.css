@@ -88,6 +88,7 @@ hint {
     display: none;
 }
 
+/* css add-ons */
 a:hover {
     text-decoration: none;
 }
@@ -139,6 +140,12 @@ a:hover {
     margin-left: 10px;
     margin-right: 10px;
     float: left;    
+}
+
+.rounded {
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+    transition: all 0.2s ease-in-out 0s;
 }
 
 /* jobs */
@@ -310,19 +317,25 @@ a:hover {
 }
 .createbox {
     border: 2px solid #c0c0c0;
-    position: fixed;
-    margin-top: -80px;
+    margin-top: -20px;
     margin-left: 20px;
     padding: 10px;
     color: #ffffff;
 }
+.createbox a {
+    color: #ffffff;
+    text-decoration: none;
+}
 .joinbox {
     border: 2px solid #c0c0c0;
-    position: fixed;
-    margin-top: -80px;
+    margin-top: -20px;
     margin-left: 180px;
     padding: 10px;
     color: #ffffff;
+}
+.joinbox a {
+    color: #ffffff;
+    text-decoration: none;
 }
 
 /* profile and project page */

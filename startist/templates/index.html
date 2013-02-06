@@ -26,14 +26,14 @@
         <a href="{{ url_for('home') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a>
         <div class="lander">
           <div class="nav-collapse collapse pull-right">
-              <form class="navbar-search" action="{{ url_for('search') }}">
+              <form class="navbar-search" action="{{ url_for('search', search="all") }}">
                 <input type="text" name="search" class="search-query" placeholder="Search projects">
                 <div class="icon-search" style="background-image:url('{{ url_for('static', filename='img/glyphicons-halflings.png') }}');"></div>
               </form>
               <ul class="nav">
               {% if not session.logged_in %}
-                <li><a href="/login" data-toggle="modal">login</a></li>
-                <li><a href="/join" data-toggle="modal">join</a></li>
+                <li><a href="{{ url_for('login') }}" data-toggle="modal">login</a></li>
+                <li><a href="{{ url_for('join') }}" data-toggle="modal">join</a></li>
               {% else %}
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ session.name }} <b class="caret"></b></a>
@@ -54,8 +54,23 @@
 
   <div class="container-narrow">
     <div class="jumbotron">
-      <img src="{{ url_for('static', filename='img/startisthomepage7.jpg') }}"/>
-      <div class="createbox blueboxhighlight">create a project</div><div class="joinbox blueboxhighlight">join a project</div>  
+      <img class="rounded" src="{{ url_for('static', filename='img/startisthomepage7.jpg') }}"/>
+      <div class="createbox blueboxhighlight">
+        {% if not session.logged_in %}
+        <a href="{{ url_for('login') }}">
+        create a project
+        </a>
+        {% else %}
+        <a href="{{ url_for('create_project', username=session.username) }}">
+        create a project
+        </a>
+        {% endif %}
+      </div>
+      <div class="joinbox blueboxhighlight">
+        <a href="{{ url_for('search', search="projects") }}">
+        join a project
+        </a>
+      </div>  
     </div>
   </div>
 
@@ -73,38 +88,8 @@
       });
     });
 
-    function shorten(string, limit)
-    {
-       return string = string.length > limit ? string.substring(0,limit) + "...": string;
-    }
-
     $(document).ready(function(){
 
-      $('.navbar-search').submit(function(event) {
-        event.preventDefault();
-        var content = '';
-        var $form = $( this ),
-            search = $form.find( 'input[name="search"]' ).val(),
-            url = $form.attr( 'action' );
-        jdata = JSON.stringify({"search": search});
-        jQuery.ajax({
-                type: "POST",
-                url: url,
-                data: jdata,
-                success: function(data) {
-                  var users = data;
-                  $.each(users, function(index, user) {
-                    var link = '{{ url_for("user", username=username) }}' + user.username;
-                    content += '<div class="box col2"><div class="thumbnail"><a href="' + link + '"><img src="' + user.pic + '"/></a></div><p>' + user.description + '</p></div>';
-                  });
-                  $(".container-narrow").html('');
-                  $("#container").html(content);
-                },  
-                dataType: "json",
-                contentType: "application/json",
-                processData: false
-              });
-          });
     });
   </script>
   </body>

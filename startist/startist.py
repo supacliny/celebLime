@@ -254,16 +254,36 @@ def update():
 
 
 # search for partners and projects
-@app.route('/search', methods = ['POST'])
-def search():
-    search = request.json['search']
+@app.route('/search/<search>', methods = ['GET', 'POST'])
+def search(search):
+
     users = []
-    users_cursor = mongo.db.users.find()
-    for user in users_cursor:
-        user.pop("_id", None)
-        users.append(user)
-    data = json.dumps(users)
-    return data
+
+    # TODO: we want to limit this for scale
+
+    # there is a query term
+    try:
+        query = request.args['search']
+        mongo.db.users.ensure_index([("skills",ASCENDING)], sparse=True, background=True)
+        query = query.split(' ')
+        for word in query:
+            user = mongo.db.users.find_one({"skills": word})
+            if user:
+                user.pop("_id", None)
+                users.append(user)   
+        # get unique list of users
+        users = {user['username']:user for user in users}.values()
+        return render_template("search.html", users=users, search=search)
+
+    # there is no query term, return all
+    except Exception, e:
+        print e
+        query = ''
+        users_cursor = mongo.db.users.find()
+        for user in users_cursor:
+            user.pop("_id", None)
+            users.append(user)
+        return render_template("search.html", users=users, search=search)
 
 
 # get user images for portfolio

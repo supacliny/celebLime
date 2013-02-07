@@ -60,16 +60,28 @@
           {% endif %}
       </div>
       <div class="span4">
+        {% if session.logged_in %}
+          {% if not (session.username == user.username) %}
+            {% if user.followers %}
+              {% if session.username in user.followers.profiles %}
+              <a class="btn btn-small pull-right largetopspace" id="follow">UNFOLLOW <i class="icon-thumbs-down"></i></a>
+              {% else %}
+              <a class="btn btn-small pull-right largetopspace" id="follow">FOLLOW <i class="icon-thumbs-up"></i></a>
+              {% endif %}
+            {% else %}
+            <a class="btn btn-small pull-right largetopspace" id="follow">FOLLOW <i class="icon-thumbs-up"></i></a>                  
+            {% endif %} 
+          {% endif %}        
+        {% endif %}
         <div class="profile-summary">
           <div class="profile-pic"><img src="{{ user.pic }}"/></div>
           <br>
           <div>Projects: {{ user.projects | length }}</div>
-          <div>Partners:</div>
-          <div>Followers:</div>
-          <div>Following:</div>
-          <div>Follow +</div>
+          <div>Partners: {% if user.projects %} {{ user.projects.partners | length }} {% else %} 0 {% endif %}</div>
+          <div>Followers: {% if user.followers %} {{ user.followers.profiles | length }} {% else %} 0 {% endif %}</div>
+          <div>Following: {% if user.following %} {{ user.following.profiles | length }} {% else %} 0 {% endif %}</div>
           <div>Contact</div>
-          <div>Member Since:</div>
+          <div>Member Since: {{ format_date(user.added_at) }}</div>
         </div>  
       </div>     
     </div>
@@ -131,25 +143,23 @@
     <div style="clear: both;"></div>
     <hr>
     <h3>Following</h3>
-
-  </div>
-
-  <div id="container">
+    {% if user.following %}
+    {% for username in user.following.profiles %}
+    <a href="{{ url_for('user', username=username) }}">
+      <div class="thumbnail dash" style="width: 60px; height: auto; float: left; margin-right: 10px;">
+        <img src="{{ (get_user(username)).pic }}"/>
+      </div>
+    </a>
+    {% endfor %}
+    {% endif %}
+    <div style="clear: both;"></div>
   </div>
 
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap-fileupload.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/jquery.tagsinput.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
   <script>
-    $(function(){
-      $('#container').isotope({
-        itemSelector: '.box',
-        resizesContainer: false
-      });
-    });
-
     function shorten(string, limit)
     {
        return string = string.length > limit ? string.substring(0,limit) + "...": string;
@@ -157,31 +167,53 @@
 
     $(document).ready(function(){
 
-      $('.navbar-search').submit(function(event) {
-        event.preventDefault();
-        var content = '';
-        var $form = $( this ),
-            search = $form.find( 'input[name="search"]' ).val(),
-            url = $form.attr( 'action' );
-        jdata = JSON.stringify({"search": search});
-        jQuery.ajax({
-                type: "POST",
-                url: url,
-                data: jdata,
-                success: function(data) {
-                  var users = data;
-                  $.each(users, function(index, user) {
-                    var link = '{{ url_for("user", username=username) }}' + user.username;
-                    content += '<div class="box col2"><div class="thumbnail"><a href="' + link + '"><img src="' + user.pic + '"/></a></div><p>' + user.description + '</p></div>';
-                  });
-                  $(".container-narrow").html('');
-                  $("#container").html(content);
-                },  
-                dataType: "json",
-                contentType: "application/json",
-                processData: false
-              });
-          });
+      $('#follow').click(
+
+        function(event){
+
+          if ($(this).text() == "FOLLOW ")
+          {
+            var url = '{{ url_for('follow') }}';
+            var username = '{{ session.username }}';
+            var following = '{{ user.username }}';
+            var type = 'profile';
+            var command = 'follow';
+            data = JSON.stringify({"username": username, "following": following, "type": type, "command": command});
+            jQuery.ajax({
+              type: "POST",
+              url: url,
+              data: data,
+              beforeSend: function() {},
+              success: function(data) {$('#follow').html("UNFOLLOW <i class='icon-thumbs-down'></i>");},
+              dataType: "json",
+              contentType: "application/json",
+              processData: false
+            });    
+            return;
+          }
+
+          if ($(this).text() == "UNFOLLOW ") 
+          {
+            var url = '{{ url_for('follow') }}';
+            var username = '{{ session.username }}';
+            var following = '{{ user.username }}';
+            var type = 'profile';
+            var command = 'unfollow';
+            data = JSON.stringify({"username": username, "following": following, "type": type, "command": command});
+            jQuery.ajax({
+              type: "POST",
+              url: url,
+              data: data,
+              beforeSend: function() {},
+              success: function(data) {$('#follow').html("FOLLOW <i class='icon-thumbs-up'></i>");},
+              dataType: "json",
+              contentType: "application/json",
+              processData: false
+            });         
+            return;
+          }
+      });
+
 
       $('#tags').tagsInput(
         {

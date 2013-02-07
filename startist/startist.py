@@ -8,6 +8,7 @@ from werkzeug import secure_filename
 from time import mktime
 from time import time
 from jinja2 import evalcontextfilter, Markup, escape
+import datetime
 import tweepy
 import json
 import bson
@@ -220,12 +221,15 @@ def register():
         ip = request.access_route[0]
         description_default = "Say something nice about yourself."
         skills = []
+        projects = []
+        followers = {"profiles": [], "projects": []}
+        following = {"profiles": [], "projects": []}
 
-        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website, "description": description_default, "skills": skills}
+        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website, "description": description_default, "skills": skills, "projects": projects, "followers": followers, "following": following}
 
-        mongo.db.users.ensure_index([("email",ASCENDING), ("username", ASCENDING)], unique=True, background=True)
-        mongo.db.users.ensure_index([("facebook.username",ASCENDING)], sparse=True, background=True)
-        mongo.db.users.ensure_index([("twitter.screen_name",ASCENDING)], sparse=True, background=True)
+        mongo.db.users.ensure_index([("username", ASCENDING)], unique=True, background=True)
+        mongo.db.users.ensure_index([("facebook.username", ASCENDING)], sparse=True, background=True)
+        mongo.db.users.ensure_index([("twitter.screen_name", ASCENDING)], sparse=True, background=True)
 
         user_id = mongo.db.users.insert(user)
         login_user(username)
@@ -247,6 +251,37 @@ def update():
     update = json.loads(update)
 
     mongo.db.users.update(search, {"$set": update})
+
+    data = {}
+    data = json.dumps(data)
+    return data
+
+
+# follow/unfollow a partner or project
+@app.route('/follow', methods = ['POST'])
+def follow():
+
+    # TODO: check if username is logged in current session!
+
+    username = request.json['username']
+    profile = request.json['following']
+    type = request.json['type']
+    command = request.json['command']
+
+    if command == 'follow':
+        # add profile to username: username is following that profile
+        mongo.db.users.update({"username": username, "following.profiles": {"$ne": profile}},{"$push": {"following.profiles": profile}}, upsert=False)
+
+        # now add username to profile: username is a follower of that profile
+        mongo.db.users.update({"username": profile, "followers.profiles": {"$ne": username}},{"$push": {"followers.profiles": username}}, upsert=False)
+
+    if command == 'unfollow':
+        # remove profile from username: username is now not following that profile
+        mongo.db.users.update({"username": username} ,{"$pull": {"following.profiles": profile}}, upsert=False)
+
+        # remove username from profile: username is now not a follower of that profile
+        mongo.db.users.update({"username": profile}, {"$pull": {"followers.profiles": username}}, upsert=False)
+
 
     data = {}
     data = json.dumps(data)
@@ -503,7 +538,7 @@ def launch_project():
     return redirect(url_for('project', username=username, project_id=id))
 
 
-# serve files
+# serve only image files
 @app.route('/image/<id>')
 def get_image(id):
     id = str(id)
@@ -667,6 +702,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
+# convert newlines to breaks for html display
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 @app.template_filter()
@@ -679,6 +715,19 @@ def nl2br(eval_ctx, value):
 
     result = re.sub('\&lt;br\&gt;', '', result)
     return result
+
+
+# format unix epoch time for day number, month, year
+def format_date(time):
+
+    # convert from unix time to datetime
+    date_time = datetime.datetime.fromtimestamp(time)
+    return date_time.strftime('%d %b %Y')
+
+
+# register extra template functions
+app.jinja_env.globals.update(format_date=format_date)
+app.jinja_env.globals.update(get_user=get_user)
 # ]
 
 if __name__ == "__main__":

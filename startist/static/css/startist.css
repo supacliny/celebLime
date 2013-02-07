@@ -1,5 +1,6 @@
 body {
     padding-top: 20px;
+    padding-bottom: 20px;
     background-color: #FFFFFF;
     font-family: "Interstate","Lucida Grande","Lucida Sans Unicode","Lucida Sans",Garuda,Verdana,Tahoma,sans-serif;
 }
@@ -112,6 +113,10 @@ a:hover {
 
 .bottomspace {
     margin-bottom: 10px;
+}
+
+.largetopspace {
+    margin-top: 20px;
 }
 
 .topspace {

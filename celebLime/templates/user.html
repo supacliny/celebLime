@@ -148,7 +148,7 @@
 
             <div class="celebname">
                 <div class="headthumb" style="background-image: url('{{ user.profile_image_url }}')"></div>
-                <h1>{{ user.name }}<a class="followbutton" href="#">FOLLOW</a><div class="followers">followers</div><div class="numfollowers">{{ user.followers_count }}</div></h1>
+                <h1>{{ user.name }}<a class="followbutton" href="#">FOLLOW</a><div class="followers">followers</div><div class="numfollowers">{% if user.followers_count %}{{ user.followers_count }}{% else %}0{% endif %}</div></h1>
             </div>
 
             <div class="wrap">

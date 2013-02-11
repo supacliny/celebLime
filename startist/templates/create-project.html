@@ -28,6 +28,10 @@
         <a href="{{ url_for('home') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a>
         <div class="lander">
           <div class="nav-collapse collapse pull-right">
+            <form class="navbar-search" action="{{ url_for('search', search="all") }}">
+              <input type="text" name="search" class="search-query" placeholder="Search">
+              <div class="icon-search" style="background-image:url('{{ url_for('static', filename='img/glyphicons-halflings.png') }}');"></div>
+            </form>
               <ul class="nav">
               {% if not session.logged_in %}
                 <li><a href="{{ url_for('login') }}" data-toggle="modal">login</a></li>

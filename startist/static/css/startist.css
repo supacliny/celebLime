@@ -574,7 +574,7 @@ textarea {
 }
 
 .col1 { width: 80px; }
-.col2 { width: 205px; }
+.col2 { width: 200px; }
 .col3 { width: 280px; }
 .col4 { width: 380px; }
 .col5 { width: 480px; }
@@ -582,8 +582,7 @@ textarea {
 
 #container {
   border: none;
-  padding: 5px;
-  margin-top: 20px;
+  margin-top: auto;
   margin-bottom: 20px;
   margin-left: auto;
   margin-right: auto;

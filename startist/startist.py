@@ -321,15 +321,48 @@ def search(search):
         return render_template("search.html", users=users, search=search)
 
 
-# get user images for portfolio
-@app.route('/get_portfolio', methods = ['POST'])
+# launch a project
+@app.route('/create', methods=['GET', 'POST'])
+def launch_project():
+    username = session["username"]
+    name = request.form["project-name"]
+    description = request.form["project-description"]
+    skills = request.form["project-skills"]
+    id = name
+    id = re.sub('[^0-9a-zA-Z ]+', '', id)
+    id = id.replace (" ", "-").lower()
+    skills = skills.split(',')
+    if request.method == 'POST':
+        file = request.files['file']
+        file_id = 0
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_id = fs.put(file, filename=filename)
+
+        mongo.db.users.update({"username": username},{"$push": {"projects": {"id": id, "name": name, "description": description, "skills": skills, "pic":str(file_id)}}}, upsert=True)
+
+    return redirect(url_for('project', username=username, project_id=id))
+
+
+# serve only image files stored in gridfs
+@app.route('/image/<id>')
+def get_image(id):
+    id = str(id)
+    file_oid = bson.objectid.ObjectId(id)
+    file = fs.get(file_oid).read()
+    response = make_response(file)
+    response.headers['Content-Type'] = 'image/jpeg'
+    return response
+
+
+# get user portfolio
+@app.route('/get_portfolio', methods = ['GET', 'POST'])
 def get_portfolio():
-    username = request.json['username']
-    user = get_user(username)
-    portfolio = user["portfolio"]
-    data = {"portfolio": portfolio}
-    data = json.dumps(data)
-    return data
+    username = session.get("username")
+    user = []
+    if username:
+        user = get_user(username)
+    return render_template("portfolio-container.html", user=user)
 
 
 # partners/users
@@ -347,6 +380,7 @@ def project(username, project_id):
     return render_template("project.html", user=user, project=project)
 
 
+# create project
 @app.route('/profile/<username>/create', methods = ['GET'])
 def create_project(username):
     user = get_user(username)
@@ -502,7 +536,7 @@ def twsverify():
 # ]
 
 
-# UPLOAD FUNCTIONS [
+# SUBMIT FUNCTIONS [
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     username = session["username"]
@@ -513,41 +547,7 @@ def upload_file():
             file_id = fs.put(file, filename=filename)
             mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "pictures", "id":str(file_id)}}}, upsert=True)
 
-    return redirect(url_for('portfolio', username=username))
-
-
-@app.route('/create', methods=['GET', 'POST'])
-def launch_project():
-    username = session["username"]
-    name = request.form["project-name"]
-    description = request.form["project-description"]
-    skills = request.form["project-skills"]
-    id = name
-    id = re.sub('[^0-9a-zA-Z ]+', '', id)
-    id = id.replace (" ", "-").lower()
-    skills = skills.split(',')
-    if request.method == 'POST':
-        file = request.files['file']
-        file_id = 0
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_id = fs.put(file, filename=filename)
-
-        mongo.db.users.update({"username": username},{"$push": {"projects": {"id": id, "name": name, "description": description, "skills": skills, "pic":str(file_id)}}}, upsert=True)
-
-    return redirect(url_for('project', username=username, project_id=id))
-
-
-# serve only image files
-@app.route('/image/<id>')
-def get_image(id):
-    id = str(id)
-    file_oid = bson.objectid.ObjectId(id)
-    file = fs.get(file_oid).read()
-    response = make_response(file)
-    response.headers['Content-Type'] = 'image/jpeg'
-    return response
-
+    return ""
 
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
@@ -571,9 +571,8 @@ def submit():
             print e
             return redirect(url_for('portfolio', username=username))
 
-    return redirect(url_for('portfolio', username=username))
+    return ""
 # ]
-
 
 # AUXILLARY FUNCTIONS [
 

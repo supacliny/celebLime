@@ -48,6 +48,7 @@
             <div class="heading">Password</div>
             <div><input type="password" name="password" class="span2" placeholder="Password"></div>
             <div class="password-error"></div>
+            <div class="invisible">
             <div class="heading">Profile Picture</div>
             <div class="signup-pic"><img src="{{ pic }}"/></div> 
             <div><input type="text" id="link" name="pic" class="span2" value="{{ pic }}" placeholder="Picture Link"><i class="space icon-refresh"></i></div>
@@ -58,7 +59,9 @@
             <div class="heading">Creative Fields</div>
             <div><input type="text" name="fields" class="span2" placeholder="Creative Fields"></div>
             <div class="heading">Web Site</div>
-            <div><input type="text" name="website" class="span2" placeholder="Web Site"></div><br>
+            <div><input type="text" name="website" class="span2" placeholder="Web Site"></div>
+            </div>
+            <br>
             <div class="register-button"><button type="submit" class="btn btn-primary">Create New Account</button></div>
           </form>
       </div>  
@@ -107,6 +110,7 @@
                 success: function(data) {
                   if ((data.name == 1) && (data.username == 1) && (data.email == 1) && (data.password == 1)) 
                   { 
+                    $form.submit();
                     document.location.href = '{{ url_for("user", username=session.username) }}' + username;
                   }
                   else

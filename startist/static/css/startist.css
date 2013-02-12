@@ -119,6 +119,10 @@ a:hover {
     margin-top: 20px;
 }
 
+.xlargetopspace {
+    margin-top: 35px;
+}
+
 .extratopspace {
     margin-top: 80px;
 }
@@ -364,7 +368,6 @@ textarea {
     line-height: 20px;
     padding: 4px;
     transition: all 0.2s ease-in-out 0s;
-    margin-top: 80px;
     margin-right: auto;
     margin-left: auto;
     background-color: #FAFAFA;

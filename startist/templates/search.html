@@ -85,7 +85,7 @@
     {% for user in users %}
     <div class="box col2 partners" data-category="partners" id="{{ user.username }}">
       <div class="thumbnail">
-        <a href="{{ url_for('user', username=user.username) }}"><img src="{{ user.pic }}"/></a>
+        <a href="{{ url_for('user', username=user.username) }}"><img src="{{ process_image(user.pic) }}"/></a>
       </div>
       <p>{{ user.description }}</p>
     </div>
@@ -94,7 +94,7 @@
     {% for project in user.projects %}
     <div class="box col2 projects" data-category="projects" id="{{ user.username }}/{{ project.id }}">
       <div class="thumbnail">
-        <a href="{{ url_for('project', username=user.username, project_id=project.id) }}"><img src=" {{ url_for('get_image', id=project.pic) }}"/></a>
+        <a href="{{ url_for('project', username=user.username, project_id=project.id) }}"><img src="{{ process_image(project.pic)}} "/></a>
       </div>
       <p>{{ project.description }}</p>
     </div>

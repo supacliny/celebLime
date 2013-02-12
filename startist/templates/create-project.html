@@ -73,7 +73,7 @@
           </div>
       </div>    
       <div class="span4">
-        <div class="project-pic pull-right"><a href="{{ url_for('user', username=user.username) }}"><img src="{{ url_for('get_image', id=user.pic) }}" width="100%"></a></div>
+        <div class="project-pic pull-right"><a href="{{ url_for('user', username=user.username) }}"><img src="{{ process_image(user.pic) }}" width="100%"></a></div>
         <div style="clear: both;"></div>
         <div class="project-summary pull-right">
           <div>Projects: {{ user.projects | length }}</div>

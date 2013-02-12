@@ -22,6 +22,7 @@ DEBUG = False
 KEY = 'H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1'
 UPLOAD_FOLDER = os.path.realpath('.') + '/static/pics/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+ANONYMOUS = os.path.realpath('.') + '/static/img/anonymous.jpg'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -162,6 +163,7 @@ def email_signup():
 # register new user
 @app.route('/register', methods = ['POST'])
 def register():
+
     group = request.json['group']
     name = request.json['name']
     username = request.json['username']
@@ -349,10 +351,19 @@ def launch_project():
     return redirect(url_for('project', username=username, project_id=id))
 
 
+
 # serve only image files stored in gridfs
-@app.route('/image/<id>')
-def get_image(id):
+@app.route('/image/')
+@app.route('/image/<path:id>')
+def get_image(id=None):
+    if id == None:
+        file = open(ANONYMOUS, "rb")
+        response = make_response(file.read())
+        response.headers['Content-Type'] = 'image/jpeg'
+        return response
+
     id = str(id)
+
     file_oid = bson.objectid.ObjectId(id)
     file = fs.get(file_oid).read()
     response = make_response(file)
@@ -542,6 +553,7 @@ def twsverify():
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     username = session["username"]
+    user = get_user(username)
     if request.method == 'POST':
         origin = request.form['origin']
         file = request.files['file']
@@ -710,6 +722,12 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
+def delete_file(file_id):
+    file_id = bson.objectid.ObjectId(file_id)
+    print file_id
+    fs.delete(file_id)
+
+
 # convert newlines to breaks for html display
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
@@ -727,15 +745,24 @@ def nl2br(eval_ctx, value):
 
 # format unix epoch time for day number, month, year
 def format_date(time):
-
     # convert from unix time to datetime
     date_time = datetime.datetime.fromtimestamp(time)
     return date_time.strftime('%d %b %Y')
 
 
+# a pic can be an external http or local file
+def process_image(image=None):
+    image = str(image)
+    if "http" in image:
+        return image
+
+    return url_for('get_image', id=image)
+
+
 # register extra template functions
 app.jinja_env.globals.update(format_date=format_date)
 app.jinja_env.globals.update(get_user=get_user)
+app.jinja_env.globals.update(process_image=process_image)
 # ]
 
 if __name__ == "__main__":

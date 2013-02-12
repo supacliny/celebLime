@@ -254,7 +254,7 @@
     
     {% if file.class == "pictures" %}
     <div class="thumbnail">
-      <img src="{{ url_for('get_image', id=file.id) }}"/>
+      <img src="{{ process_image(file.id) }}"/>
     </div>
     {% endif %}
 

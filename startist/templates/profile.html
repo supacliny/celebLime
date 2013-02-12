@@ -77,9 +77,22 @@
             {% endif %} 
           {% endif %}        
         {% endif %}
-        <div class="profile-summary">
-          <div class="profile-pic"><img src="{{ user.pic }}"/></div>
-          <br>
+        
+        {% if session.logged_in and session.username == user.username %}
+        <form class="fileupload fileupload-new pull-right" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}" target="submit-iframe">
+          <div class="fileupload-preview thumbnail extratopspace" style="width: 200px;"><img src="{{ url_for('get_image', id=user.pic) }}" width="100%"></div>
+            <div>
+              <span class="btn btn-small btn-file"><span class="fileupload-new">Edit</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file-input"/><input type="hidden" name="origin" value="profile"/></span>
+              <a href="#" class="smallspace btn btn-small fileupload-exists" data-dismiss="fileupload">Remove</a><button type="submit" class="smallspace btn btn-small fileupload-exists" id="upload-btn">Upload</button>
+          </div>
+          <iframe id="submit-iframe" name="submit-iframe" style="display:none"></iframe>
+        </form>
+        {% else %}
+        <div class="profile-pic pull-right"><img src="{{ url_for('get_image', id=user.pic) }}" width="100%"></div>
+        {% endif %}
+
+        <div style="clear: both;"></div>
+        <div class="profile-summary pull-right">
           <div>Projects: {{ user.projects | length }}</div>
           <div>Partners: {% if user.projects %} {{ user.projects.partners | length }} {% else %} 0 {% endif %}</div>
           <div>Followers: {% if user.followers %} {{ user.followers.profiles | length }} {% else %} 0 {% endif %}</div>
@@ -90,14 +103,7 @@
       </div>     
     </div>
     <br>
-<!--     <form class="fileupload fileupload-new" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}" target="submit-iframe">
-      <div class="fileupload-preview thumbnail" style="width: 200px; height: 200px;"></div>
-        <div>
-          <span class="btn btn-small btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file-input"/></span>
-          <a href="#" class="smallspace btn btn-small fileupload-exists" data-dismiss="fileupload">Remove</a><button type="submit" class="smallspace btn btn-small fileupload-exists" id="upload-btn">Upload</button>
-      </div>
-      <iframe id="submit-iframe" name="submit-iframe" class="invisible"></iframe>
-    </form> -->
+
     <hr>
     <h3>Skills</h3>
     <div class="skills">
@@ -278,7 +284,7 @@
           }
         );
 
-      $("div.trigger").toggle(
+        $("div.trigger").toggle(
           function(){
             if ($("div.editme").children('input').length == 0) {
               
@@ -324,30 +330,9 @@
         );
 
         $('#submit-iframe').load(function() {
-            alert("the iframe has been loaded");
+          $('form').removeClass('fileupload-exists');
+          $('form').addClass('fileupload-new');     
         });
-
-        // $('.fileupload').submit(function(event) {
-        //   event.preventDefault();
-        //   var $form = $( this ),
-        //       file = $form.find( 'input[name="file"]' ).val(),
-        //       url = $form.attr( 'action' );
-        //   var username = '{{ user.username }}';    
-        //   jdata = JSON.stringify({"username": username, "file": file});
-        //   jQuery.ajax({
-        //           type: "POST",
-        //           url: url,
-        //           data: jdata,
-        //           beforeSend: function() {},
-        //           success: function(data) {},
-        //           dataType: "json",
-        //           contentType: "application/json",
-        //           processData: false
-        //         });
-        //   $('.register-button').html('<img src="{{ url_for("static", filename="img/loading.gif") }}"/>');
-        // });
-
-        // var json = $.parseJSON($("#hiddeniframe").contents().text());
 
       });
   </script>

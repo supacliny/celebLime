@@ -119,6 +119,10 @@ a:hover {
     margin-top: 20px;
 }
 
+.extratopspace {
+    margin-top: 80px;
+}
+
 .topspace {
     margin-top: 10px;
 }
@@ -352,7 +356,7 @@ textarea {
 }
 
 .profile-pic {
-    width: 98px; 
+    width: 200px; 
     border: 1px solid #DDDDDD;
     border-radius: 4px 4px 4px 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
@@ -360,11 +364,12 @@ textarea {
     line-height: 20px;
     padding: 4px;
     transition: all 0.2s ease-in-out 0s;
+    margin-top: 80px;
     margin-right: auto;
     margin-left: auto;
     background-color: #FAFAFA;
-    background-image: linear-gradient(to bottom, #FFFFFF, #F2F2F2);
     background-repeat: repeat-x;
+    background-size: cover;
 }
 
 .profile-box {
@@ -382,12 +387,13 @@ textarea {
 }
 
 .profile-summary {
+    width: 190px;
     border: 1px solid #DDDDDD;
     border-radius: 4px 4px 4px 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
     transition: all 0.2s ease-in-out 0s;
     padding: 10px;
-    margin-top: 80px;
+    margin-top: 5px;
     background-color: #FAFAFA;
     background-image: linear-gradient(to bottom, #FFFFFF, #F2F2F2);
     background-repeat: repeat-x;
@@ -481,6 +487,23 @@ textarea {
 
 
 /* project page */
+.project-pic {
+    width: 200px; 
+    border: 1px solid #DDDDDD;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+    display: block;
+    line-height: 20px;
+    padding: 4px;
+    transition: all 0.2s ease-in-out 0s;
+    margin-top: 30px;
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #FAFAFA;
+    background-repeat: repeat-x;
+    background-size: cover;
+}
+
 .project-name {
     border: 1px solid #DDDDDD;
     border-radius: 4px 4px 4px 4px;
@@ -504,7 +527,7 @@ textarea {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
     transition: all 0.2s ease-in-out 0s;
     padding: 10px;
-    margin-top: 30px;
+    margin-top: 5px;
     background-color: #FAFAFA;
     background-image: linear-gradient(to bottom, #FFFFFF, #F2F2F2);
     background-repeat: repeat-x;

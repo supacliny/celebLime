@@ -66,7 +66,7 @@
           <form class="fileupload fileupload-new topspace" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}" target="submit-iframe">
           <div class="fileupload-preview thumbnail" style="width: 100%; height: 370px"><img src="{{ url_for('get_image', id=project.pic) }}"/></div>
             <div>
-              <span class="btn btn-small btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file-input"/><input type="hidden" name="type" value="project" /></span>
+              <span class="btn btn-small btn-file"><span class="fileupload-new">Edit</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file-input"/><input type="hidden" name="origin" value="project" /><input type="hidden" name="id" value="{{project.id}}" /></span>
               <a href="#" class="smallspace btn btn-small fileupload-exists" data-dismiss="fileupload">Remove</a><button type="submit" class="smallspace btn btn-small fileupload-exists" id="upload-btn">Upload</button>
           </div>
           <iframe id="submit-iframe" name="submit-iframe" class="invisible"></iframe>
@@ -76,17 +76,15 @@
           {% endif %}
       </div>
       <div class="span4">
-        <div class="project-summary">
-          <div class="profile-pic"><img src="{{ user.pic }}"/></div>
-          <br>
-          <div>Title:</div>
-          <div>Projects:</div>
-          <div>Partners:</div>
-          <div>Followers:</div>
-          <div>Following:</div>
-          <div>Follow +</div>
+        <div class="project-pic pull-right"><a href="{{ url_for('user', username=user.username) }}"><img src="{{ url_for('get_image', id=user.pic) }}" width="100%"></a></div>
+        <div style="clear: both;"></div>
+        <div class="project-summary pull-right">
+          <div>Projects: {{ user.projects | length }}</div>
+          <div>Partners: {% if user.projects %} {{ user.projects.partners | length }} {% else %} 0 {% endif %}</div>
+          <div>Followers: {% if user.followers %} {{ user.followers.profiles | length }} {% else %} 0 {% endif %}</div>
+          <div>Following: {% if user.following %} {{ user.following.profiles | length }} {% else %} 0 {% endif %}</div>
           <div>Contact</div>
-          <div>Member Since:</div>
+          <div>Member Since: {{ format_date(user.added_at) }}</div>
         </div>  
       </div>     
     </div>
@@ -287,30 +285,9 @@
         );
 
         $('#submit-iframe').load(function() {
-            // alert("the iframe has been loaded");
+          $('form').removeClass('fileupload-exists');
+          $('form').addClass('fileupload-new');     
         });
-
-        // $('.fileupload').submit(function(event) {
-        //   event.preventDefault();
-        //   var $form = $( this ),
-        //       file = $form.find( 'input[name="file"]' ).val(),
-        //       url = $form.attr( 'action' );
-        //   var username = '{{ user.username }}';    
-        //   jdata = JSON.stringify({"username": username, "file": file});
-        //   jQuery.ajax({
-        //           type: "POST",
-        //           url: url,
-        //           data: jdata,
-        //           beforeSend: function() {},
-        //           success: function(data) {},
-        //           dataType: "json",
-        //           contentType: "application/json",
-        //           processData: false
-        //         });
-        //   $('.register-button').html('<img src="{{ url_for("static", filename="img/loading.gif") }}"/>');
-        // });
-
-        // var json = $.parseJSON($("#hiddeniframe").contents().text());
 
       });
   </script>

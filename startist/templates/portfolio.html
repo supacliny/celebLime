@@ -70,7 +70,7 @@
       <form class="fileupload fileupload-new" data-provides="fileupload" enctype="multipart/form-data" method="post" action="{{ url_for('upload_file') }}" target="submit-iframe">
         <div class="fileupload-preview thumbnail" style="width: 200px; height: 200px;"></div>
           <div>
-            <span class="btn btn-small btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file-input"/></span>
+            <span class="btn btn-small btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" name="file" id="file-input"/><input type="hidden" name="origin" value="portfolio"/></span>
             <a href="#" class="smallspace btn btn-small fileupload-exists" data-dismiss="fileupload">Remove</a><button type="submit" class="smallspace btn btn-small fileupload-exists" id="upload-btn">Upload</button>
         </div>
         <iframe id="submit-iframe" name="submit-iframe" style="display:none"></iframe>
@@ -108,7 +108,7 @@
   <script>
     $(function(){
 
-      $('.isotope-display').load("{{ url_for('get_portfolio') }}");
+      $('.isotope-display').load("{{ url_for('get_portfolio', username=user.username) }}");
 
       $("input[name$='group']").click(function() {
           var checked = $(this).val();
@@ -117,7 +117,7 @@
       }); 
 
       $('#submit-iframe').load(function() {
-        $('.isotope-display').load("{{ url_for('get_portfolio') }}");
+        $('.isotope-display').load("{{ url_for('get_portfolio', username=user.username) }}");
         $('.isotope-display').hide().fadeIn('fast');
         $('form').removeClass('fileupload-exists');
         $('form').addClass('fileupload-new');

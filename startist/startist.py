@@ -305,7 +305,12 @@ def search(search):
             user = mongo.db.users.find_one({"skills": word})
             if user:
                 user.pop("_id", None)
+                users.append(user)
+            user = mongo.db.users.find_one({"name": word})
+            if user:
+                user.pop("_id", None)
                 users.append(user)   
+
         # get unique list of users
         users = {user['username']:user for user in users}.values()
         return render_template("search.html", users=users, search=search)
@@ -355,13 +360,10 @@ def get_image(id):
     return response
 
 
-# get user portfolio
-@app.route('/get_portfolio', methods = ['GET', 'POST'])
-def get_portfolio():
-    username = session.get("username")
-    user = []
-    if username:
-        user = get_user(username)
+# get user portfolio data
+@app.route('/get_portfolio/<username>', methods = ['GET'])
+def get_portfolio(username):
+    user = get_user(username)
     return render_template("portfolio-container.html", user=user)
 
 
@@ -541,11 +543,18 @@ def twsverify():
 def upload_file():
     username = session["username"]
     if request.method == 'POST':
+        origin = request.form['origin']
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_id = fs.put(file, filename=filename)
-            mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "pictures", "id":str(file_id)}}}, upsert=True)
+            if origin == "profile":
+                mongo.db.users.update({"username": username},{"$set": {"pic": str(file_id)}}, upsert=True)
+            if origin == "portfolio":
+                mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "pictures", "id":str(file_id)}}}, upsert=True)
+            if origin == "project":
+                project_id = request.form['id']
+                mongo.db.users.update({"username": username, "projects.id": project_id},{"$set": {"projects.$.pic": str(file_id)}}, upsert=True)
 
     return ""
 

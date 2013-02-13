@@ -42,6 +42,7 @@
                 $(this).parent().removeClass('larger'); 
               }
 
+              $(this).children('.delete').hide();
               $(this).children('.caption').hide();
               $(this).children('.labels').hide();
               $(this).parent().removeClass('large');
@@ -65,6 +66,7 @@
               }
 
 
+              $(this).children('.delete').show();
               $(this).children('.caption').show();
               $(this).children('.labels').show();
 
@@ -202,6 +204,31 @@
           event.stopPropagation();
         });
     
+        $('.delete').click(function(event) {
+          var box = $(this).parent().parent();
+          var id = box.attr('id');
+          var url = '{{ url_for('delete') }}';
+          var username = '{{ user.username }}';
+          var search = JSON.stringify({"username": username});
+          var update = JSON.stringify({"portfolio.media": {"id": id}});
+          data = JSON.stringify({"search": search, "update": update});
+          jQuery.ajax({
+                  type: "POST",
+                  url: url,
+                  data: data,
+                  beforeSend: function() {},
+                  success: function(data) {
+                    if (box) {
+                        $container.isotope('remove', box);
+                        $container.isotope('reLayout');
+                    }
+                  },
+                  dataType: "json",
+                  contentType: "application/json",
+                  processData: false
+                });          
+        });
+
         var $optionSets = $('#options .option-set'),
             $optionLinks = $optionSets.find('a');
 
@@ -251,7 +278,11 @@
 {% for file in user.portfolio.media %}
 <div class="box col2 {{ file.class }}" data-category="{{ file.class }}" id="{{ file.id }}">
   <div class="box-container">
-    
+
+    {% if session.logged_in and session.username == user.username %}
+    <a class="delete" style="display: none; background: url('{{ url_for('static', filename='img/delete.png')}}') repeat scroll left top transparent;"></a>
+    {% endif %}
+
     {% if file.class == "pictures" %}
     <div class="thumbnail">
       <img src="{{ process_image(file.id) }}"/>

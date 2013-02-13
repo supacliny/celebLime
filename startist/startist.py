@@ -247,42 +247,68 @@ def update():
     search = request.json['search']
     update = request.json['update']
 
-    # TODO: check if username is logged in current session!
-
     search = json.loads(search)
     update = json.loads(update)
 
-    mongo.db.users.update(search, {"$set": update})
+    username_client = search["username"]
+    username_session = session.get("username")
+
+    # check authentication
+    if username_client == username_session:
+        mongo.db.users.update(search, {"$set": update})
 
     data = {}
     data = json.dumps(data)
     return data
 
 
+# delete data from portfolio
+@app.route('/delete', methods = ['POST'])
+def delete():
+    search = request.json['search']
+    update = request.json['update']
+
+    search = json.loads(search)
+    update = json.loads(update)
+
+    username_client = search["username"]
+    username_session = session.get("username")
+
+    # check authentication
+    if username_client == username_session:
+        mongo.db.users.update(search, {"$pull": update}, upsert=False)
+        file_id = update["portfolio.media"]["id"]
+        delete_file(file_id)
+
+    data = {}
+    data = json.dumps(data)
+    return data
+
 # follow/unfollow a partner or project
 @app.route('/follow', methods = ['POST'])
 def follow():
 
-    # TODO: check if username is logged in current session!
-
-    username = request.json['username']
+    username_session = session.get("username")
+    username_client = request.json['username']
     profile = request.json['following']
     type = request.json['type']
     command = request.json['command']
 
-    if command == 'follow':
-        # add profile to username: username is following that profile
-        mongo.db.users.update({"username": username, "following.profiles": {"$ne": profile}},{"$push": {"following.profiles": profile}}, upsert=False)
+    # check authentication
+    if username_client == username_session:
+        if command == 'follow':
+            # add profile to username: username is following that profile
+            mongo.db.users.update({"username": username_client, "following.profiles": {"$ne": profile}},{"$push": {"following.profiles": profile}}, upsert=False)
 
-        # now add username to profile: username is a follower of that profile
-        mongo.db.users.update({"username": profile, "followers.profiles": {"$ne": username}},{"$push": {"followers.profiles": username}}, upsert=False)
+            # now add username to profile: username is a follower of that profile
+            mongo.db.users.update({"username": profile, "followers.profiles": {"$ne": username_client}},{"$push": {"followers.profiles": username_client}}, upsert=False)
 
-    if command == 'unfollow':
-        # remove profile from username: username is now not following that profile
-        mongo.db.users.update({"username": username} ,{"$pull": {"following.profiles": profile}}, upsert=False)
+        if command == 'unfollow':
+            # remove profile from username: username is now not following that profile
+            mongo.db.users.update({"username": username_client} ,{"$pull": {"following.profiles": profile}}, upsert=False)
 
-        # remove username from profile: username is now not a follower of that profile
-        mongo.db.users.update({"username": profile}, {"$pull": {"followers.profiles": username}}, upsert=False)
+            # remove username from profile: username is now not a follower of that profile
+            mongo.db.users.update({"username": profile}, {"$pull": {"followers.profiles": username_client}}, upsert=False)
 
 
     data = {}
@@ -562,11 +588,18 @@ def upload_file():
             file_id = fs.put(file, filename=filename)
             if origin == "profile":
                 mongo.db.users.update({"username": username},{"$set": {"pic": str(file_id)}}, upsert=True)
+                if user["pic"]:
+                    delete_file(user["pic"])
             if origin == "portfolio":
                 mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "pictures", "id":str(file_id)}}}, upsert=True)
             if origin == "project":
                 project_id = request.form['id']
                 mongo.db.users.update({"username": username, "projects.id": project_id},{"$set": {"projects.$.pic": str(file_id)}}, upsert=True)
+                projects = user["projects"]
+                if projects:
+                    project = (item for item in projects if item["id"] == project_id).next()
+                    if project:
+                        delete_file(project["pic"])
 
     return ""
 
@@ -722,11 +755,13 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
+# delete file from gridfs
 def delete_file(file_id):
-    file_id = bson.objectid.ObjectId(file_id)
-    print file_id
-    fs.delete(file_id)
-
+    try:
+        file_id = bson.objectid.ObjectId(file_id)
+        fs.delete(file_id)
+    except Exception, e:
+        print e
 
 # convert newlines to breaks for html display
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')

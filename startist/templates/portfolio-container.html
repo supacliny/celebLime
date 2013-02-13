@@ -174,7 +174,7 @@
             content += '<hint>Add Labels</hint>';
           }
           for (var i = 0; i < array.length; i++) {
-            content += '<span>' + array[i] + '</span>';
+            content += '<span><a href="{{ url_for("search", search="all") }}?search=' + array[i] + '">' + array[i] + '</a></span>';
           }
           $(this).parent().children('.labels-input').html(content);
           var url = '{{ url_for('update') }}';
@@ -203,7 +203,19 @@
         $('.caption-input').click(function(event) {
           event.stopPropagation();
         });
-    
+
+        $('.labels-input').click(function(event) {
+          event.stopPropagation();
+        });
+       
+        $('.labels-input span').click(function(event) {
+          event.stopPropagation();
+        });
+
+        $('body').on('click', '.labels-input span a', function(event) {
+          event.stopPropagation();
+        });
+
         $('.delete').click(function(event) {
           var box = $(this).parent().parent();
           var id = box.attr('id');
@@ -320,7 +332,7 @@
         <div class="labels-input">
         {% if file.labels %}
         {% for label in file.labels %}  
-          <span>{{ label }}</span>
+          <span><a href="{{ url_for('search', search="all") }}?search={{label}}">{{ label }}</a></span>
         {% endfor %}
         {% else %}
         <hint>Add Labels</hint>

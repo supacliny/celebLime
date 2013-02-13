@@ -114,7 +114,7 @@
       <div class="skills-input">
       {% if user.skills %}
       {% for skill in user.skills %}  
-        <span>{{ skill }}</span>
+        <span><a href="{{ url_for('search', search="all") }}?search={{skill}}">{{ skill }}</a></span>
       {% endfor %}
       {% else %}
       <hint>Add Skills</hint>
@@ -266,7 +266,7 @@
             content += '<hint>Add Skills</hint>';
           }
           for (var i = 0; i < array.length; i++) {
-            content += '<span>' + array[i] + '</span>';
+            content += '<span><a href="{{ url_for("search", search="all") }}?search=' + array[i] + '">' + array[i] + '</a></span>';
           }
           $('.skills-input').html(content);
   

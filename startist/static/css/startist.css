@@ -434,6 +434,10 @@ textarea {
     border-radius: 4px 4px 4px 4px;
 }
 
+.skills-input span a {
+    color: #638421;
+}
+
 /* portfolio page */
 .labels-input { 
     border: 1px solid #DDDDDD;
@@ -463,6 +467,10 @@ textarea {
     margin-right: 5px; 
     font-size:13px; 
     border-radius: 4px 4px 4px 4px;
+}
+
+.labels-input span a {
+    color: #638421;
 }
 
 .caption-input {
@@ -580,6 +588,10 @@ textarea {
     margin-bottom:5px;
     font-size:13px; 
     border-radius: 4px 4px 4px 4px;
+}
+
+.project-skills span a {
+    color: #638421;
 }
 
 /* isotope */

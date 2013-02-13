@@ -151,6 +151,14 @@
                 //will be expecting to immediately type in the input box,
                 //and we need to give them that ability
                 $('input.project-name-input', location).focus();
+
+                $('input.project-name-input', location).keypress(function(e) {
+                  if(e.which == 13) {
+                      e.preventDefault();
+                      $('.project-name-trigger').click();
+                      
+                    }
+                });
             }
           },
           

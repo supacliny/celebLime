@@ -1,0 +1,10 @@
+.content .sidebar li a.active {
+    background-color: #54b2bf;
+    color: white; }
+
+.profile .avatar img {
+    border: 5px solid #E0E0E0;
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-top: 25px;
+}

@@ -1,0 +1,536 @@
+/* reset */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: "";
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+/* fonts */
+@font-face {
+  font-family: "walsheim_bold";
+  src: url("../fonts/gt-walsheim-bold-trial-webfont.eot");
+  src: url("../fonts/gt-walsheim-bold-trial-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/gt-walsheim-bold-trial-webfont.woff") format("woff"), url("../fonts/gt-walsheim-bold-trial-webfont.ttf") format("truetype"), url("../fonts/gt-walsheim-bold-trial-webfont.svg#gt_walsheim_trialbold") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: "walsheim_light";
+  src: url("../fonts/gt-walsheim-light-trial-webfont.eot");
+  src: url("../fonts/gt-walsheim-light-trial-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/gt-walsheim-light-trial-webfont.woff") format("woff"), url("../fonts/gt-walsheim-light-trial-webfont.ttf") format("truetype"), url("../fonts/gt-walsheim-light-trial-webfont.svg#gt_walsheim_triallight") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+@font-face {
+  font-family: "walsheim";
+  src: url("../fonts/gt-walsheim-regular-trial-webfont.eot");
+  src: url("../fonts/gt-walsheim-regular-trial-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/gt-walsheim-regular-trial-webfont.woff") format("woff"), url("../fonts/gt-walsheim-regular-trial-webfont.ttf") format("truetype"), url("../fonts/gt-walsheim-regular-trial-webfont.svg#gt_walsheim_trialregular") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+/* colors */
+/* global etc */
+body {
+  background: url(../img/bg-body.png) repeat white;
+  font-family: "walsheim", Verdana, Arial, san-serif; }
+
+.container {
+  width: 1160px;
+  margin: 0 auto;
+  position: relative; }
+
+/* header */
+header {
+  height: 80px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  background: white;
+  z-index: 99; }
+  header .logo {
+    position: absolute;
+    left: 0;
+    top: 20px; }
+  header .login {
+    position: absolute;
+    right: 0;
+    top: 20px;
+    background-color: #d48119;
+    width: 143px;
+    height: 38px;
+    display: block;
+    color: white;
+    text-align: center;
+    line-height: 42px;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 1px solid #c57817;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -o-border-radius: 3px;
+    text-shadow: 1px 1px 1px #c57817;
+    filter: dropshadow(color=#c57817, offx=1, offy=1); }
+
+/* Hero */
+.hero {
+  height: 500px;
+  width: 100%;
+  background-color: black;
+  border-bottom: 4px solid #fed201; }
+  .hero .heroimage {
+    width: 100%;
+    height: 500px;
+    max-width: 1440px;
+    min-width: 1160px;
+    margin: 0 auto;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center center; }
+
+/* Profile Details (username etc) */
+.profile {
+  height: 140px;
+  width: 100%;
+  position: relative; }
+  .profile .container {
+    height: 100%; }
+  .profile .avatar {
+    border: 1px solid #e0e0e0;
+    width: 190px;
+    height: 250px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: white; }
+    .profile .avatar img {
+      border-bottom: 1px solid #e0e0e0; }
+    .profile .avatar .follow {
+      background-color: #679924;
+      border: 1px solid #608e21;
+      width: 166px;
+      height: 38px;
+      display: block;
+      color: white;
+      text-align: center;
+      line-height: 42px;
+      text-decoration: none;
+      text-transform: uppercase;
+      position: absolute;
+      bottom: 10px;
+      left: 11px;
+      text-shadow: 1px 1px 1px #608e21;
+      filter: dropshadow(color=#608e21, offx=1, offy=1);
+      border-radius: 3px;
+      -moz-border-radius: 3px;
+      -webkit-border-radius: 3px;
+      -o-border-radius: 3px; }
+  .profile .info {
+    position: absolute;
+    top: 30px;
+    left: 220px;
+    color: #545454;
+    line-height: 22px; }
+    .profile .info h1.name {
+      text-transform: uppercase;
+      font-family: walsheim_bold, verdana, arial;
+      font-size: 2em;
+      display: inline;
+      color: black; }
+    .profile .info .followers {
+      font-size: 0.8em; }
+      .profile .info .followers .count {
+        color: #679924;
+        margin-left: 10px; }
+    .profile .info .description {
+      font-size: 0.9em; }
+    .profile .info .social {
+      font-size: 0.8em; }
+      .profile .info .social a {
+        color: #2f9397;
+        text-decoration: none;
+        background: url(../img/social.png) no-repeat;
+        margin-right: 15px;
+        line-height: 20px;
+        padding: 5px 0 5px 25px; }
+        .profile .info .social a.web {
+          background: transparent;
+          background-image: none;
+          padding-left: 0px; }
+        .profile .info .social a.facebook {
+          background-position: 0 0; }
+        .profile .info .social a.twitter {
+          background-position: 0 -40px; }
+        .profile .info .social a:hover {
+          text-decoration: underline; }
+
+/* content */
+.content {
+  margin-top: 20px; }
+  .content .sidebar {
+    width: 190px;
+    min-height: 200px;
+    float: left; }
+    .content .sidebar ul {
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 15px; }
+    .content .sidebar li {
+      text-indent: 10px;
+      margin: 5px 0;
+      font-size: 0.8em; }
+      .content .sidebar li a {
+        padding: 12px 0 9px 0;
+        width: 100%;
+        display: block;
+        color: #545454;
+        text-decoration: none; }
+        .content .sidebar li a:hover {
+          background-color: #54b2bf;
+          color: white; }
+    .content .sidebar li.subheader {
+      font-family: walsheim_bold, verdana, arial;
+      text-transform: uppercase; }
+    .content .sidebar li.add {
+      background: url(../img/icon-add.png) 170px center no-repeat; }
+      .content .sidebar li.add a {
+        color: #d48119; }
+        .content .sidebar li.add a:hover {
+          background: transparent !important; }
+
+.main {
+  float: left;
+  margin-left: 10px;
+  min-height: 200px;
+  width: 960px; }
+  .main.grid li {
+    width: 320px;
+    height: 320px;
+    float: left;
+    display: inline;
+    overflow: hidden;
+    position: relative; }
+    .main.grid li:hover .details {
+      display: block; }
+  .main.grid .details {
+    display: none;
+    background: rgba(0, 0, 0, 0.8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    width: 100%;
+    height: 100%; }
+  .main.grid img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%; }
+  .main.grid .track {
+    z-index: 2;
+    color: white;
+    font-size: 1.2em;
+    margin-top: 45%;
+    padding: 0 20px;
+    font-family: walsheim_light, verdana, arial; }
+  .main.grid .artist {
+    z-index: 2;
+    color: #fed201;
+    padding: 0 20px;
+    text-transform: uppercase;
+    font-size: 0.75em; }
+  .main.grid .music-links {
+    position: absolute;
+    bottom: 20px;
+    left: 20px; }
+    .main.grid .music-links a {
+      float: left;
+      display: inline;
+      width: 40px;
+      height: 40px;
+      background: url("../img/icons-music.png");
+      background-repeat: no-repeat;
+      margin-right: 30px; }
+      .main.grid .music-links a.itunes {
+        background-position: 0 0; }
+      .main.grid .music-links a.spotify {
+        background-position: -68px 0; }
+      .main.grid .music-links a.youtube {
+        background-position: -133px 0; }
+      .main.grid .music-links a.share {
+        background-position: -200px 0; }
+  .main.list li {
+    width: 320px;
+    height: 130px;
+    float: left;
+    display: inline;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 30px; }
+    .main.list li:hover .music-links {
+      display: block !important; }
+    .main.list li img {
+      width: 130px;
+      height: 130px;
+      position: absolute;
+      top: 0;
+      left: 0; }
+    .main.list li .details .track {
+      color: #545454;
+      margin-top: 17%;
+      margin-left: 140px; }
+    .main.list li .details .artist {
+      margin-left: 140px; }
+    .main.list li .details .music-links {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 180px;
+      overflow: hidden;
+      display: none; }
+      .main.list li .details .music-links a {
+        float: left;
+        display: inline;
+        width: 28px;
+        height: 28px;
+        background: url("../img/icons-music-small.png");
+        background-repeat: no-repeat;
+        margin-right: 15px; }
+        .main.list li .details .music-links a.itunes {
+          background-position: 0 0; }
+        .main.list li .details .music-links a.spotify {
+          background-position: -39px 0; }
+        .main.list li .details .music-links a.youtube {
+          background-position: -77px 0; }
+        .main.list li .details .music-links a.share {
+          background-position: -117px 0; }
+
+.toggleview {
+  position: absolute;
+  top: -60px;
+  right: 0;
+  width: 113px; }
+  .toggleview a {
+    background-color: #d9d9d9;
+    background-image: url(../img/icons-music-view.png);
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 0;
+    width: 55px;
+    height: 30px;
+    display: block;
+    border-top: 1px solid #b3b3b3;
+    border-bottom: 1px solid #b3b3b3; }
+    .toggleview a.current {
+      background-color: #8a8a8a; }
+  .toggleview #grid {
+    left: 0;
+    background-position: 14px 7px;
+    border-left: 1px solid #b3b3b3;
+    border-right: 1px solid #b3b3b3;
+    -webkit-border-top-left-radius: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-bottomleft: 3px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px; }
+  .toggleview #list {
+    right: 0;
+    background-position: -38px 8px;
+    border-right: 1px solid #b3b3b3;
+    -webkit-border-top-right-radius: 3px;
+    -webkit-border-bottom-right-radius: 3px;
+    -moz-border-radius-topright: 3px;
+    -moz-border-radius-bottomright: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px; }
+
+#infobar {
+  height: 70px;
+  width: 100%;
+  top: 80px;
+  position: fixed;
+  background: url(../img/bg-infobar.png) repeat;
+  z-index: 9999;
+  display: none; }
+  #infobar .toggleview {
+    top: 18px; }
+  #infobar .avatar {
+    width: 49px;
+    height: 49px;
+    border: 1px solid #e0e0e0;
+    position: absolute;
+    top: 10px;
+    left: 0; }
+  #infobar .name {
+    font-family: walsheim_bold, verdana, arial;
+    position: absolute;
+    top: 30px;
+    left: 60px;
+    text-transform: uppercase; }
+
+/* spotify player */
+#spotifyplayer {
+  background-color: white;
+  background-color: rgba(255, 255, 255, 0.8);
+  background-image: url(../img/loading.gif);
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: fixed;
+  right: -320px;
+  top: 200px;
+  z-index: 9999;
+  padding: 20px 0 20px 20px; }
+  #spotifyplayer .close {
+    position: absolute;
+    top: -26px;
+    left: -35px;
+    background-color: white;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px 10px;
+    color: black;
+    text-decoration: none;
+    font-family: walsheim_bold, verdana, arial;
+    -webkit-border-top-left-radius: 3px;
+    -webkit-border-top-right-radius: 3px;
+    -moz-border-radius-topleft: 3px;
+    -moz-border-radius-topright: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-left: 5px solid #333333; }
+  #spotifyplayer .slide {
+    position: absolute;
+    top: 0px;
+    left: -35px;
+    display: block;
+    height: 100%;
+    background-color: white;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: black;
+    text-decoration: none;
+    font-family: walsheim_bold, verdana, arial;
+    text-align: center;
+    width: 30px;
+    border-left: 5px solid #333333; }
+
+/* youtube player */
+#youtubeplayer {
+  background-color: white;
+  background-color: rgba(255, 255, 255, 0.8);
+  position: fixed;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  opacity: 0; }
+  #youtubeplayer .videoholder {
+    width: 1160px;
+    height: 76%;
+    background-color: #1f201b;
+    margin: 4% auto 0 auto;
+    position: relative; }
+    #youtubeplayer .videoholder .videoinfo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 320px;
+      color: white; }
+      #youtubeplayer .videoholder .videoinfo .title {
+        font-family: walsheim_light, verdana, arial;
+        font-size: 1.2em;
+        margin: 60% 20px 0 20px; }
+      #youtubeplayer .videoholder .videoinfo .artist {
+        color: #fed201;
+        font-size: 0.8em;
+        margin: 0 20px; }
+      #youtubeplayer .videoholder .videoinfo .close {
+        background: url(../img/icon-youtubeclose.png) no-repeat;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 32px;
+        height: 32px; }
+      #youtubeplayer .videoholder .videoinfo .share {
+        width: 40px;
+        height: 40px;
+        background-image: url("../img/icons-music.png");
+        background-position: -200px 0;
+        background-repeat: no-repeat;
+        position: absolute;
+        bottom: 20px;
+        right: 20px; }
+    #youtubeplayer .videoholder iframe {
+      width: 840px;
+      height: 100%;
+      top: 0;
+      left: 0;
+      position: absolute; }
+  #youtubeplayer .videothumbnails {
+    height: 130px;
+    width: 100%;
+    position: absolute;
+    bottom: -130px;
+    left: 0;
+    background: url(../img/bg-infobar.png) repeat; }
+    #youtubeplayer .videothumbnails .thumbs {
+      overflow: hidden;
+      height: 130px; }
+    #youtubeplayer .videothumbnails .yt-prev, #youtubeplayer .videothumbnails .yt-next {
+      width: 42px;
+      height: 42px;
+      position: absolute;
+      top: 47px;
+      background-image: url(../img/youtubebuttons.png);
+      background-repeat: no-repeat;
+      z-index: 9; }
+    #youtubeplayer .videothumbnails .yt-prev {
+      margin-left: -601px;
+      left: 50%;
+      background-position: 0 0; }
+    #youtubeplayer .videothumbnails .yt-next {
+      right: 50%;
+      margin-right: -601px;
+      background-position: -45px 0; }
+    #youtubeplayer .videothumbnails ul {
+      height: 130px;
+      width: 20000em;
+      position: absolute;
+      list-style: none;
+      left: 0px; }
+      #youtubeplayer .videothumbnails ul li {
+        width: 232px; }
+        #youtubeplayer .videothumbnails ul li a {
+          display: block;
+          width: 100%;
+          height: 100%; }
+    #youtubeplayer .videothumbnails .thumbnail {
+      width: 232px;
+      height: 100%;
+      float: left;
+      display: inline;
+      background-size: cover;
+      background-position: center center; }

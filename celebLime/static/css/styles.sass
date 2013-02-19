@@ -1,0 +1,637 @@
+/* reset */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup,menu, nav, output, ruby, section, summary, time, mark, audio, video 
+  margin: 0
+  padding: 0
+  border: 0
+  font-size: 100%
+  font: inherit
+  vertical-align: baseline
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section 
+  display: block
+
+body 
+  line-height: 1
+
+ol, ul 
+  list-style: none
+
+blockquote, q 
+  quotes: none
+
+blockquote:before, blockquote:after, q:before, q:after 
+  content: ''
+  content: none
+
+table 
+  border-collapse: collapse
+  border-spacing: 0
+
+/* fonts */
+@font-face 
+  font-family: 'walsheim_bold'
+  src: url('../fonts/gt-walsheim-bold-trial-webfont.eot')
+  src: url('../fonts/gt-walsheim-bold-trial-webfont.eot?#iefix') format('embedded-opentype'),url('../fonts/gt-walsheim-bold-trial-webfont.woff') format('woff'),url('../fonts/gt-walsheim-bold-trial-webfont.ttf') format('truetype'),url('../fonts/gt-walsheim-bold-trial-webfont.svg#gt_walsheim_trialbold') format('svg')
+  font-weight: normal
+  font-style: normal
+
+@font-face 
+  font-family: 'walsheim_light'
+  src: url('../fonts/gt-walsheim-light-trial-webfont.eot')
+  src: url('../fonts/gt-walsheim-light-trial-webfont.eot?#iefix') format('embedded-opentype'),url('../fonts/gt-walsheim-light-trial-webfont.woff') format('woff'),url('../fonts/gt-walsheim-light-trial-webfont.ttf') format('truetype'),url('../fonts/gt-walsheim-light-trial-webfont.svg#gt_walsheim_triallight') format('svg')
+  font-weight: normal
+  font-style: normal
+
+@font-face
+  font-family: 'walsheim'
+  src: url('../fonts/gt-walsheim-regular-trial-webfont.eot')
+  src: url('../fonts/gt-walsheim-regular-trial-webfont.eot?#iefix') format('embedded-opentype'),url('../fonts/gt-walsheim-regular-trial-webfont.woff') format('woff'),url('../fonts/gt-walsheim-regular-trial-webfont.ttf') format('truetype'),url('../fonts/gt-walsheim-regular-trial-webfont.svg#gt_walsheim_trialregular') format('svg')
+  font-weight: normal
+  font-style: normal
+
+
+/* colors */
+$yellow: #fed201
+$green: #679924
+$orange: #d48119
+
+
+/* global etc */
+body
+  background: url(../img/bg-body.png) repeat #fff
+  font-family: 'walsheim', Verdana, Arial, san-serif
+
+.container 
+  width: 1160px
+  margin: 0 auto
+  position: relative
+
+@mixin corners($radius)
+  border-radius: $radius
+  -moz-border-radius: $radius
+  -webkit-border-radius: $radius
+  -o-border-radius: $radius
+
+@mixin tshadow($color)
+  text-shadow: 1px 1px 1px $color
+  filter: dropshadow(color=$color, offx=1, offy=1) 
+
+@mixin transition($duration)
+  -webkit-transition: all $duration ease
+  -moz-transition: all $duration ease
+  -ms-transition: all $duration ease
+  -o-transition: all $duration ease
+  transition: all $duration easee
+
+
+/* header */
+header
+  height: 80px
+  width: 100%
+  position: fixed
+  top: 0
+  background: #fff
+  z-index: 99
+
+  .logo
+    position: absolute
+    left: 0
+    top: 20px
+
+  .login
+    position: absolute
+    right: 0
+    top: 20px
+    background-color: $orange
+    width: 143px
+    height: 38px
+    display: block
+    color: #fff
+    text-align: center
+    line-height: 42px
+    text-decoration: none
+    text-transform: uppercase
+    border: 1px solid #c57817
+    @include corners(3px)
+    @include tshadow(#c57817)
+
+/* Hero */
+.hero
+  height: 500px
+  width: 100%
+  background-color: #000
+  border-bottom: 4px solid $yellow
+
+  .heroimage
+    width: 100%
+    height: 500px
+    max-width: 1440px
+    min-width: 1160px
+    margin: 0 auto
+    overflow: hidden
+    background-size: cover
+    background-position: center center
+
+/* Profile Details (username etc) */
+.profile
+  height: 140px
+  width: 100%
+  position: relative
+
+  .container
+    height: 100%
+
+  .avatar
+    border: 1px solid #e0e0e0
+    width: 190px
+    height: 250px
+    position: absolute
+    bottom: 0
+    left: 0
+    background: #fff
+
+    img
+      border-bottom: 1px solid #e0e0e0
+
+    .follow
+      background-color: $green
+      border: 1px solid #608e21
+      width: 166px
+      height: 38px
+      display: block
+      color: #fff
+      text-align: center
+      line-height: 42px
+      text-decoration: none
+      text-transform: uppercase
+      position: absolute
+      bottom: 10px
+      left: 11px
+      @include tshadow(#608e21)
+      @include corners(3px)
+      
+  .info
+    position: absolute
+    top: 30px
+    left: 220px
+    color: #545454
+    line-height: 22px
+
+    h1.name
+      text-transform: uppercase
+      font-family: walsheim_bold, verdana, arial
+      font-size: 2em
+      display: inline
+      color: #000
+
+    .followers
+      font-size: 0.8em
+
+      .count 
+        color: $green
+        margin-left: 10px
+
+    .description
+      font-size: 0.9em
+
+    .social
+      font-size: 0.8em
+
+      a 
+        color: #2f9397
+        text-decoration: none
+        background: url(../img/social.png) no-repeat
+        margin-right: 15px
+        line-height: 20px
+        padding: 5px 0 5px 25px
+
+        &.web
+          background: transparent
+          background-image: none
+          padding-left: 0px
+
+        &.facebook
+          background-position: 0 0
+
+        &.twitter
+          background-position: 0 -40px
+
+        &:hover
+          text-decoration: underline
+
+/* content */
+.content
+  margin-top: 20px
+
+  .sidebar
+    width: 190px
+    min-height: 200px
+    float: left
+
+    ul
+      border-bottom: 1px solid #e0e0e0
+      margin-bottom: 15px
+
+    li
+      text-indent: 10px
+      margin: 5px 0
+      font-size: 0.8em
+
+      a
+        padding: 12px 0 9px 0
+        width: 100%
+        display: block
+        color: #545454
+        text-decoration: none
+
+        &:hover
+          background-color: #54b2bf
+          color: #fff
+
+    li.subheader
+      font-family: walsheim_bold, verdana, arial
+      text-transform: uppercase
+
+    li.add 
+      background: url(../img/icon-add.png) 170px center no-repeat
+
+      a
+        color: $orange
+
+        &:hover
+          background: transparent !important  
+
+.main
+  float: left
+  margin-left: 10px
+  min-height: 200px
+  width: 960px
+
+  &.grid 
+    li
+      width: 320px
+      height: 320px
+      float: left
+      display: inline
+      overflow: hidden
+      position: relative
+
+      &:hover .details
+        display: block
+
+    .details
+      display: none
+      background: rgba(0,0,0,0.8)
+      position: absolute
+      top: 0
+      left: 0
+      z-index: 5
+      width: 100%
+      height: 100%
+
+    img 
+      position: absolute
+      top: 0
+      left: 0
+      z-index: 1
+      width: 100%
+      height: 100%
+
+    .track
+      z-index: 2
+      color: #fff
+      font-size: 1.2em
+      margin-top: 45%
+      padding: 0 20px
+      font-family: walsheim_light, verdana, arial
+
+    .artist
+      z-index: 2
+      color: $yellow
+      padding: 0 20px
+      text-transform: uppercase
+      font-size: 0.75em
+
+    .music-links
+      position: absolute
+      bottom: 20px
+      left: 20px
+
+      a
+        float: left
+        display: inline
+        width: 40px
+        height: 40px
+        background: url('../img/icons-music.png')
+        background-repeat: no-repeat
+        margin-right: 30px
+
+        &.itunes
+          background-position: 0 0
+
+        &.spotify
+          background-position: -68px 0
+
+        &.youtube
+          background-position: -133px 0
+
+        &.share
+          background-position: -200px 0
+
+ 
+  &.list
+    li
+      width: 320px
+      height: 130px
+      float: left
+      display: inline
+      overflow: hidden
+      position: relative
+      margin-bottom: 30px
+
+      &:hover .music-links
+        display: block !important
+
+      img
+        width: 130px
+        height: 130px
+        position: absolute
+        top: 0
+        left: 0
+
+      .details
+
+        .track
+          color: #545454
+          margin-top: 17%
+          margin-left: 140px
+
+        .artist
+          margin-left: 140px
+
+        .music-links
+          position: absolute
+          bottom: 0
+          right: 0
+          width: 180px
+          overflow: hidden
+          display: none
+
+          a
+            float: left
+            display: inline
+            width: 28px
+            height: 28px
+            background: url('../img/icons-music-small.png')
+            background-repeat: no-repeat
+            margin-right: 15px
+
+            &.itunes
+              background-position: 0 0
+
+            &.spotify
+              background-position: -39px 0
+
+            &.youtube
+              background-position: -77px 0
+
+            &.share
+              background-position: -117px 0
+
+.toggleview
+  position: absolute
+  top: -60px
+  right: 0
+  width: 113px
+
+  a
+    background-color: #d9d9d9
+    background-image: url(../img/icons-music-view.png)
+    background-repeat: no-repeat
+    position: absolute
+    top: 0
+    width: 55px
+    height: 30px
+    display: block
+    border-top: 1px solid #b3b3b3
+    border-bottom: 1px solid #b3b3b3
+
+    &.current
+      background-color: #8a8a8a  
+
+  #grid
+    left: 0
+    background-position: 14px 7px
+    border-left: 1px solid #b3b3b3
+    border-right: 1px solid #b3b3b3
+    -webkit-border-top-left-radius: 3px
+    -webkit-border-bottom-left-radius: 3px
+    -moz-border-radius-topleft: 3px
+    -moz-border-radius-bottomleft: 3px
+    border-top-left-radius: 3px
+    border-bottom-left-radius: 3px
+
+  #list
+    right: 0
+    background-position: -38px 8px
+    border-right: 1px solid #b3b3b3
+    -webkit-border-top-right-radius: 3px
+    -webkit-border-bottom-right-radius: 3px
+    -moz-border-radius-topright: 3px
+    -moz-border-radius-bottomright: 3px
+    border-top-right-radius: 3px
+    border-bottom-right-radius: 3px
+
+
+#infobar
+  height: 70px
+  width: 100%
+  top: 80px
+  position: fixed
+  background: url(../img/bg-infobar.png) repeat
+  z-index: 9999
+  display: none
+
+  .toggleview
+    top: 18px
+
+  .avatar
+    width: 49px
+    height: 49px
+    border: 1px solid #e0e0e0
+    position: absolute
+    top: 10px
+    left: 0
+
+  .name
+    font-family: walsheim_bold, verdana, arial
+    position: absolute
+    top: 30px
+    left: 60px
+    text-transform: uppercase
+
+
+
+/* spotify player */
+#spotifyplayer
+  background-color: #fff
+  background-color: rgba(255,255,255,0.8)
+  background-image: url(../img/loading.gif)
+  background-position: center center
+  background-repeat: no-repeat
+  position: fixed
+  right: -320px
+  top: 200px
+  z-index: 9999
+  padding: 20px 0 20px 20px
+
+  .close
+    position: absolute
+    top: -26px
+    left: -35px
+    background-color: #fff
+    background-color: rgba(255,255,255,0.8)
+    padding: 5px 10px
+    color: #000
+    text-decoration: none
+    font-family: walsheim_bold, verdana, arial
+    -webkit-border-top-left-radius: 3px
+    -webkit-border-top-right-radius: 3px
+    -moz-border-radius-topleft: 3px
+    -moz-border-radius-topright: 3px
+    border-top-left-radius: 3px
+    border-top-right-radius: 3px
+    border-left: 5px solid #333
+
+  .slide
+    position: absolute
+    top: 0px
+    left: -35px
+    display: block
+    height: 100%
+    background-color: #fff
+    background-color: rgba(255,255,255,0.8)
+    color: #000
+    text-decoration: none
+    font-family: walsheim_bold, verdana, arial
+    text-align: center
+    width: 30px
+    border-left: 5px solid #333
+
+
+/* youtube player */
+#youtubeplayer
+  background-color: #fff
+  background-color: rgba(255,255,255,0.8)
+  position: fixed
+  top: 80px
+  left: 0
+  width: 100%
+  z-index: 9999
+  opacity: 0
+
+  .videoholder
+    width: 1160px
+    height: 76%
+    background-color: #1f201b
+    margin: 4% auto 0 auto
+    position: relative    
+
+    .videoinfo
+      position: absolute
+      top: 0
+      right: 0
+      height: 100%
+      width: 320px
+      color: #fff
+
+      .title
+        font-family: walsheim_light, verdana, arial
+        font-size: 1.2em
+        margin: 60% 20px 0 20px
+
+      .artist
+        color: $yellow
+        font-size: 0.8em
+        margin: 0 20px
+
+      .close
+        background: url(../img/icon-youtubeclose.png) no-repeat
+        position: absolute
+        top: 20px
+        right: 20px
+        width: 32px
+        height: 32px
+
+      .share
+        width: 40px
+        height: 40px
+        background-image: url('../img/icons-music.png')
+        background-position: -200px 0
+        background-repeat: no-repeat
+        position: absolute
+        bottom: 20px
+        right: 20px
+
+    iframe
+      width: 840px
+      height: 100%
+      top: 0
+      left: 0
+      position: absolute
+
+  .videothumbnails
+    height: 130px
+    width: 100%
+    position: absolute
+    bottom: -130px
+    left: 0
+    background: url(../img/bg-infobar.png) repeat
+
+    .thumbs 
+      overflow: hidden
+      height: 130px
+
+    .yt-prev, .yt-next
+      width: 42px
+      height: 42px
+      position: absolute
+      top: 47px
+      background-image: url(../img/youtubebuttons.png)
+      background-repeat: no-repeat
+      z-index: 9
+
+    .yt-prev
+      margin-left: -601px
+      left: 50%
+      background-position: 0 0
+
+    .yt-next
+      right: 50%
+      margin-right: -601px
+      background-position: -45px 0
+
+    ul
+      height: 130px
+      width: 20000em
+      position: absolute
+      list-style: none
+      left: 0px
+
+      li 
+        width: 232px
+
+        a
+          display: block
+          width: 100%
+          height: 100%
+
+    .thumbnail
+      width: 232px
+      height: 100%
+      float: left
+      display: inline
+      background-size: cover
+      background-position: center center
+      

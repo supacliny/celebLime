@@ -21,11 +21,12 @@ import requests
 ## CONFIG SETTINGS ##
 
 DEBUG = False
+# DEBUG = True
 CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"
 CONSUMER_SECRET = "cXfqDfMFBQutTMf9KpZWGt2HWDhBVxTajAqVDuFH7U"
 
-if DEBUG: 
+if DEBUG:
     CALLBACK_URL = "http://127.0.0.1:8000/verify"
 else:
     CALLBACK_URL = "http://www.cvstechnology.ca/projects/celebLime/verify"
@@ -79,7 +80,7 @@ def getSpotifyTrack(song_id, search):
         # update original song_id record to keep all data in one place
         mongo.db.songs.update({"_id": song_oid },{"$set": {"spotify": data}})
 
-    
+
 @celery.task
 def getYouTubeVideo(song_id, search):
     with app.test_request_context():
@@ -89,7 +90,7 @@ def getYouTubeVideo(song_id, search):
         results = requests.get(query_url, params=query_params).json()
 
         # convert the string song_id to a bson ObjectID for mongo
-        song_oid = bson.objectid.ObjectId(song_id)        
+        song_oid = bson.objectid.ObjectId(song_id)
         data = {}
 
         if (results.get('feed').get('entry')) != None:
@@ -115,14 +116,14 @@ def home():
     logged_in = session.get("logged_in")
     name = session.get("username")
     active = session.get("tab")
-    
+
     if logged_in == None:
         logged_in = False
 
     if name == None:
         name = ""
 
-    # possibly new session, so set active to Celebrities tab  
+    # possibly new session, so set active to Celebrities tab
     if active == None:
         active = True
 
@@ -149,7 +150,7 @@ def home():
                 else:
                     celeb["now"] = False
 
-                celeb["mr_song_title"] = songinfo["title"] 
+                celeb["mr_song_title"] = songinfo["title"]
                 celeb["mr_song_artist"] = songinfo["artist"]
 
             celebs.append(celeb)
@@ -183,7 +184,7 @@ def home():
                 else:
                     fan["now"] = False
 
-                fan["mr_song_title"] = songinfo["title"] 
+                fan["mr_song_title"] = songinfo["title"]
                 fan["mr_song_artist"] = songinfo["artist"]
 
             fans.append(fan)
@@ -193,7 +194,17 @@ def home():
             fan["mr_song_artist"] = ""
             fans.append(fan)
 
-    return render_template("index.html", fans=fans, celebs=celebs, logged_in=logged_in, name=name, active=active, debug=DEBUG)
+    tfans = fans
+    fans = []
+    celebs = []
+
+    for i in tfans:
+        if i["screen_name"] in ["fanlimeDRose", "fanlimeBolt"]:
+            celebs.append(i)
+        else:
+            fans.append(i)
+
+    return render_template("old/index.html", fans=fans, celebs=celebs, logged_in=logged_in, name=name, active=active, debug=DEBUG)
 
 
 # first half of twitter oauth - go to twitter login page, then redirect to home page
@@ -316,13 +327,22 @@ def verify():
 
 
 # when we visit a user profile page
+
+@app.route("/user/<screen_name>/old", methods = ["GET"])
+def user_view_depr(screen_name):
+    return user(screen_name, "old/user.html")
+
 @app.route("/user/<screen_name>", methods = ["GET"])
-def user(screen_name):
+def user_view(screen_name):
+    return user(screen_name)
+
+
+def user(screen_name, template="userpage.html"):
 
     # check for logged in session
     logged_in = session.get("logged_in")
     name = session.get("username")
-    
+
     if logged_in == None:
         logged_in = False
 
@@ -354,13 +374,16 @@ def user(screen_name):
             if songinfo:
                 songs.append(songinfo)
                 playlist["songs"] = songs
-
+            
         # corner case fix: there are song_ids but no mapped songs!
         if not songs:
             playlist["songs"] = songs
 
+        make_song_playlists(playlist["songs"])
+        
         playlists.append(playlist)
 
+#    raise Exception(playlists[0])
     streaming = []
 
     # sort recently played songs in descending order by date
@@ -373,6 +396,8 @@ def user(screen_name):
             songinfo["played_at"] = song["played_at"]
             streaming.append(songinfo)
 
+    make_song_playlists(streaming)
+
     top_songs = []
 
     # sort in descending order by number of times played
@@ -382,6 +407,8 @@ def user(screen_name):
         song_id = song["song_id"]
         songinfo = mongo.db.songs.find_one({"_id": song_id})
         top_songs.append(songinfo)
+
+    make_song_playlists(top_songs)
 
     artists = []
 
@@ -404,13 +431,36 @@ def user(screen_name):
 
     # now reverse sort
     top_artists = sorted(counter, key=counter.get, reverse=True)
+    top_artists = top_artists[:6]
 
-    return render_template("user.html", user=user, playlists=playlists, streaming=streaming, top_songs=top_songs, top_artists=top_artists, logged_in=logged_in, name=name, debug=DEBUG)
+    return render_template(template, user=user, playlists=playlists, streaming=streaming, top_songs=top_songs, top_artists=top_artists, logged_in=logged_in, name=name, debug=DEBUG)
 
 
+def make_song_playlists(plist):
+    playlist = []
+    for song in plist:
+        spotify_link = song.get("spotify",[]).get("href", "")
+        if spotify_link:
+            spotify_link = spotify_link.split(":")
+            spotify_id = spotify_link[2]
+            playlist.append(spotify_id)
+        
+    for index, song in enumerate(plist):
+        string_list = ','.join(map(str, playlist[index:]))
+        song["playlists"] = string_list
+
+        
 # ajax query to update the recently listened playlist
+@app.route("/old/poll/<screen_name>", methods = ["POST"])
+def poll_view_depr(screen_name):
+    return poll(screen_name, "old/streaming.html")
+
 @app.route("/poll/<screen_name>", methods = ["POST"])
-def poll(screen_name):
+def poll_view(screen_name):
+    return poll(screen_name)
+
+
+def poll(screen_name, template="streaming.html"):
 
     # cast to string just in case
     screen_name = str(screen_name)
@@ -442,7 +492,9 @@ def poll(screen_name):
         if ((int(most_recent_song_start) + int(most_recent_song_duration)) >= int(time())):
             now = True
 
-    return render_template("streaming.html", streaming=recent_songs, now=now, debug=DEBUG)
+    make_song_playlists(recent_songs)
+
+    return render_template(template, streaming=recent_songs, now=now, debug=DEBUG)
 
 
 # store session preferences - right place or use g?
@@ -577,7 +629,7 @@ def api_delete():
             token = incoming["token"]
             if "playlist_id" in incoming:
                 playlist_id = incoming["playlist_id"]
-            if "song_id" in incoming:  
+            if "song_id" in incoming:
                 song_id = incoming["song_id"]
         except KeyError:
             return bad_request()
@@ -714,7 +766,7 @@ def api_stream_song():
             incoming["played_count"] = 1
             incoming["song_id"] = song_oid
             mongo.db.streaming.insert(incoming)
-            
+
         data = {}
 
         data = json.dumps(data)
@@ -754,10 +806,10 @@ def api_recent_list():
         except KeyError:
             visible = None
 
-        if limit == None and visible == None:    
+        if limit == None and visible == None:
             most_recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).sort([("played_at", -1)])
 
-        if limit != None and visible == None:   
+        if limit != None and visible == None:
             most_recent_songs_cursor = mongo.db.streaming.find({"twitter_id": user_id}).limit(limit).sort([("played_at", -1)])
 
         if limit == None and visible != None:
@@ -771,7 +823,7 @@ def api_recent_list():
         for song in most_recent_songs_cursor:
             song_id = str(song["song_id"])
             mru.append(song_id)
-            
+
         data = {"recent": mru}
 
         data = json.dumps(data)
@@ -813,7 +865,7 @@ def api_playlists():
             playlist["playlist_id"] = str(playlist["_id"])
             playlist.pop("_id", None)
             playlists.append(playlist)
-            
+
         data = {"playlists": playlists}
 
         data = json.dumps(data)
@@ -841,7 +893,7 @@ def api_publish_playlist():
             token = incoming["token"]
             if "playlist_id" in incoming:
                 playlist_id = incoming["playlist_id"]
-            if "song_id" in incoming:  
+            if "song_id" in incoming:
                 song_id = incoming["song_id"]
             visibility = incoming["visible"]
         except KeyError:
@@ -880,7 +932,7 @@ def api_add_song():
 
     if request.headers["Content-Type"] == "application/json":
 
-        incoming = request.json    
+        incoming = request.json
 
         data = json.dumps(add_song(incoming))
 
@@ -897,7 +949,7 @@ def api_get_song():
     if request.headers["Content-Type"] == "application/json":
 
         try:
-            song_id = request.json["song_id"]    
+            song_id = request.json["song_id"]
         except KeyError:
             return bad_request()
 
@@ -906,7 +958,7 @@ def api_get_song():
         song = mongo.db.songs.find_one({"_id": song_oid})
 
         if song:
-            song["song_id"] = str(song["_id"])    
+            song["song_id"] = str(song["_id"])
             song.pop("_id", None)
         else:
             song = {}
@@ -1050,7 +1102,7 @@ def format_date(time):
 
 # now apply this jinja2 template
 app.jinja_env.globals.update(format_date=format_date)
-
+app.debug = True
 
 if __name__ == "__main__":
     if DEBUG:

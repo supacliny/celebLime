@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>{{user.name}}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="A web application that publishes music playlists from a mobile application by celebrities.">
+        <meta name="keywords" content="fanlime athlete celebrity fan music playlist">
+        <meta name="author" content="cvstechnolgy">
+
+    {% if debug %}
+        <!-- styles -->
+        <link href="/projects/celebLime/static/old/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+        <link href="/projects/celebLime/static/old/css/docs.css" rel="stylesheet">
+        <link href="/projects/celebLime/static/old/css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="/projects/celebLime/static/old/css/bootstrap.css" rel="stylesheet">
+        <link href="/projects/celebLime/static/old/css/prettify.css" rel="stylesheet">
+        <link href="/projects/celebLime/static/old/css/celeb.css" rel="stylesheet">
+
+        <!-- javascript -->
+        <script src="/projects/celebLime/static/old/js/jquery.min.js"></script>
+        <script src="/projects/celebLime/static/old/js/jquery-ui.min.js"></script>
+        <script src="/projects/celebLime/static/old/js/bootstrap-dropdown.js"></script>
+    {% else %}
+        <!-- styles -->
+        <link href="/projects/celebLime/static/old/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+        <link href="/projects/celebLime/static/old/css/docs.css" rel="stylesheet">
+        <link href="/projects/celebLime/static/old/css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="/projects/celebLime/static/old/css/bootstrap.css" rel="stylesheet">
+        <link href="/projects/celebLime/static/old/css/prettify.css" rel="stylesheet">
+        <link href="/projects/celebLime/static/old/css/celeb.css" rel="stylesheet">
+
+        <!-- javascript -->
+        <script src="/projects/celebLime/static/old/js/jquery.min.js"></script>
+        <script src="/projects/celebLime/static/old/js/jquery-ui.min.js"></script>
+        <script src="/projects/celebLime/static/old/js/bootstrap-dropdown.js"></script>
+    {% endif %}
+
+        <script>
+            $(function () {
+                $(".innercollapsable").hide();
+
+                $(".default").show();
+
+                $(".outerclickable").click(
+                    function() {
+                    z=$(this);
+                    $(this).siblings(".innercollapsable").slideToggle();
+                });
+
+                $(".toggler").click(
+                    function() {
+                    z=$(this);
+                    $(this).siblings(".tunein_container").slideToggle();
+                });
+
+                {% if debug %}
+                function doPoll(){
+                    $.post("/projects/celebLime/old/poll/{{ user.screen_name }}", function(data) {
+                        $(".stream").html(data);
+                        setTimeout(doPoll,30000);
+                    });
+                }
+                {% else %}
+                function doPoll(){
+                    $.post("/projects/celebLime/old/poll/{{ user.screen_name }}", function(data) {
+                        $(".stream").html(data);
+                        setTimeout(doPoll,30000);
+                    });
+                }
+                {% endif %}
+
+                doPoll();
+
+            });
+
+            function shorten(string, limit)
+            {
+               return string = string.length > limit ? string.substring(0,limit) + "...": string;
+            }
+
+            $(document).ready(function(){
+
+                $(".youtube").click(function() {
+                    $("html, body").animate({ scrollTop: 0 }, 1000);
+                    $(".playwindow").empty();
+                    $(".tunein_container").animate({height: "300px"}, 1000, "easeInOutQuad");
+                    var ytid = $(this).attr("rel");
+                    var embedhtml = '<div class="youtubeframe"><iframe id="playwindow" type="text/html" width="279" height="279" src="http://www.youtube.com/embed/' + ytid + '?autoplay=1&origin=http://example.com" frameborder="0"/></div>';
+                    $(".playwindow").append(embedhtml);
+                });
+
+
+                $(".spotify").click(function() {
+                    $("html, body").animate({ scrollTop: 0 }, 1000);
+                    $(".playwindow").empty();
+                    $(".tunein_container").animate({height: "100px"}, 1000, "easeInOutQuad");
+                    var spid = $(this).attr("rel");
+                    var embedhtml = '<div class="spotifyframe"><iframe src="https://embed.spotify.com/?uri=' + spid + '" width="279" height="86" frameborder="0" allowtransparency="true"></iframe></div>';
+                    $(".playwindow").append(embedhtml);
+                    });
+
+                $(".itunes").click(function() {
+                    $("html, body").animate({ scrollTop: 0 }, 1000);
+                    $(".playwindow").empty();
+                    $(".tunein_container").animate({height: "120px"}, 1000, "easeInOutQuad");
+                    var itida = shorten($(this).attr("rela"), 25);
+                    var itidb = shorten($(this).attr("relb"), 25);
+                    var itidc = shorten($(this).attr("relc"), 25);
+                    var itidd = $(this).attr("reld");
+                    var itide = $(this).attr("rele");
+                    var itidf = $(this).attr("relf");
+                    var itidg = $(this).attr("relg");
+                    var itidh = $(this).attr("relh");
+                    var embedhtml = '<div class="itthumb" style="background-image: url(' + itidg + ')"></div><div class="itinfo"><div class="itname">' + itidb + '</div><br><div class="itname">' + itida + '</div><br><div class="itname">' + itidc + '</div><br><div class="itname">Track ' + itidd + ' of ' + itide + '</div><br><div><div class="itname">USD$' + itidf + '</div><a class="itbuy" href="' + itidh + '" target="_blank">ITUNES BUY</a></div></div>';
+                    $(".playwindow").append(embedhtml);
+                });
+            });
+        </script>
+    </head>
+
+    <!-- Le html -->
+    <body>
+        <div class="navbar navbar-fixed-top">
+          <div class="navbar-inner">
+            <div class="container">
+            {% if not logged_in %}
+              <a class="brand" href="{{ url_for('home') }}">celebLime</a>
+              <a class="manage" href="{{ url_for('login') }}">login</a>
+            {% else %}
+              <a class="brand" href="{{ url_for('home') }}">celebLime</a>
+              <div class="dropdown">
+                <b class="caret"></b>
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">{{ name }}</a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                  <li>
+                    <a href="{{ url_for('logout') }}" tabindex="-1">Sign out celebLime</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="manage">Welcome</div>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="container">
+
+            <div class="celebname">
+                <div class="headthumb" style="background-image: url('{{ user.profile_image_url }}')"></div>
+                <h1>{{ user.name }}<a class="followbutton" href="#">FOLLOW</a><div class="followers">followers</div><div class="numfollowers">{% if user.followers_count %}{{ user.followers_count }}{% else %}0{% endif %}</div></h1>
+            </div>
+
+            <div class="wrap">
+
+                <div class="leftcol">
+
+                    <div class="playlists">
+                        <h2 class="playlists_header outerclickable blackback">Recently listened: </h2>
+                        <div class="playlists_container innercollapsable default">
+                            <div class="playlist">
+                                <div class="stream"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="playlists realplaylist">
+                        <h2 class="playlists_header outerclickable blackback">Playlists:</h2>
+                        <div class="playlists_container innercollapsable">
+                            {% for playlist in playlists %}
+                            <div class="playlist">
+                                <div class="playlist_header outerclickable blackback"><div class="left playlistname">{{ playlist.name | truncate(64) }}</div><div class="right date updated">
+                                {% if playlist.added_at == playlist.updated_at %}
+                                Added {{ format_date(playlist.added_at) }}
+                                {% else %}
+                                Updated {{ format_date(playlist.updated_at) }}
+                                {% endif %}
+                                </div></div>
+                                {% if playlist.songs %}
+                                <div class="playlist_container innercollapsable blackback">
+                                {% else %}
+                                <div class="playlist_container innercollapsable blackback">
+                                    <h3 style="color: #9c9c9c; margin-left: 10px; margin-top: 5px; margin-bottom: -5px;">No songs in this playlist yet!</h3>
+                                {% endif %}
+                                    {% for song in playlist.songs %}
+                                    <div class="song">
+                                        <div class="thumb" style="background-image: url('{{ song.itunes.artworkUrl60 }}')"></div>
+                                        <div class="rowA">
+                                            <div class="name">{{ song.title | truncate(20) }}</div><div class="by">by</div><div class="artist">{{ song.artist | truncate(20)}}</div>&nbsp
+                                        </div>
+                                        {% if debug %}
+                                        <div class="rowB">
+                                            <div class="album">{{ song.album | truncate(25) }}</div>
+                                            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/projects/celebLime/static/old/img/icons/youtube.png"/></div>
+                                            <div class="spotify" rel="{{ song.spotify.href }}"><img class="spotifylogo" src="/projects/celebLime/static/old/img/icons/spotify-logo.png"/></div>
+                                            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img class="ituneslogo" src="/projects/celebLime/static/old/img/icons/itunes.png"/></div>
+                                        </div>
+                                        {% else %}
+                                        <div class="rowB">
+                                            <div class="album">{{ song.album | truncate(25) }}</div>
+                                            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/projects/celebLime/static/old/img/icons/youtube.png"/></div>
+                                            <div class="spotify" rel="{{ song.spotify.href }}"><img class="spotifylogo" src="/projects/celebLime/static/old/img/icons/spotify-logo.png"/></div>
+                                            <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img class="ituneslogo" src="/projects/celebLime/static/old/img/icons/itunes.png"/></div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rightcol">
+
+                    <div class="toplists">
+                        <h2 class="toplists_header blackback toggler">Tune in:</h2>
+                        <div class="tunein_container blackback">
+                            <div class="playwindow"></div>
+                        </div>
+                    </div>
+
+                    <div class="toplists">
+                        <h2 class="toplists_header outerclickable blackback">Top Tracks:</h2>
+                        {% if top_songs %}
+                        <div class="toplists_container innercollapsable">
+                            <div class="toplist">
+                                <div class="toplist_container blackback">
+                                    {% for song in top_songs %}
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">{{ loop.index }}.</div><div class="trackname">{{ song.title | truncate(30) }}</div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+
+                        {% endif %}
+                    </div>
+
+                    <div class="toplists">
+                        <h2 class="toplists_header outerclickable blackback">Favorite Artists:</h2>
+                        {% if top_artists %}
+                        <div class="toplists_container innercollapsable">
+                            <div class="toplist">
+                                <div class="toplist_container blackback">
+                                    {% for artist in top_artists %}
+                                    <div class="track">
+                                        <div class="rowA">
+                                            <div class="number">{{ loop.index }}.</div><div class="trackartist">{{ artist| truncate(30) }}</div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+
+                        {% endif %}
+                    </div>
+
+                </div> <!-- /rightcol -->
+            </div> <!-- /wrap -->
+        </div> <!-- /container -->
+
+    </body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CelebLime</title>
+  <link rel="stylesheet" href="/projects/celebLime/static/css/styles.css" />
+  <link rel="stylesheet" href="/projects/celebLime/static/css/extras.css" />
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/projects/celebLime/"><img src="/projects/celebLime/static/img/logo-music.png" alt="music" width="141" height="29" class="logo" /></a>
+      <a href="#" class="login">LOGIN</a>
+    </div>
+  </header>
+  <div class="hero">
+      <div class="heroimage" style="background-image:url(/projects/celebLime/static/img/usain/hero.jpg);"></div>
+  </div>
+  <div class="profile">
+    <div class="container">
+      <div class="avatar">
+        <img src="https://api.twitter.com/1/users/profile_image?screen_name={{ user.screen_name }}&size=reasonably_small" />
+        <a href="#" class="follow">FOLLOW</a>
+      </div>
+
+      <div class="info">
+        <h1 class="name">{{ user.name }}</h1> <span class="followers"><span class="count">{% if user.followers_count %}{{ user.followers_count }}{% else %}0{% endif %}</span> Followers</span><br />
+        <span class="description">The most naturally gifted athlete the world has ever seen.</span><br />
+        <span class="social">
+          <a href="#" class="web">celeblime.com/{{ user.screen_name }}</a>
+          <a href="#" class="facebook">facebook.com/{{ user.screen_name }}</a>
+          <a href="#" class="twitter">@{{ user.screen_name }}</a>
+        </span>
+      </div>
+    </div>
+    <!-- this is the profile bar that sticks to the top when the user scrolls past the profile info -->
+    <div id="infobar">
+      <div class="container">
+        <img src="{{ user.profile_image_url }}" class="avatar" />
+        <div class="name">{{ user.name }}</div>
+        <div class="toggleview">
+          <a href="#" id="grid" class="current"></a>
+          <a href="#" id="list"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content container">
+    <div class="toggleview">
+      <a href="#" id="grid" class="current"></a>
+      <a href="#" id="list"></a>
+    </div>
+
+
+    <div class="sidebar">
+      <ul class="show_playlist">
+        <li class="subheader">Recently Listened</li>
+        <li><a href="#" data-link="playlist_streaming" class="active">Last Played</a></li>
+      </ul>
+      <ul class="show_playlist">
+        <li class="subheader">Top Tracks</li>
+        <li><a href="#" data-link="playlist_toptracks">This Week</a></li>
+        <li><a href="#" data-link="playlist_toptracks">This Month</a></li>
+      </ul>
+      <ul class="show_playlist">
+        <li class="subheader">Playlists</li>
+        {% for playlist in playlists %}
+        <li><a href="#" data-link="playlist_{{ playlist._id }}">{{ playlist.name | truncate(64) }}</a></li>
+        {% endfor %}
+      </ul>
+      <ul>
+        {% if top_artists %}
+        <li class="subheader">Favorite Artists</li>
+        {% for artist in top_artists %}
+        <li><a href="#">{{ artist| truncate(30) }}</a></li>
+        {% endfor %}
+        {% endif %}
+      </ul>
+    </div>
+
+    <div class="main grid">
+      {% for playlist in playlists %}
+      <ul id="playlist_{{ playlist._id }}" class="aplaylist" style="display:none;">
+        {% for song in playlist.songs %}
+        <li>
+          <img src="{{ song.itunes.artworkUrl100 }}">
+          <div class="details">
+            <div class="track">{{ song.title | truncate(60) }}</div>
+            <div class="artist">{{ song.artist | truncate(60) }}</div>
+            <div class="music-links">
+              <a href="#" class="itunes"></a>
+              <a href="spotify:trackset:{{ playlist.name }}:{{ song.playlists }}" class="spotify"></a>
+              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" class="youtube"></a>
+              <a href="#" class="share"></a>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endfor %}
+
+      {% if top_songs %}
+      <ul id="playlist_toptracks" class="aplaylist" style="display:none">
+        {% for song in top_songs %}
+        <li>
+          <img src="{{ song.itunes.artworkUrl100 }}">
+          <div class="details">
+            <div class="track">{{ song.title | truncate(60) }}</div>
+            <div class="artist">{{ song.artist | truncate(60) }}</div>
+            <div class="music-links">
+              <a href="#" class="itunes"></a>
+              <a href="spotify:trackset:Top Songs:{{ song.playlists }}" class="spotify"></a>
+              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" class="youtube"></a>
+              <a href="#" class="share"></a>
+            </div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      <ul id="playlist_streaming" class="aplaylist" style="">
+          <li>No songs yet!</li>
+      </ul>
+
+
+    </div>
+  </div>
+  <script src="/projects/celebLime/static/js/jquery-1.9.1.min.js"></script>
+  <script src="/projects/celebLime/static/js/index.js"></script>
+</body>
+
+
+<script>
+    $(function () {
+
+    $(".sidebar .show_playlist a").click(function() {
+      var show = $(this).attr("data-link");
+      $(".aplaylist").hide();
+      $("#"+show).show();
+
+      $(".sidebar li a.active").removeClass("active");
+      $(this).addClass("active");
+
+      return false;
+    });
+
+
+    function doPoll() {
+     $.post("/projects/celebLime/poll/{{ user.screen_name }}", function(data) {
+         $("#playlist_streaming").html(data);
+         setTimeout(doPoll,30000);
+     });
+    }
+
+    doPoll();
+    });
+
+    $(document).ready(function() {
+        $('#list').click();
+    });
+</script>
+
+</html>

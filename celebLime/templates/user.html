@@ -37,7 +37,7 @@
     {% endif %}
 
         <script>
-            $(function () {  
+            $(function () {
                 $(".innercollapsable").hide();
 
                 $(".default").show();
@@ -54,7 +54,7 @@
                     $(this).siblings(".tunein_container").slideToggle();
                 });
 
-                {% if debug %} 
+                {% if debug %}
                 function doPoll(){
                     $.post("/poll/{{ user.screen_name }}", function(data) {
                         $(".stream").html(data);
@@ -79,7 +79,7 @@
                return string = string.length > limit ? string.substring(0,limit) + "...": string;
             }
 
-            $(document).ready(function(){   
+            $(document).ready(function(){
 
                 $(".youtube").click(function() {
                     $("html, body").animate({ scrollTop: 0 }, 1000);
@@ -99,7 +99,7 @@
                     var embedhtml = '<div class="spotifyframe"><iframe src="https://embed.spotify.com/?uri=' + spid + '" width="279" height="86" frameborder="0" allowtransparency="true"></iframe></div>';
                     $(".playwindow").append(embedhtml);
                     });
-             
+
                 $(".itunes").click(function() {
                     $("html, body").animate({ scrollTop: 0 }, 1000);
                     $(".playwindow").empty();
@@ -158,8 +158,8 @@
                     <div class="playlists">
                         <h2 class="playlists_header outerclickable blackback">Recently listened: </h2>
                         <div class="playlists_container innercollapsable default">
-                            <div class="playlist"> 
-                                <div class="stream"></div>    
+                            <div class="playlist">
+                                <div class="stream"></div>
                             </div>
                         </div>
                     </div>
@@ -191,19 +191,19 @@
                                         {% if debug %}
                                         <div class="rowB">
                                             <div class="album">{{ song.album | truncate(25) }}</div>
-                                            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/static/img/icons/youtube.png"/></div> 
+                                            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/static/img/icons/youtube.png"/></div>
                                             <div class="spotify" rel="{{ song.spotify.href }}"><img class="spotifylogo" src="/static/img/icons/spotify-logo.png"/></div>
                                             <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img class="ituneslogo" src="/static/img/icons/itunes.png"/></div>
                                         </div>
                                         {% else %}
                                         <div class="rowB">
                                             <div class="album">{{ song.album | truncate(25) }}</div>
-                                            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/projects/celebLime/static/img/icons/youtube.png"/></div> 
+                                            <div class="youtube" rel="{{ song.youtube.videoid }}"><img class="youtubelogo" src="/projects/celebLime/static/img/icons/youtube.png"/></div>
                                             <div class="spotify" rel="{{ song.spotify.href }}"><img class="spotifylogo" src="/projects/celebLime/static/img/icons/spotify-logo.png"/></div>
                                             <div class="itunes" rela="{{ song.itunes.artistName }}" relb="{{ song.itunes.trackName }}" relc="{{ song.itunes.collectionName }}" reld="{{ song.itunes.trackNumber }}" rele="{{ song.itunes.trackCount }}" relf="{{ song.itunes.trackPrice }}" relg="{{ song.itunes.artworkUrl100 }}" relh="{{ song.itunes.trackViewUrl }}"><img class="ituneslogo" src="/projects/celebLime/static/img/icons/itunes.png"/></div>
                                         </div>
                                         {% endif %}
-                                    </div>  
+                                    </div>
                                     {% endfor %}
                                 </div>
                             </div>
@@ -212,7 +212,7 @@
                     </div>
                 </div>
 
-                <div class="rightcol">  
+                <div class="rightcol">
 
                     <div class="toplists">
                         <h2 class="toplists_header blackback toggler">Tune in:</h2>
@@ -220,11 +220,11 @@
                             <div class="playwindow"></div>
                         </div>
                     </div>
-          
+
                     <div class="toplists">
                         <h2 class="toplists_header outerclickable blackback">Top Tracks:</h2>
-                        {% if top_songs %} 
-                        <div class="toplists_container innercollapsable">                       
+                        {% if top_songs %}
+                        <div class="toplists_container innercollapsable">
                             <div class="toplist">
                                 <div class="toplist_container blackback">
                                     {% for song in top_songs %}
@@ -262,7 +262,7 @@
 
                         {% endif %}
                     </div>
- 
+
                 </div> <!-- /rightcol -->
             </div> <!-- /wrap -->
         </div> <!-- /container -->

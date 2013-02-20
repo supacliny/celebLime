@@ -88,29 +88,39 @@
         </div>  
       </div>     
     </div>
-    <div class="row-fluid">
-      <div class="project-description">{{ project.description | nl2br }}</div>
-      {% if session.logged_in and session.username == user.username %}
-      <button class="btn btn-small project-description-trigger" type="button">Edit</button>
-      {% endif %}
-    </div>  
+
+    <hr>
+
+    <h3>Description</h3>
+      <div class="row-fluid">
+        <div class="project-description">{{ project.description | nl2br }}</div>
+        {% if session.logged_in and session.username == user.username %}
+        <button class="btn btn-small project-description-trigger" type="button">Edit</button>
+        {% endif %}
+      </div>  
+
+    <hr>
+
+    <h3>Skills</h3>
     <div class="row-fluid">
       <div class="project-skills">
-      {% if project.skills %}
-      {% for skill in project.skills %}  
-        <span><a href="{{ url_for('search', search="all") }}?search={{skill}}">{{ skill }}</a></span>
-      {% endfor %}
-      {% else %}
-      <hint>Add Skills</hint>
-      {% endif %}
-      </div>
-      <div class="skills-input-edit" style="display:none;">
-        <input name="tags" id="tags" value=""/>
-      </div> 
+        <div class="project-skills-input">
+        {% if project.skills %}
+        {% for skill in project.skills %}  
+          <span><a href="{{ url_for('search', search="all") }}?search={{skill}}">{{ skill }}</a></span>
+        {% endfor %}
+        {% else %}
+        <hint>Add Skills</hint>
+        {% endif %}
+        </div>
+        <div class="project-skills-input-edit" style="display:none;">
+          <input name="tags" id="tags" value=""/>
+        </div> 
+      </div>  
       {% if session.logged_in and session.username == user.username %}
       <button class="btn btn-small project-skills-trigger" type="button">Edit</button>
       {% endif %}   
-    </div>
+      </div>
     <hr>
   </div>
 
@@ -118,40 +128,19 @@
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap-fileupload.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/jquery.tagsinput.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
   <script>
-    $(function(){
-      $('#container').isotope({
-        itemSelector: '.box',
-        resizesContainer: false
-      });
-    });
-
-    function shorten(string, limit)
-    {
-       return string = string.length > limit ? string.substring(0,limit) + "...": string;
-    }
-
     $(document).ready(function(){
 
+      // edit project name
       $('.project-name-trigger').toggle(
+
           function(){
-            if ($('.project-name').children('input').length == 0) {
-              
+            if ($('.project-name').children('input').length == 0) {              
                 var location = $(this).parent();
                 $(this).text("Finished");
-
-                //Create the HTML to insert into the div. Escape any " characters 
-                var inputbox = '<input class="project-name-input"' + $('.project-name', location).text() + '>';
-                
-                //Insert the HTML into the div
+                var inputbox = '<input class="project-name-input" value="' + $('.project-name', location).text() + '">';
                 $('.project-name', location).html(inputbox);
-                
-                //Immediately give the input box focus. The user
-                //will be expecting to immediately type in the input box,
-                //and we need to give them that ability
                 $('input.project-name-input', location).focus();
-
                 $('input.project-name-input', location).keypress(function(e) {
                   if(e.which == 13) {
                       e.preventDefault();
@@ -164,63 +153,56 @@
           
           function(){
                 var location = $(this).parent();
-                $(this).text("Edit");
+                $(this).text('Edit');
                 var value = $('input.project-name-input', location).val();
                 var newvalue = value;
                 newvalue = newvalue.replace(/\r?\n/g, "<br>\n");
                 $('.project-name', location).html(newvalue);
                 var url = '{{ url_for('update') }}';
                 var username = '{{ user.username }}';
-                var project_id = '{{ project.id }}';
-                var search = JSON.stringify({"username": username, "projects.id": project_id});
-                var update = JSON.stringify({"projects.$.name": value});
-                data = JSON.stringify({"search": search, "update": update});
+                var project = '{{ project.id }}';
+                var origin = 'project';
+                var command = 'update-name';
+                data = JSON.stringify({"username": username, "parameters": {"project": project, "name": value}, "origin": origin, "command": command});
                 jQuery.ajax({
-                  type: "POST",
+                  type: 'POST',
                   url: url,
                   data: data,
                   beforeSend: function() {},
                   success: function(data) {},
-                  dataType: "json",
-                  contentType: "application/json",
+                  dataType: 'json',
+                  contentType: 'application/json',
                   processData: false
                 });
           }
         );
 
+      // edit project description
       $('.project-description-trigger').toggle(
+
           function(){
-            if ($('.project-description').children('input').length == 0) {
-              
+            if ($('.project-description').children('input').length == 0) {              
                 var location = $(this).parent();
                 $(this).text("Finished");
-
-                //Create the HTML to insert into the div. Escape any " characters 
                 var inputbox = '<textarea class="project-description-input" style="height: 200px;">' + $('.project-description', location).text() + '</textarea>';
-                
-                //Insert the HTML into the div
-                $('.project-description', location).html(inputbox);
-                
-                //Immediately give the input box focus. The user
-                //will be expecting to immediately type in the input box,
-                //and we need to give them that ability
+                $('.project-description', location).html(inputbox);                
                 $('textarea.project-description-input', location).focus();
             }
           },
           
           function(){
                 var location = $(this).parent();
-                $(this).text("Edit");
+                $(this).text('Edit');
                 var value = $('textarea.project-description-input', location).val();
                 var newvalue = value;
                 newvalue = newvalue.replace(/\r?\n/g, "<br>\n");
                 $('.project-description', location).html(newvalue);
                 var url = '{{ url_for('update') }}';
                 var username = '{{ user.username }}';
-                var project_id = '{{ project.id }}';
-                var search = JSON.stringify({"username": username, "projects.id": project_id});
-                var update = JSON.stringify({"projects.$.description": value});
-                data = JSON.stringify({"search": search, "update": update});
+                var project = '{{ project.id }}';
+                var origin = 'project';
+                var command = 'update-description';
+                data = JSON.stringify({"username": username, "parameters": {"project": project, "description": value}, "origin": origin, "command": command});
                 jQuery.ajax({
                   type: "POST",
                   url: url,
@@ -234,6 +216,7 @@
           }
         );
 
+      // call tags library for project skills input
       $('#tags').tagsInput(
         {
           'height':'32px',
@@ -241,26 +224,27 @@
           'minChars' : 1
         });
 
+      // edit project skills
       $('.project-skills-trigger').toggle( 
         function() {
-          $(this).text("Finished");
+          $(this).text('Finished');
 
           var skills = '';
-          $('.project-skills span').each(function(){
+          $('.project-skills-input span').each(function(){
               skills += $(this).text();
               skills += ','
           });
-          $('.project-skills').hide();
+          $('.project-skills-input').hide();
           $('#tags').importTags(skills);
-          $(".skills-input-edit").show();
+          $(".project-skills-input-edit").show();
         },
 
         function() {
-          $(this).text("Edit");
+          $(this).text('Edit');
 
-          var skills = $("#tags").val();
-          $(".skills-input-edit").hide();
-          $('.project-skills').show();
+          var skills = $('#tags').val();
+          $('.project-skills-input-edit').hide();
+          $('.project-skills-input').show();
           var content = '';
           var array = skills.split(',');
           if (array[0] == '')
@@ -271,14 +255,14 @@
           for (var i = 0; i < array.length; i++) {
             content += '<span><a href="{{ url_for("search", search="all") }}?search=' + array[i] + '">' + array[i] + '</a></span>';
           }
-          $('.project-skills').html(content);
+          $('.project-skills-input').html(content);
   
           var url = '{{ url_for('update') }}';
           var username = '{{ user.username }}';
-          var project_id = '{{ project.id }}';
-          var search = JSON.stringify({"username": username, "projects.id": project_id});
-          var update = JSON.stringify({"projects.$.skills": array});
-          data = JSON.stringify({"search": search, "update": update});
+          var project = '{{ project.id }}';
+          var origin = 'project';
+          var command = 'update-skills';
+          data = JSON.stringify({"username": username, "parameters": {"project": project, "skills": array}, "origin": origin, "command": command});
           jQuery.ajax({
                   type: "POST",
                   url: url,
@@ -292,6 +276,7 @@
           }
         );
 
+        // upload iframe
         $('#submit-iframe').load(function() {
           $('form').removeClass('fileupload-exists');
           $('form').addClass('fileupload-new');     

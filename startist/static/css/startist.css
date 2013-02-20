@@ -351,7 +351,7 @@ a:hover {
     text-decoration: none;
 }
 
-/* profile and project page */
+/* profile page */
 textarea {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -375,7 +375,7 @@ textarea {
     background-size: cover;
 }
 
-.profile-box {
+.profile-description {
     border: 1px solid #DDDDDD;
     border-radius: 4px 4px 4px 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
@@ -402,7 +402,7 @@ textarea {
     background-repeat: repeat-x;
 }
 
-.skills-input { 
+.profile-skills-input { 
     border: 1px solid #DDDDDD;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
     transition: all 0.2s ease-in-out 0s;
@@ -418,7 +418,7 @@ textarea {
     background-repeat: repeat-x;
 }
 
-.skills-input span { 
+.profile-skills-input span { 
     border: 1px solid #a5d24a; 
     -moz-border-radius: 4px; 
     -webkit-border-radius: 4px; 
@@ -434,7 +434,7 @@ textarea {
     border-radius: 4px 4px 4px 4px;
 }
 
-.skills-input span a {
+.profile-skills-input span a {
     color: #638421;
 }
 
@@ -558,7 +558,7 @@ textarea {
     background-repeat: repeat-x;
 }
 
-.project-skills { 
+.project-skills-input { 
     border: 1px solid #DDDDDD;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
     transition: all 0.2s ease-in-out 0s;
@@ -574,7 +574,7 @@ textarea {
     background-repeat: repeat-x;
 }
 
-.project-skills span { 
+.project-skills-input span { 
     border: 1px solid #a5d24a; 
     -moz-border-radius: 4px; 
     -webkit-border-radius: 4px; 
@@ -590,7 +590,7 @@ textarea {
     border-radius: 4px 4px 4px 4px;
 }
 
-.project-skills span a {
+.project-skills-input span a {
     color: #638421;
 }
 

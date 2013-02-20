@@ -62,17 +62,17 @@
 
           {% if search == "all" %}
           <li><a href="#filter" data-option-value="*" class="selected">show all</a></li>
-          <li><a href="#filter" data-option-value=".partners">partners</a></li>
+          <li><a href="#filter" data-option-value=".profiles">profiles</a></li>
           <li><a href="#filter" data-option-value=".projects">projects</a></li>
           {% endif %}
-          {% if search == "partners" %}
+          {% if search == "profiles" %}
           <li><a href="#filter" data-option-value="*">show all</a></li>
-          <li><a href="#filter" data-option-value=".partners" class="selected">partners</a></li>
+          <li><a href="#filter" data-option-value=".profiles" class="selected">profiles</a></li>
           <li><a href="#filter" data-option-value=".projects">projects</a></li>
           {% endif %}
           {% if search == "projects" %}
           <li><a href="#filter" data-option-value="*">show all</a></li>
-          <li><a href="#filter" data-option-value=".partners">partners</a></li>
+          <li><a href="#filter" data-option-value=".profiles">profiles</a></li>
           <li><a href="#filter" data-option-value=".projects" class="selected">projects</a></li>
           {% endif %}
 
@@ -81,26 +81,22 @@
   </div>
 
   <div id="container">
-    {% if users %}
     {% for user in users %}
-    <div class="box col2 partners" data-category="partners" id="{{ user.username }}">
+    <div class="box col2 profiles" data-category="profiles" id="{{ user.username }}">
       <div class="thumbnail">
         <a href="{{ url_for('user', username=user.username) }}"><img src="{{ process_image(user.pic) }}"/></a>
       </div>
       <p>{{ user.description }}</p>
     </div>
     {% endfor %}
-    {% for user in users %}
-    {% for project in user.projects %}
-    <div class="box col2 projects" data-category="projects" id="{{ user.username }}/{{ project.id }}">
+    {% for project in projects %}
+    <div class="box col2 projects" data-category="projects" id="{{ project.username }}/{{ project.id }}">
       <div class="thumbnail">
-        <a href="{{ url_for('project', username=user.username, project_id=project.id) }}"><img src="{{ process_image(project.pic)}} "/></a>
+        <a href="{{ url_for('project', username=project.username, project_id=project.id) }}"><img src="{{ process_image(project.pic)}} "/></a>
       </div>
       <p>{{ project.description }}</p>
     </div>
     {% endfor %}
-    {% endfor %}
-    {% endif %}
     </div>
 
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>

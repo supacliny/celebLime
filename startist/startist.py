@@ -23,6 +23,9 @@ KEY = 'H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1'
 UPLOAD_FOLDER = os.path.realpath('.') + '/static/pics/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 ANONYMOUS = os.path.realpath('.') + '/static/img/anonymous.jpg'
+SEARCH_LIMIT = 10
+DEFAULT_DESCRIPTION = "Say something nice about yourself."
+COMMON_WORDS = ['a', 'able', 'about', 'across', 'after', 'all', 'almost', 'also', 'am', 'among', 'an', 'and', 'any', 'are', 'as', 'at', 'be', 'because', 'been', 'but', 'by', 'can', 'cannot', 'could', 'dear', 'did', 'do', 'does', 'either', 'else', 'ever', 'every', 'for', 'from', 'get', 'got', 'had', 'has', 'have', 'he', 'her', 'hers', 'him', 'his', 'how', 'however', 'i', 'if', 'in', 'into', 'is', 'it', 'its', 'just', 'least', 'let', 'like', 'likely', 'may', 'me', 'might', 'most', 'must', 'my', 'neither', 'no', 'nor', 'not', 'of', 'off', 'often', 'on', 'only', 'or', 'other', 'our', 'own', 'rather', 'said', 'say', 'says', 'she', 'should', 'since', 'so', 'some', 'than', 'that', 'the', 'their', 'them', 'then', 'there', 'these', 'they', 'this', 'tis', 'to', 'too', 'twas', 'us', 'wants', 'was', 'we', 'were', 'what', 'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'will', 'with', 'would', 'yet', 'you', 'your']
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -186,7 +189,7 @@ def register():
     else:
         name_signal = 0
 
-    if len(username) > 0:
+    if (len(username) > 0) and (' ' not in username):
         username_signal = 1
         already_username = mongo.db.users.find_one({"username": username})
         if already_username:
@@ -221,13 +224,16 @@ def register():
 
         current_time = int(time())
         ip = request.access_route[0]
-        description_default = "Say something nice about yourself."
+        description_default = DEFAULT_DESCRIPTION
         skills = []
         projects = []
+        words_list = extract_keywords(name)
+        words_list.append(username)
+        keywords = words_list
         followers = {"profiles": [], "projects": []}
         following = {"profiles": [], "projects": []}
 
-        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website, "description": description_default, "skills": skills, "projects": projects, "followers": followers, "following": following}
+        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website, "description": description_default, "skills": skills, "projects": projects, "followers": followers, "following": following, "keywords": keywords}
 
         mongo.db.users.ensure_index([("username", ASCENDING)], unique=True, background=True)
         mongo.db.users.ensure_index([("facebook.username", ASCENDING)], sparse=True, background=True)
@@ -244,73 +250,98 @@ def register():
 # update user information
 @app.route('/update', methods = ['POST'])
 def update():
-    search = request.json['search']
-    update = request.json['update']
-
-    search = json.loads(search)
-    update = json.loads(update)
-
-    username_client = search["username"]
-    username_session = session.get("username")
-
-    # check authentication
-    if username_client == username_session:
-        mongo.db.users.update(search, {"$set": update})
-
-    data = {}
-    data = json.dumps(data)
-    return data
-
-
-# delete data from portfolio
-@app.route('/delete', methods = ['POST'])
-def delete():
-    search = request.json['search']
-    update = request.json['update']
-
-    search = json.loads(search)
-    update = json.loads(update)
-
-    username_client = search["username"]
-    username_session = session.get("username")
-
-    # check authentication
-    if username_client == username_session:
-        mongo.db.users.update(search, {"$pull": update}, upsert=False)
-        file_id = update["portfolio.media"]["id"]
-        delete_file(file_id)
-
-    data = {}
-    data = json.dumps(data)
-    return data
-
-# follow/unfollow a partner or project
-@app.route('/follow', methods = ['POST'])
-def follow():
-
+    print request.json
     username_session = session.get("username")
     username_client = request.json['username']
-    profile = request.json['following']
-    type = request.json['type']
+    parameters = request.json['parameters']
+    origin = request.json['origin']
     command = request.json['command']
 
     # check authentication
     if username_client == username_session:
-        if command == 'follow':
+
+        if command == 'follow-profile':
+            profile = parameters["following"]
             # add profile to username: username is following that profile
             mongo.db.users.update({"username": username_client, "following.profiles": {"$ne": profile}},{"$push": {"following.profiles": profile}}, upsert=False)
 
             # now add username to profile: username is a follower of that profile
             mongo.db.users.update({"username": profile, "followers.profiles": {"$ne": username_client}},{"$push": {"followers.profiles": username_client}}, upsert=False)
 
-        if command == 'unfollow':
+        if command == 'unfollow-profile':
+            profile = parameters["following"]
             # remove profile from username: username is now not following that profile
             mongo.db.users.update({"username": username_client} ,{"$pull": {"following.profiles": profile}}, upsert=False)
 
             # remove username from profile: username is now not a follower of that profile
             mongo.db.users.update({"username": profile}, {"$pull": {"followers.profiles": username_client}}, upsert=False)
 
+        if command == 'update-skills' and origin == 'profile':
+            skills = parameters["skills"]
+            mongo.db.users.update({"username": username_client}, {"$set": {"skills": skills}})
 
+        if command == 'update-description' and origin == 'profile':
+            description = parameters["description"]
+            mongo.db.users.update({"username": username_client}, {"$set": {"description": description}})
+
+        if command == 'update-name' and origin == 'project':
+            project = parameters["project"]
+            name = parameters["name"]
+            mongo.db.users.update({"username": username_client, "projects.id": project}, {"$set": {"projects.$.name": name}})
+
+        if command == 'update-description' and origin == 'project':
+            project = parameters["project"]
+            description = parameters["description"]
+            mongo.db.users.update({"username": username_client, "projects.id": project}, {"$set": {"projects.$.description": description}})
+
+        if command == 'update-skills' and origin == 'project':
+            project = parameters["project"]
+            skills = parameters["skills"]
+            mongo.db.users.update({"username": username_client, "projects.id": project}, {"$set": {"projects.$.skills": skills}})
+
+        if command == 'update-caption' and origin == 'portfolio':
+            media = parameters["media"]
+            caption = parameters["caption"]
+            mongo.db.users.update({"username": username_client, "portfolio.media.id": media}, {"$set": {"portfolio.media.$.caption": caption}})
+
+        if command == 'update-labels' and origin == 'portfolio':
+            media = parameters["media"]
+            labels = parameters["labels"]
+            mongo.db.users.update({"username": username_client, "portfolio.media.id": media}, {"$set": {"portfolio.media.$.labels": labels}})
+
+        if command == 'delete-box' and origin == 'portfolio':
+            media = parameters["media"]
+            mongo.db.users.update({"username": username_client}, {"$pull": {"portfolio.media": {"id": media}}}, upsert=False)
+            delete_file(media)
+
+        if command == 'submit-link' and origin == 'portfolio':
+            link = parameters["link"]
+            try:
+                if 'youtube' in link:
+                    url_data = urlparse.urlparse(link)
+                    query = urlparse.parse_qs(url_data.query)
+                    file_id = query["v"][0]
+                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"class": "videos", "id": str(file_id)}}}, upsert=True)
+
+                    data = {"link": "youtube", "id": str(file_id), "class": "videos"}
+                    data = json.dumps(data)
+                    return data
+
+                if 'soundcloud' in link:
+                    path = urlparse.urlparse(link).path
+                    response = requests.get('http://soundcloud.com/oembed?format=json&url=https://soundcloud.com' + str(path) + '&iframe=true&callback=')
+                    result = response.json()
+                    html = result['html']
+                    thumbnail = result['thumbnail_url']
+                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"class": "soundcloud", "id": str(path), "iframe": html, "thumbnail": thumbnail}}}, upsert=True)
+
+                    data = {"link": "soundcloud", "id": str(path), "class": "soundcloud", "thumbnail": thumbnail, "iframe": html}
+                    data = json.dumps(data)
+                    return data
+
+            except Exception, e:
+                print e
+ 
     data = {}
     data = json.dumps(data)
     return data
@@ -321,37 +352,51 @@ def follow():
 def search(search):
 
     users = []
-
-    # TODO: we want to limit this for scale
+    projects = []
+    portfolios = []
 
     # there is a query term
     try:
         query = request.args['search']
-        mongo.db.users.ensure_index([("skills",ASCENDING)], sparse=True, background=True)
+        mongo.db.users.ensure_index([("keywords",ASCENDING)], sparse=True, background=True)
+        mongo.db.users.ensure_index([("projects.keywords",ASCENDING)], sparse=True, background=True)
         query = query.split(' ')
         for word in query:
-            user = mongo.db.users.find_one({"skills": word})
-            if user:
+            word = word.lower()
+
+            users_cursor = mongo.db.users.find({"keywords": word}).limit(SEARCH_LIMIT)
+            for user in users_cursor:
                 user.pop("_id", None)
                 users.append(user)
-            user = mongo.db.users.find_one({"name": word})
-            if user:
-                user.pop("_id", None)
-                users.append(user)   
 
-        # get unique list of users
+            users_cursor = mongo.db.users.find({"projects.keywords": word}).limit(SEARCH_LIMIT)
+            for user in users_cursor:
+                projects_array = user["projects"]
+                for project in projects_array:
+                     keywords = project["keywords"]
+                     if word in keywords:
+                        project["username"] = user["username"]
+                        projects.append(project)
+
+        # get unique list of users, projects
         users = {user['username']:user for user in users}.values()
-        return render_template("search.html", users=users, search=search)
+        projects = {project['id']:project for project in projects}.values()
 
-    # there is no query term, return all
+        return render_template("search.html", users=users, projects=projects, search=search)
+
+    # there is no query term, return first 10
     except Exception, e:
         print e
         query = ''
-        users_cursor = mongo.db.users.find()
+        users_cursor = mongo.db.users.find().limit(SEARCH_LIMIT)
         for user in users_cursor:
             user.pop("_id", None)
             users.append(user)
-        return render_template("search.html", users=users, search=search)
+            projects_array = user["projects"]
+            for project in projects_array:
+                projects.append(project)
+
+        return render_template("search.html", users=users, projects=projects, search=search)
 
 
 # launch a project
@@ -361,10 +406,13 @@ def launch_project():
     name = request.form["project-name"]
     description = request.form["project-description"]
     skills = request.form["project-skills"]
-    id = name
-    id = re.sub('[^0-9a-zA-Z ]+', '', id)
+    keywords_name = extract_keywords(name)
+    keywords_skills = extract_keywords(skills, ",")
+    keywords_name = list(set(keywords_name) - set(COMMON_WORDS))
+    keywords = list(set(keywords_name).union(set(keywords_skills)))
+    id = scrub_string(name)
     id = id.replace (" ", "-").lower()
-    skills = skills.split(',')
+    skills = skills.split(',') 
     if request.method == 'POST':
         file = request.files['file']
         file_id = 0
@@ -372,10 +420,9 @@ def launch_project():
             filename = secure_filename(file.filename)
             file_id = fs.put(file, filename=filename)
 
-        mongo.db.users.update({"username": username},{"$push": {"projects": {"id": id, "name": name, "description": description, "skills": skills, "pic":str(file_id)}}}, upsert=True)
+        mongo.db.users.update({"username": username},{"$push": {"projects": {"id": id, "name": name, "description": description, "skills": skills, "pic":str(file_id), "keywords": keywords}}}, upsert=True)
 
     return redirect(url_for('project', username=username, project_id=id))
-
 
 
 # serve only image files stored in gridfs
@@ -395,13 +442,6 @@ def get_image(id=None):
     response = make_response(file)
     response.headers['Content-Type'] = 'image/jpeg'
     return response
-
-
-# get user portfolio data
-@app.route('/get_portfolio/<username>', methods = ['GET'])
-def get_portfolio(username):
-    user = get_user(username)
-    return render_template("portfolio-container.html", user=user)
 
 
 # partners/users
@@ -578,6 +618,7 @@ def twsverify():
 # SUBMIT FUNCTIONS [
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
+    # check for authentication
     username = session["username"]
     user = get_user(username)
     if request.method == 'POST':
@@ -601,31 +642,12 @@ def upload_file():
                     if project:
                         delete_file(project["pic"])
 
-    return ""
+            print str(file_id)
+            data = {"id": str(file_id), "class": "pictures"}
+            data = json.dumps(data)
+            return data
 
-@app.route('/submit', methods=['GET', 'POST'])
-def submit():
-    username = session["username"]
-    if request.method == 'POST':
-        try:
-            link = request.form['link']
-            if 'youtube' in link:
-                url_data = urlparse.urlparse(link)
-                query = urlparse.parse_qs(url_data.query)
-                file_id = query["v"][0]
-                mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "videos", "id": str(file_id)}}}, upsert=True)
-            if 'soundcloud' in link:
-                path = urlparse.urlparse(link).path
-                response = requests.get('http://soundcloud.com/oembed?format=json&url=https://soundcloud.com' + str(path) + '&iframe=true&callback=')
-                result = response.json()
-                html = result['html']
-                thumbnail = result['thumbnail_url']
-                mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "soundcloud", "id": str(path), "iframe": html, "thumbnail": thumbnail}}}, upsert=True)
-        except Exception, e:
-            print e
-            return redirect(url_for('portfolio', username=username))
-
-    return ""
+    return redirect(url_for('portfolio', username=username))
 # ]
 
 # AUXILLARY FUNCTIONS [
@@ -762,6 +784,21 @@ def delete_file(file_id):
         fs.delete(file_id)
     except Exception, e:
         print e
+
+
+# convert a 'splitter'-separated string into a list: default split by white space
+def extract_keywords(string, splitter=" "):
+    string_list = string.split(splitter)
+    list = [x.lower() for x in string_list]
+    return list
+
+
+# remove characters from string as well leading and trailing whitespace
+def scrub_string(string):
+    scrubbed_string = re.sub('[^0-9a-zA-Z ]+', '', string)
+    scrubbed_string = scrubbed_string.strip()
+    return scrubbed_string
+
 
 # convert newlines to breaks for html display
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')

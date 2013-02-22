@@ -64,16 +64,25 @@
           <li><a href="#filter" data-option-value="*" class="selected">show all</a></li>
           <li><a href="#filter" data-option-value=".profiles">profiles</a></li>
           <li><a href="#filter" data-option-value=".projects">projects</a></li>
+          <li><a href="#filter" data-option-value=".portfolios">portfolios</a></li>
           {% endif %}
           {% if search == "profiles" %}
           <li><a href="#filter" data-option-value="*">show all</a></li>
           <li><a href="#filter" data-option-value=".profiles" class="selected">profiles</a></li>
           <li><a href="#filter" data-option-value=".projects">projects</a></li>
+          <li><a href="#filter" data-option-value=".portfolios">portfolios</a></li>
           {% endif %}
           {% if search == "projects" %}
           <li><a href="#filter" data-option-value="*">show all</a></li>
           <li><a href="#filter" data-option-value=".profiles">profiles</a></li>
           <li><a href="#filter" data-option-value=".projects" class="selected">projects</a></li>
+          <li><a href="#filter" data-option-value=".portfolios">portfolios</a></li>
+          {% endif %}
+          {% if search == "portfolios" %}
+          <li><a href="#filter" data-option-value="*">show all</a></li>
+          <li><a href="#filter" data-option-value=".profiles">profiles</a></li>
+          <li><a href="#filter" data-option-value=".projects">projects</a></li>
+          <li><a href="#filter" data-option-value=".portfolios" class="selected">portfolios</a></li>
           {% endif %}
 
         </ul>
@@ -97,6 +106,14 @@
       <p>{{ project.description }}</p>
     </div>
     {% endfor %}
+    {% for media in portfolios %}
+    <div class="box col2 portfolios" data-category="portfolios" id="{{ media.id }}">
+      <div class="thumbnail">
+        <a href="{{ url_for('portfolio', username=media.username) }}"><img src="{{ process_image(media.id)}} "/></a>
+      </div>
+    </div>
+    {% endfor %}
+
     </div>
 
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>

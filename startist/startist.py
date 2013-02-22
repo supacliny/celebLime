@@ -227,7 +227,7 @@ def register():
         description_default = DEFAULT_DESCRIPTION
         skills = []
         projects = []
-        words_list = extract_keywords(name)
+        words_list = convert_string_to_list(name)
         words_list.append(username)
         keywords = words_list
         followers = {"profiles": [], "projects": []}
@@ -251,7 +251,7 @@ def register():
 @app.route('/update', methods = ['POST'])
 def update():
     print request.json
-    username_session = session.get("username")
+    username_session = session.get("username", "")
     username_client = request.json['username']
     parameters = request.json['parameters']
     origin = request.json['origin']
@@ -260,8 +260,11 @@ def update():
     # check authentication
     if username_client == username_session:
 
+        user = get_user(username_client)
+        user_keywords = user.get("keywords", "")
+
         if command == 'follow-profile':
-            profile = parameters["following"]
+            profile = parameters.get("following", "")
             # add profile to username: username is following that profile
             mongo.db.users.update({"username": username_client, "following.profiles": {"$ne": profile}},{"$push": {"following.profiles": profile}}, upsert=False)
 
@@ -269,7 +272,7 @@ def update():
             mongo.db.users.update({"username": profile, "followers.profiles": {"$ne": username_client}},{"$push": {"followers.profiles": username_client}}, upsert=False)
 
         if command == 'unfollow-profile':
-            profile = parameters["following"]
+            profile = parameters.get("following", "")
             # remove profile from username: username is now not following that profile
             mongo.db.users.update({"username": username_client} ,{"$pull": {"following.profiles": profile}}, upsert=False)
 
@@ -277,45 +280,72 @@ def update():
             mongo.db.users.update({"username": profile}, {"$pull": {"followers.profiles": username_client}}, upsert=False)
 
         if command == 'update-skills' and origin == 'profile':
-            skills = parameters["skills"]
-            mongo.db.users.update({"username": username_client}, {"$set": {"skills": skills}})
+            old_skills = user.get("skills", [])
+            new_skills = parameters.get("skills", [])
+            new_keywords = update_keywords(user_keywords, new_skills, old_skills)
+            mongo.db.users.update({"username": username_client}, {"$set": {"skills": new_skills}})
+            mongo.db.users.update({"username": username_client}, {"$set": {"keywords": new_keywords}})
 
         if command == 'update-description' and origin == 'profile':
-            description = parameters["description"]
+            description = parameters.get("description", "")
             mongo.db.users.update({"username": username_client}, {"$set": {"description": description}})
 
         if command == 'update-name' and origin == 'project':
-            project = parameters["project"]
-            name = parameters["name"]
-            mongo.db.users.update({"username": username_client, "projects.id": project}, {"$set": {"projects.$.name": name}})
+            project_id = parameters.get("project", "")
+            new_name = parameters.get("name", "")
+            project = get_project(username_client, project_id)
+            project_keywords = project.get("keywords", [])
+            old_name = project.get("name", "")
+            new_name_keywords = convert_string_to_list(new_name)
+            old_name_keywords = convert_string_to_list(old_name)
+            new_keywords = update_keywords(project_keywords, new_name_keywords, old_name_keywords)
+            mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$set": {"projects.$.name": new_name}})
+            mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$set": {"projects.$.keywords": new_keywords}})
 
         if command == 'update-description' and origin == 'project':
-            project = parameters["project"]
-            description = parameters["description"]
+            project = parameters.get("project", "")
+            description = parameters.get("description", "")
             mongo.db.users.update({"username": username_client, "projects.id": project}, {"$set": {"projects.$.description": description}})
 
         if command == 'update-skills' and origin == 'project':
-            project = parameters["project"]
-            skills = parameters["skills"]
-            mongo.db.users.update({"username": username_client, "projects.id": project}, {"$set": {"projects.$.skills": skills}})
+            project_id = parameters.get("project", "")
+            project = get_project(username_client, project_id)
+            project_keywords = project.get("keywords", [])
+            old_skills = project.get("skills", [])
+            new_skills = parameters.get("skills", [])
+            new_keywords = update_keywords(project_keywords, new_skills, old_skills)
+            mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$set": {"projects.$.skills": new_skills}})
+            mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$set": {"projects.$.keywords": new_keywords}})
 
         if command == 'update-caption' and origin == 'portfolio':
-            media = parameters["media"]
-            caption = parameters["caption"]
-            mongo.db.users.update({"username": username_client, "portfolio.media.id": media}, {"$set": {"portfolio.media.$.caption": caption}})
+            media_id = parameters.get("media", "")
+            media = get_portfolio_media(username_client, media_id)
+            old_caption = media.get("caption", "")
+            new_caption = parameters.get("caption", "")
+            old_caption_keywords = convert_string_to_list(old_caption)
+            new_caption_keywords = convert_string_to_list(new_caption)
+            media_keywords = media.get("keywords", [])
+            new_keywords = update_keywords(media_keywords, new_caption_keywords, old_caption_keywords)
+            mongo.db.users.update({"username": username_client, "portfolio.media.id": media_id}, {"$set": {"portfolio.media.$.caption": new_caption}})
+            mongo.db.users.update({"username": username_client, "portfolio.media.id": media_id}, {"$set": {"portfolio.media.$.keywords": new_keywords}})
 
         if command == 'update-labels' and origin == 'portfolio':
-            media = parameters["media"]
-            labels = parameters["labels"]
-            mongo.db.users.update({"username": username_client, "portfolio.media.id": media}, {"$set": {"portfolio.media.$.labels": labels}})
+            media_id = parameters.get("media", "")
+            media = get_portfolio_media(username_client, media_id)
+            new_labels = parameters.get("labels", [])
+            old_labels = media.get("labels", [])
+            media_keywords = media.get("keywords", [])
+            new_keywords = update_keywords(media_keywords, new_labels, old_labels)
+            mongo.db.users.update({"username": username_client, "portfolio.media.id": media_id}, {"$set": {"portfolio.media.$.labels": new_labels}})
+            mongo.db.users.update({"username": username_client, "portfolio.media.id": media_id}, {"$set": {"portfolio.media.$.keywords": new_keywords}})
 
         if command == 'delete-box' and origin == 'portfolio':
-            media = parameters["media"]
-            mongo.db.users.update({"username": username_client}, {"$pull": {"portfolio.media": {"id": media}}}, upsert=False)
+            media_id = parameters.get("media", "")
+            mongo.db.users.update({"username": username_client}, {"$pull": {"portfolio.media": {"id": media_id}}}, upsert=False)
             delete_file(media)
 
         if command == 'submit-link' and origin == 'portfolio':
-            link = parameters["link"]
+            link = parameters.get("link", "")
             try:
                 if 'youtube' in link:
                     url_data = urlparse.urlparse(link)
@@ -360,6 +390,7 @@ def search(search):
         query = request.args['search']
         mongo.db.users.ensure_index([("keywords",ASCENDING)], sparse=True, background=True)
         mongo.db.users.ensure_index([("projects.keywords",ASCENDING)], sparse=True, background=True)
+        mongo.db.users.ensure_index([("portfolio.media.keywords",ASCENDING)], sparse=True, background=True)
         query = query.split(' ')
         for word in query:
             word = word.lower()
@@ -371,18 +402,29 @@ def search(search):
 
             users_cursor = mongo.db.users.find({"projects.keywords": word}).limit(SEARCH_LIMIT)
             for user in users_cursor:
-                projects_array = user["projects"]
+                projects_array = user.get("projects", [])
                 for project in projects_array:
-                     keywords = project["keywords"]
+                     keywords = project.get("keywords", [])
                      if word in keywords:
-                        project["username"] = user["username"]
+                        project["username"] = user.get("username", "")
                         projects.append(project)
 
-        # get unique list of users, projects
+            users_cursor = mongo.db.users.find({"portfolio.media.keywords": word}).limit(SEARCH_LIMIT)
+            for user in users_cursor:
+                portfolio = user.get("portfolio", {}).get("media", [])
+                for media in portfolio:
+                     keywords = media.get("keywords", [])
+                     if word in keywords:
+                        media["username"] = user.get("username", "")
+                        portfolios.append(media)
+
+
+        # get unique list of users, projects, portofolio
         users = {user['username']:user for user in users}.values()
         projects = {project['id']:project for project in projects}.values()
+        portfolios = {media['id']:media for media in portfolios}.values()
 
-        return render_template("search.html", users=users, projects=projects, search=search)
+        return render_template("search.html", users=users, projects=projects, portfolios=portfolios, search=search)
 
     # there is no query term, return first 10
     except Exception, e:
@@ -396,21 +438,21 @@ def search(search):
             for project in projects_array:
                 projects.append(project)
 
-        return render_template("search.html", users=users, projects=projects, search=search)
+        return render_template("search.html", users=users, projects=projects, portfolios=portfolios, search=search)
 
 
 # launch a project
 @app.route('/create', methods=['GET', 'POST'])
 def launch_project():
+    print request.form
     username = session["username"]
     name = request.form["project-name"]
     description = request.form["project-description"]
     skills = request.form["project-skills"]
-    keywords_name = extract_keywords(name)
-    keywords_skills = extract_keywords(skills, ",")
-    keywords_name = list(set(keywords_name) - set(COMMON_WORDS))
-    keywords = list(set(keywords_name).union(set(keywords_skills)))
-    id = scrub_string(name)
+    keywords_name = convert_string_to_list(name)
+    keywords_skills = convert_string_to_list(skills, ",")
+    keywords = keywords_name + keywords_skills
+    id = scrub_project_id_string(name)
     id = id.replace (" ", "-").lower()
     skills = skills.split(',') 
     if request.method == 'POST':
@@ -756,10 +798,26 @@ def get_project(username, project_id):
     user = mongo.db.users.find_one({"username": username})
     try:
         projects = user['projects']
-        for index, project in enumerate(projects):
-            if project['id'] == project_id:
-                return projects[index]
+        if projects:
+            project = (item for item in projects if item["id"] == project_id).next()
+            if project:
+                return project
+            else:
+                return {}
+    except Exception:
         return {}
+
+
+def get_portfolio_media(username, media_id):
+    user = mongo.db.users.find_one({"username": username})
+    try:
+        portfolio = user["portfolio"]
+        if portfolio:
+            media = (item for item in portfolio if item["id"] == media_id).next()
+            if media:
+                return media
+            else:
+                return {}
     except Exception:
         return {}
 
@@ -786,15 +844,22 @@ def delete_file(file_id):
         print e
 
 
-# convert a 'splitter'-separated string into a list: default split by white space
-def extract_keywords(string, splitter=" "):
+def update_keywords(keywords, new, old):
+    keywords = list(set(keywords) - set(old))
+    keywords = keywords + new
+    return keywords
+
+
+# convert a 'splitter'-separated string into a list: default split by white space, and then make it unique
+def convert_string_to_list(string, splitter=" "):
     string_list = string.split(splitter)
-    list = [x.lower() for x in string_list]
-    return list
+    string_list = [x.lower() for x in string_list]
+    keywords = list(set(string_list) - set(COMMON_WORDS))
+    return keywords
 
 
 # remove characters from string as well leading and trailing whitespace
-def scrub_string(string):
+def scrub_project_id_string(string):
     scrubbed_string = re.sub('[^0-9a-zA-Z ]+', '', string)
     scrubbed_string = scrubbed_string.strip()
     return scrubbed_string

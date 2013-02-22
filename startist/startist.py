@@ -18,6 +18,9 @@ import urlparse
 import os
 import gridfs
 
+
+# CONFIGURATION [
+
 DEBUG = False
 KEY = 'H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1'
 UPLOAD_FOLDER = os.path.realpath('.') + '/static/pics/'
@@ -26,6 +29,8 @@ ANONYMOUS = os.path.realpath('.') + '/static/img/anonymous.jpg'
 SEARCH_LIMIT = 10
 DEFAULT_DESCRIPTION = "Say something nice about yourself."
 COMMON_WORDS = ['a', 'able', 'about', 'across', 'after', 'all', 'almost', 'also', 'am', 'among', 'an', 'and', 'any', 'are', 'as', 'at', 'be', 'because', 'been', 'but', 'by', 'can', 'cannot', 'could', 'dear', 'did', 'do', 'does', 'either', 'else', 'ever', 'every', 'for', 'from', 'get', 'got', 'had', 'has', 'have', 'he', 'her', 'hers', 'him', 'his', 'how', 'however', 'i', 'if', 'in', 'into', 'is', 'it', 'its', 'just', 'least', 'let', 'like', 'likely', 'may', 'me', 'might', 'most', 'must', 'my', 'neither', 'no', 'nor', 'not', 'of', 'off', 'often', 'on', 'only', 'or', 'other', 'our', 'own', 'rather', 'said', 'say', 'says', 'she', 'should', 'since', 'so', 'some', 'than', 'that', 'the', 'their', 'them', 'then', 'there', 'these', 'they', 'this', 'tis', 'to', 'too', 'twas', 'us', 'wants', 'was', 'we', 'were', 'what', 'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'will', 'with', 'would', 'yet', 'you', 'your']
+WORD_SUFFIX = ['s', 'ed', 'er', 'ing']
+
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -58,24 +63,18 @@ else:
     TW_CONSUMER_KEY = 'QTidL2svjqbtbnDIi3GEg'
     TW_CONSUMER_SECRET = 'GVZ6eApHktuiFJeZRrUQSqc4CwfEfltwi2rC6hTg8'
 
+# ] CONFIGURATION
 
 
 # PRELAUNCH [
+
 # render the signup page for now until we launch
 @app.route('/')
 def signup():
     return render_template('launch.html')
 
 
-@app.route('/launch')
-def launch():
-    return render_template('launch-ipad.html')
-
-
 # validate email submitted from signup page:
-# if the email is invalid, then return 0
-# if the email is valid, then return 1 
-# if the email is valid but already in mongo, then return 2
 @app.route('/email', methods = ['POST'])
 def email():
     email = request.json['email']
@@ -103,10 +102,11 @@ def email():
 def jobs():
     return render_template('jobs.html')
 
-# ]
+# ] PRELAUNCH
 
 
 # LAUNCH [
+
 # lander page
 @app.route('/lander')
 def home():
@@ -161,6 +161,35 @@ def join():
 @app.route('/signup')
 def email_signup():
     return render_template('signup.html')
+
+
+# partners/users
+@app.route('/profile/<username>', methods = ['GET'])
+def user(username):
+    user = get_user(username)
+    return render_template("profile.html", user=user)
+
+
+# projects
+@app.route('/profile/<username>/<project_id>', methods = ['GET'])
+def project(username, project_id):
+    user = get_user(username)
+    project = get_project(username, project_id)
+    return render_template("project.html", user=user, project=project)
+
+
+# create project
+@app.route('/profile/<username>/create', methods = ['GET'])
+def create_project(username):
+    user = get_user(username)
+    return render_template("create-project.html", user=user)
+
+
+# portfolios
+@app.route('/profile/<username>/portfolio', methods = ['GET'])
+def portfolio(username):
+    user = get_user(username)
+    return render_template("portfolio.html", user=user)
 
 
 # register new user
@@ -377,7 +406,7 @@ def update():
     return data
 
 
-# search for partners and projects
+# search for profiles, projects and portfolios
 @app.route('/search/<search>', methods = ['GET', 'POST'])
 def search(search):
 
@@ -393,28 +422,29 @@ def search(search):
         mongo.db.users.ensure_index([("portfolio.media.keywords",ASCENDING)], sparse=True, background=True)
         query = query.split(' ')
         for word in query:
-            word = word.lower()
+            word = stem_search_query(word)
+            regex_word = word + '.*'
 
-            users_cursor = mongo.db.users.find({"keywords": word}).limit(SEARCH_LIMIT)
+            users_cursor = mongo.db.users.find({"keywords": {'$regex': regex_word}}).limit(SEARCH_LIMIT)
             for user in users_cursor:
                 user.pop("_id", None)
                 users.append(user)
-
-            users_cursor = mongo.db.users.find({"projects.keywords": word}).limit(SEARCH_LIMIT)
+        
+            users_cursor = mongo.db.users.find({"projects.keywords": {'$regex': regex_word}}).limit(SEARCH_LIMIT)
             for user in users_cursor:
                 projects_array = user.get("projects", [])
                 for project in projects_array:
-                     keywords = project.get("keywords", [])
-                     if word in keywords:
+                    keywords = project.get("keywords", [])
+                    if (any(word in item for item in keywords)):
                         project["username"] = user.get("username", "")
                         projects.append(project)
 
-            users_cursor = mongo.db.users.find({"portfolio.media.keywords": word}).limit(SEARCH_LIMIT)
+            users_cursor = mongo.db.users.find({"portfolio.media.keywords": {'$regex': regex_word}}).limit(SEARCH_LIMIT)
             for user in users_cursor:
                 portfolio = user.get("portfolio", {}).get("media", [])
                 for media in portfolio:
                      keywords = media.get("keywords", [])
-                     if word in keywords:
+                     if (any(word in item for item in keywords)):
                         media["username"] = user.get("username", "")
                         portfolios.append(media)
 
@@ -486,36 +516,8 @@ def get_image(id=None):
     return response
 
 
-# partners/users
-@app.route('/profile/<username>', methods = ['GET'])
-def user(username):
-    user = get_user(username)
-    return render_template("profile.html", user=user)
-
-
-# projects
-@app.route('/profile/<username>/<project_id>', methods = ['GET'])
-def project(username, project_id):
-    user = get_user(username)
-    project = get_project(username, project_id)
-    return render_template("project.html", user=user, project=project)
-
-
-# create project
-@app.route('/profile/<username>/create', methods = ['GET'])
-def create_project(username):
-    user = get_user(username)
-    return render_template("create-project.html", user=user)
-
-
-# portfolios
-@app.route('/profile/<username>/portfolio', methods = ['GET'])
-def portfolio(username):
-    user = get_user(username)
-    return render_template("portfolio.html", user=user)
-
-
 # SOCIAL MEDIA LOGIN [
+
 @app.route('/facebook_login')
 def facebook_login():
     try:
@@ -583,7 +585,8 @@ def twlverify():
     except Exception, e:
         print e
         return redirect(url_for('login'))
-# ]
+
+# ] SOCIAL MEDIA LOGIN
 
 
 # SOCIAL MEDIA SIGNUP [
@@ -654,10 +657,12 @@ def twsverify():
     except Exception, e:
         print e
         return redirect(url_for('join'))
-# ]
+
+# ] SOCIAL MEDIA SIGNUP 
 
 
-# SUBMIT FUNCTIONS [
+# FILE UPLOAD [
+
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     # check for authentication
@@ -690,7 +695,8 @@ def upload_file():
             return data
 
     return redirect(url_for('portfolio', username=username))
-# ]
+
+# ] FILE UPLOAD
 
 # AUXILLARY FUNCTIONS [
 
@@ -847,6 +853,7 @@ def delete_file(file_id):
 def update_keywords(keywords, new, old):
     keywords = list(set(keywords) - set(old))
     keywords = keywords + new
+    keywords = [word.lower() for word in keywords]
     return keywords
 
 
@@ -864,6 +871,23 @@ def scrub_project_id_string(string):
     scrubbed_string = scrubbed_string.strip()
     return scrubbed_string
 
+# a basic way of extracting the root stem of a word
+def stem_search_query(word):
+    word = word.lower()
+    word_suffix_one = word[-1:]
+    word_suffix_two = word[-2:]
+    word_suffix_three = word[-3:]
+    if word_suffix_one in WORD_SUFFIX:
+        word = word[:-1]
+    if word_suffix_two in WORD_SUFFIX:
+        word = word[:-2]
+    if word_suffix_three in WORD_SUFFIX:
+        word = word[:-3]
+    return word
+
+# ] AUXILARY FUNCTIONS
+
+# TEMPLATE FUNCTIONS [
 
 # convert newlines to breaks for html display
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
@@ -900,7 +924,8 @@ def process_image(image=None):
 app.jinja_env.globals.update(format_date=format_date)
 app.jinja_env.globals.update(get_user=get_user)
 app.jinja_env.globals.update(process_image=process_image)
-# ]
+
+# ] TEMPLATE FUNCTIONS
 
 if __name__ == "__main__":
     if DEBUG:
@@ -908,3 +933,4 @@ if __name__ == "__main__":
     else:
         app.run()
 
+# ] LAUNCH

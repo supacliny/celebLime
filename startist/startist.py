@@ -45,7 +45,7 @@ if DEBUG:
     FB_LOGIN_REDIRECT = 'http://localhost:8000/fblverify'
     FB_APP_ID = '330274977087606'
     FB_SECRET = 'e9fe610df8d1cbf4ae3dd57226558a29'
-    FB_PERMISSIONS = 'user_about_me, email'
+    FB_PERMISSIONS = 'user_about_me, email, user_likes, user_interests, user_location'
     FB_STATE = KEY
     TW_SIGNUP_REDIRECT = 'http://localhost:8000/twsverify'
     TW_LOGIN_REDIRECT = 'http://localhost:8000/twlverify'
@@ -56,7 +56,7 @@ else:
     FB_LOGIN_REDIRECT = 'http://www.startists.com/fblverify'
     FB_APP_ID = '471868396209054'
     FB_SECRET = '12d3aa51e0c73758cac9f283fcca23e8'
-    FB_PERMISSIONS = 'user_about_me, email'
+    FB_PERMISSIONS = 'user_about_me, email, user_likes, user_interests, user_location'
     FB_STATE = KEY
     TW_SIGNUP_REDIRECT = 'http://www.startists.com/twsverify'
     TW_LOGIN_REDIRECT = 'http://www.startists.com/twlverify'
@@ -380,9 +380,9 @@ def update():
                     url_data = urlparse.urlparse(link)
                     query = urlparse.parse_qs(url_data.query)
                     file_id = query["v"][0]
-                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"class": "videos", "id": str(file_id)}}}, upsert=True)
-
-                    data = {"link": "youtube", "id": str(file_id), "class": "videos"}
+                    pic_link = "http://img.youtube.com/vi/" + file_id + "/0.jpg"
+                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"file": pic_link, "class": "videos", "id": str(file_id)}}}, upsert=True)
+                    data = {"link": "youtube", "id": str(file_id), "class": "videos", "file": pic_link}
                     data = json.dumps(data)
                     return data
 
@@ -390,11 +390,10 @@ def update():
                     path = urlparse.urlparse(link).path
                     response = requests.get('http://soundcloud.com/oembed?format=json&url=https://soundcloud.com' + str(path) + '&iframe=true&callback=')
                     result = response.json()
-                    html = result['html']
-                    thumbnail = result['thumbnail_url']
-                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"class": "soundcloud", "id": str(path), "iframe": html, "thumbnail": thumbnail}}}, upsert=True)
-
-                    data = {"link": "soundcloud", "id": str(path), "class": "soundcloud", "thumbnail": thumbnail, "iframe": html}
+                    html = result.get("html", "")
+                    pic_link = result.get("thumbnail_url", "")
+                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"file": pic_link, "class": "soundcloud", "id": str(path), "iframe": html}}}, upsert=True)
+                    data = {"link": "soundcloud", "id": str(path), "class": "soundcloud", "file": pic_link, "iframe": html}
                     data = json.dumps(data)
                     return data
 
@@ -466,7 +465,11 @@ def search(search):
             users.append(user)
             projects_array = user["projects"]
             for project in projects_array:
+                project["username"] = user.get("username", "")
                 projects.append(project)
+            portfolio = user["portfolio"]
+            portfolio["username"] = user.get("username", "")
+            portfolios.append(portfolio)
 
         return render_template("search.html", users=users, projects=projects, portfolios=portfolios, search=search)
 
@@ -474,7 +477,6 @@ def search(search):
 # launch a project
 @app.route('/create', methods=['GET', 'POST'])
 def launch_project():
-    print request.form
     username = session["username"]
     name = request.form["project-name"]
     description = request.form["project-description"]
@@ -492,7 +494,7 @@ def launch_project():
             filename = secure_filename(file.filename)
             file_id = fs.put(file, filename=filename)
 
-        mongo.db.users.update({"username": username},{"$push": {"projects": {"id": id, "name": name, "description": description, "skills": skills, "pic":str(file_id), "keywords": keywords}}}, upsert=True)
+        mongo.db.users.update({"username": username},{"$push": {"projects": {"id": id, "name": name, "description": description, "skills": skills, "file": str(file_id), "keywords": keywords}}}, upsert=True)
 
     return redirect(url_for('project', username=username, project_id=id))
 
@@ -678,21 +680,27 @@ def upload_file():
                 mongo.db.users.update({"username": username},{"$set": {"pic": str(file_id)}}, upsert=True)
                 if user["pic"]:
                     delete_file(user["pic"])
+                data = {}
+                data = json.dumps(data)
+                return data
+
             if origin == "portfolio":
-                mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"class": "pictures", "id":str(file_id)}}}, upsert=True)
+                mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"file": str(file_id), "class": "pictures", "id": str(file_id)}}}, upsert=True)
+                data = {"id": str(file_id), "class": "pictures", "file": str(file_id)}
+                data = json.dumps(data)
+                return data
+
             if origin == "project":
                 project_id = request.form['id']
-                mongo.db.users.update({"username": username, "projects.id": project_id},{"$set": {"projects.$.pic": str(file_id)}}, upsert=True)
+                mongo.db.users.update({"username": username, "projects.id": project_id},{"$set": {"projects.$.file": str(file_id)}}, upsert=True)
                 projects = user["projects"]
                 if projects:
                     project = (item for item in projects if item["id"] == project_id).next()
                     if project:
-                        delete_file(project["pic"])
-
-            print str(file_id)
-            data = {"id": str(file_id), "class": "pictures"}
-            data = json.dumps(data)
-            return data
+                        delete_file(project["file"])
+                data = {}
+                data = json.dumps(data)
+                return data
 
     return redirect(url_for('portfolio', username=username))
 

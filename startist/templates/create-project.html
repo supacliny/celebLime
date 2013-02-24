@@ -113,7 +113,7 @@
     </div>
 
     <hr>
-    
+
     <button type="submit" class="btn" id="upload-btn">Launch</button>
     </form>
   </div>
@@ -141,19 +141,12 @@
       $('.project-name-trigger').toggle(
           function(){
             if ($('.project-name').children('input').length == 0) {
-              
                 var location = $(this).parent();
                 $(this).text("Finished");
-
-                // create the HTML to insert into the div. Escape any " characters 
-                var inputbox = '<input class="project-name-input"' + $('.project-name', location).text() + '>';
-                
-                // insert the HTML into the div
+                var inputbox = '<input class="project-name-input" value="' + $('.project-name', location).text() + '">';
                 $('.project-name', location).html(inputbox);
-                
-                // give the input box focus. 
+                $('input.project-name-input', location).select();
                 $('input.project-name-input', location).focus();
-
                 $('input.project-name-input', location).keypress(function(e) {
                   if(e.which == 13) {
                       e.preventDefault();
@@ -171,7 +164,6 @@
                 var newvalue = value;
                 newvalue = newvalue.replace(/\r?\n/g, "<br>\n");
                 $('.project-name', location).html(newvalue);
-
                 var elem = document.getElementById("project-name-id");
                 elem.value = value;
           }
@@ -180,17 +172,11 @@
       $('.project-description-trigger').toggle(
           function(){
             if ($('.project-description').children('input').length == 0) {
-              
                 var location = $(this).parent();
                 $(this).text("Finished");
-
-                // create the HTML to insert into the div. Escape any " characters 
                 var inputbox = '<textarea class="project-description-input" style="height: 200px;">' + $('.project-description', location).text() + '</textarea>';
-                
-                // insert the HTML into the div
                 $('.project-description', location).html(inputbox);
-                
-                // give the input box focus.
+                $('textarea.project-description-input', location).select();
                 $('textarea.project-description-input', location).focus();
             }
           },
@@ -202,7 +188,6 @@
                 var newvalue = value;
                 newvalue = newvalue.replace(/\r?\n/g, "<br>\n");
                 $('.project-description', location).html(newvalue);
-
                 var elem = document.getElementById("project-description-id");
                 elem.value = value;
           }
@@ -227,6 +212,7 @@
           $('.project-skills-input').hide();
           $('#project-skills-id').importTags(skills);
           $(".project-skills-input-edit").show();
+          $('.project-skills-input-edit').children('.tagsinput').click();
         },
 
         function() {

@@ -249,9 +249,10 @@
               var location = $(this).parent();
               $(this).text('Finished');
               var inputbox = '<textarea class="profile-description-input" style="height: 300px;">' + $('.profile-description', location).text() + '</textarea>';
-              $('.profile-description', location).html(inputbox);  
+              $('.profile-description', location).html(inputbox);
+              $('textarea.profile-description-input', location).select();
               $('textarea.profile-description-input', location).focus();
-          }
+            }
         },
         
         function(){
@@ -301,6 +302,7 @@
           $('.profile-skills-input').hide();
           $('#tags').importTags(skills);
           $('.profile-skills-input-edit').show();
+          $('.profile-skills-input-edit').children('.tagsinput').click();
         },
 
         function() {

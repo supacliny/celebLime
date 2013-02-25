@@ -374,13 +374,13 @@ def user(screen_name, template="userpage.html"):
             if songinfo:
                 songs.append(songinfo)
                 playlist["songs"] = songs
-            
+
         # corner case fix: there are song_ids but no mapped songs!
         if not songs:
             playlist["songs"] = songs
 
         make_song_playlists(playlist["songs"])
-        
+
         playlists.append(playlist)
 
 #    raise Exception(playlists[0])
@@ -438,18 +438,22 @@ def user(screen_name, template="userpage.html"):
 
 def make_song_playlists(plist):
     playlist = []
+    yt = []
     for song in plist:
         spotify_link = song.get("spotify",[]).get("href", "")
         if spotify_link:
             spotify_link = spotify_link.split(":")
             spotify_id = spotify_link[2]
             playlist.append(spotify_id)
-        
+        vidid = song.get("youtube", []).get("videoid", "")
+        if vidid:
+            yt.append(vidid)
     for index, song in enumerate(plist):
         string_list = ','.join(map(str, playlist[index:]))
         song["playlists"] = string_list
+        song["youtube_playlist"] = json.dumps(yt[index:])
 
-        
+
 # ajax query to update the recently listened playlist
 @app.route("/old/poll/<screen_name>", methods = ["POST"])
 def poll_view_depr(screen_name):

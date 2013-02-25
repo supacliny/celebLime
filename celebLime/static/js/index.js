@@ -1,3 +1,5 @@
+var jc;
+
 // view toggle
 $('.toggleview').on('click', function(event){
   event.preventDefault();
@@ -29,8 +31,6 @@ $(window).scroll(function(){
 // spotify player
 $(document).on('click', '.music-links .spotify',function(event){
   event.preventDefault();
-
-    $('#spotifyplayer .close').click();
 
   var player = '<a href="#" class="slide"><br />&raquo;</a><a href="#" class="close">x</a><iframe src="https://embed.spotify.com/?uri='+$(this).attr('href')+'&theme=white&view=list" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>';
   var container = $('<div id="spotifyplayer"></div>');
@@ -82,6 +82,8 @@ $(document).on('click','.music-links .youtube', function(event){
   var track = $(this).attr('data-track'),
     artist = $(this).attr('data-artist');
 
+    var ytplist = $(this).attr("data-playlist");
+    ytplist = eval(ytplist);
 
   // will contain the whole shebang
   var container = $('<div id="youtubeplayer"></div>');
@@ -90,7 +92,7 @@ $(document).on('click','.music-links .youtube', function(event){
 
   // will hold video and info
   var vid = $('<div class="videoholder"></div>');
-  vid.html('<iframe src="http://www.youtube.com/embed/'+$(this).attr('href')+'" frameborder="0" allowfullscreen></iframe>');
+  vid.html('<iframe src="http://www.youtube.com/embed/'+$(this).attr('href')+'?rel=0&showinfo=0&autoplay=1&playlist='+ ytplist.slice(1).join() +'" frameborder="0" allowfullscreen></iframe>');
 
   // set up the info pane
   var videoInfo = $('<div class="videoinfo"></div>');
@@ -98,15 +100,14 @@ $(document).on('click','.music-links .youtube', function(event){
 
 
   // set up thumbnails
-  var thumbnails = $('<div class="videothumbnails"></div>');
-    // parse JSON elements and add to ul with event handlers?
+  var thumbnails = $('<div class="videothumbnails"><a href="#" class="yt-prev"></a><a href="#" class="yt-next"></a></div>');
+  genYoutubeThumbs(ytplist).appendTo(thumbnails);
 
 
-
+  // combine everything
   videoInfo.appendTo(vid);
   vid.appendTo(container);
   thumbnails.appendTo(container);
-
   container.appendTo('body');
 
   container.animate({
@@ -125,6 +126,56 @@ $(document).on('click','.music-links .youtube', function(event){
 
 });
 
+// generate jquery object that contains the thumbnails of related videos
+// replace/modify this with your JSON parsing or etc
+function genYoutubeThumbs(plist){
+  // junk variables for demo/testing purposes... should be replaced with JSON value
+    var tempimage = '../static/img/albumart/thumbnail.jpg',
+      count = 12;
+
+    count = plist.length;
 
 
+  // set up jquery fun
+  var container = $('<div class="container thumbs"></div>');
+  var list = $('<ul></ul>');
 
+  for(var i=0; i<count; i++){
+    var thumbnail = $('<li class="thumbnail"></li>');
+    thumbnail.css({'background-image':'url("http://img.youtube.com/vi/' + plist[i] + '/default.jpg")'});
+    thumbnail.html('<a href="#"></a>');
+    thumbnail.appendTo(list);
+  }
+  list.appendTo(container);
+  return container;
+}
+
+$(document).on('click', '.videothumbnails', function(event){
+  event.preventDefault();
+
+  var totalItems = $('.thumbs ul li').length - 1,
+  max = totalItems * -232,
+  clicked = $(event.target).attr('class'),
+  currentPos = parseInt($('.thumbs ul').css('left'));
+
+
+  if(clicked == 'yt-next' && currentPos <= totalItems){
+    var newLocation = currentPos - 1160;
+
+    if(newLocation >= max){
+      $('.thumbs ul').animate({
+       'left':newLocation.toString()+'px'
+       });
+    }
+  }
+
+  if(clicked == 'yt-prev' && currentPos != '0px'){
+    var newLocation = currentPos + 1160;
+
+    if(newLocation <= 0){
+      $('.thumbs ul').animate({
+      'left': newLocation.toString()+'px'
+      }, 500);
+    }
+  }
+});

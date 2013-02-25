@@ -83,6 +83,9 @@
       {% for playlist in playlists %}
       <ul id="playlist_{{ playlist._id }}" class="aplaylist" style="display:none;">
         {% for song in playlist.songs %}
+        <script>
+            var youtube_{{playlist._id}} = {{song.youtube_playlist | safe}};
+        </script>
         <li>
           <img src="{{ song.itunes.artworkUrl100 }}">
           <div class="details">
@@ -91,7 +94,7 @@
             <div class="music-links">
               <a href="#" class="itunes"></a>
               <a href="spotify:trackset:{{ playlist.name }}:{{ song.playlists }}" class="spotify"></a>
-              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" class="youtube"></a>
+              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" data-playlist='{{song.youtube_playlist | safe}}' class="youtube"></a>
               <a href="#" class="share"></a>
             </div>
           </div>
@@ -111,7 +114,7 @@
             <div class="music-links">
               <a href="#" class="itunes"></a>
               <a href="spotify:trackset:Top Songs:{{ song.playlists }}" class="spotify"></a>
-              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" class="youtube"></a>
+              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" data-playlist='{{song.youtube_playlist | safe}}' class="youtube"></a>
               <a href="#" class="share"></a>
             </div>
           </div>
@@ -150,7 +153,7 @@
     function doPoll() {
      $.post("/projects/celebLime/poll/{{ user.screen_name }}", function(data) {
          $("#playlist_streaming").html(data);
-         setTimeout(doPoll,30000);
+         setTimeout(doPoll,10000);
      });
     }
 

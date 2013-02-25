@@ -259,8 +259,9 @@ def register():
         keywords = words_list
         followers = {"profiles": [], "projects": []}
         following = {"profiles": [], "projects": []}
+        portfolio = {}
 
-        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "country_code": country_code, "city": city, "field": field, "description": description_default, "skills": skills, "projects": projects, "followers": followers, "following": following, "keywords": keywords}
+        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "country_code": country_code, "city": city, "field": field, "description": description_default, "skills": skills, "projects": projects, "followers": followers, "following": following, "keywords": keywords, "portfolio": portfolio}
 
         mongo.db.users.ensure_index([("username", ASCENDING)], unique=True, background=True)
         mongo.db.users.ensure_index([("facebook.username", ASCENDING)], sparse=True, background=True)
@@ -461,13 +462,14 @@ def search(search):
         for user in users_cursor:
             user.pop("_id", None)
             users.append(user)
-            projects_array = user["projects"]
+            projects_array = user.get("projects", [])
             for project in projects_array:
                 project["username"] = user.get("username", "")
                 projects.append(project)
-            portfolio = user["portfolio"]
-            portfolio["username"] = user.get("username", "")
-            portfolios.append(portfolio)
+            portfolio = user.get("portfolio", {})
+            if portfolio:
+                portfolio["username"] = user.get("username", "")
+                portfolios.append(portfolio)
 
         return render_template("search.html", users=users, projects=projects, portfolios=portfolios, search=search)
 

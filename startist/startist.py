@@ -457,20 +457,23 @@ def search(search):
 
     # there is no query term
     else:
-        query = ''
-        users_cursor = mongo.db.users.find().limit(SEARCH_LIMIT)
-        for user in users_cursor:
-            user.pop("_id", None)
-            users.append(user)
-            projects_array = user.get("projects", [])
-            for project in projects_array:
-                project["username"] = user.get("username", "")
-                projects.append(project)
-            portfolio = user.get("portfolio", {}).get("media", [])
-            if portfolio:
-                media = portfolio[0]
-                media["username"] = user.get("username", "")
-                portfolios.append(media)
+        if search == 'projects':
+            query = ''
+            users_cursor = mongo.db.users.find().limit(SEARCH_LIMIT)
+            for user in users_cursor:
+                user.pop("_id", None)
+                users.append(user)
+                projects_array = user.get("projects", [])
+                for project in projects_array:
+                    project["username"] = user.get("username", "")
+                    projects.append(project)
+                portfolio = user.get("portfolio", {}).get("media", [])
+                if portfolio:
+                    media = portfolio[0]
+                    media["username"] = user.get("username", "")
+                    portfolios.append(media)
+            users = []
+            portfolios = []        
 
     return render_template("search.html", users=users, projects=projects, portfolios=portfolios, search=search)
 

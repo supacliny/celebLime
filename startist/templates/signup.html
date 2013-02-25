@@ -12,7 +12,6 @@
     <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/startist.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ url_for('static', filename='css/bootstrap-formhelpers.css') }}" rel="stylesheet" type="text/css"/>
-    <link href="{{ url_for('static', filename='css/bootstrap-formhelpers-countries.flags.css') }}" rel="stylesheet" type="text/css"/>
   </head>
     
   <body>
@@ -48,18 +47,31 @@
             <div class="heading">Password</div>
             <div><input type="password" name="password" class="span2" placeholder="Password"></div>
             <div class="password-error"></div>
+            <div class="heading">Location</div>
+            <div><select class="input-medium countries space" name="country" data-country="US"></select><input type="text" name="city" class="span2" placeholder="City"></div>
+            <div class="heading topspace">Creative Field</div>
+            <div>
+              <select class="span2" name="field">
+                <option value="art">Art</option>
+                <option value="comics">Comics</option>
+                <option value="dance">Dance</option>
+                <option value="design">Design</option>
+                <option value="fashion">Fashion</option>
+                <option value="film">Film & Video</option>
+                <option value="food">Food</option>
+                <option value="games">Games</option>
+                <option value="music">Music</option>
+                <option value="photography">Photography</option>
+                <option value="publishing">Publishing</option>
+                <option value="technology">Technology</option>
+                <option value="theater">Theater</option>
+                <option value="other">Other</option>
+              </select> 
+            </div>
             <div class="invisible">
             <div class="heading">Profile Picture</div>
             <div class="signup-pic"><img src="{{ pic }}"/></div> 
             <div><input type="text" id="link" name="pic" class="span2" value="{{ pic }}" placeholder="Picture Link"><i class="space icon-refresh"></i></div>
-            <div class="heading">Location</div>
-            <div><select class="input-medium countries space" data-country="US"></select><input type="text" name="city" class="span2" placeholder="City"></div>
-            <div class="heading">Title</div>
-            <div><input type="text" name="title" class="span2" placeholder="Title"></div>
-            <div class="heading">Creative Fields</div>
-            <div><input type="text" name="fields" class="span2" placeholder="Creative Fields"></div>
-            <div class="heading">Web Site</div>
-            <div><input type="text" name="website" class="span2" placeholder="Web Site"></div>
             </div>
             <br>
             <div class="register-button"><button type="submit" class="btn btn-primary">Create New Account</button></div>
@@ -71,6 +83,7 @@
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap-formhelpers-countries.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap-formhelpers-countries.en_US.js') }}"></script>
+
   <script>
     $(document).ready(function(){
 
@@ -93,13 +106,13 @@
             email = $form.find( 'input[name="email"]' ).val(),
             password = $form.find( 'input[name="password"]' ).val(),
             pic = $form.find( 'input[name="pic"]' ).val(),
-            country = $form.find(":selected").text(),
+            country = $form.find('select[name="country"] option:selected').text();
+            code = $form.find('select[name="country"] option:selected').val();
             city = $form.find( 'input[name="city"]' ).val(),
-            title = $form.find( 'input[name="title"]' ).val(),
-            fields = $form.find( 'input[name="fields"]' ).val(),
-            website = $form.find( 'input[name="website"]' ).val(),
+            field = $form.find( 'select[name="field"]' ).val(),
             url = $form.attr( 'action' );
-        jdata = JSON.stringify({"group": group, "name": name, "username": username, "email": email, "password": password, "pic": pic, "country": country, "city": city, "title": title, "fields": fields, "website": website});
+
+        jdata = JSON.stringify({"group": group, "name": name, "username": username, "email": email, "password": password, "pic": pic, "country": country, "code": code, "city": city, "field": field});
         jQuery.ajax({
                 type: "POST",
                 url: url,

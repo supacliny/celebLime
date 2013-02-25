@@ -278,7 +278,7 @@ def register():
 # update user information
 @app.route('/update', methods = ['POST'])
 def update():
-    print request.json
+
     username_session = session.get("username", "")
     username_client = request.json['username']
     parameters = request.json['parameters']
@@ -412,39 +412,42 @@ def search(search):
     projects = []
     portfolios = []
 
+    query = request.args
+
     # there is a query term
-    try:
-        query = request.args['search']
+    if query:
+        query = query['search']
         mongo.db.users.ensure_index([("keywords",ASCENDING)], sparse=True, background=True)
         mongo.db.users.ensure_index([("projects.keywords",ASCENDING)], sparse=True, background=True)
         mongo.db.users.ensure_index([("portfolio.media.keywords",ASCENDING)], sparse=True, background=True)
         query = query.split(' ')
         for word in query:
             word = stem_search_query(word)
-            regex_word = word + '.*'
+            if word:
+                regex_word = word + '.*'
 
-            users_cursor = mongo.db.users.find({"keywords": {'$regex': regex_word}}).limit(SEARCH_LIMIT)
-            for user in users_cursor:
-                user.pop("_id", None)
-                users.append(user)
-        
-            users_cursor = mongo.db.users.find({"projects.keywords": {'$regex': regex_word}}).limit(SEARCH_LIMIT)
-            for user in users_cursor:
-                projects_array = user.get("projects", [])
-                for project in projects_array:
-                    keywords = project.get("keywords", [])
-                    if (any(word in item for item in keywords)):
-                        project["username"] = user.get("username", "")
-                        projects.append(project)
+                users_cursor = mongo.db.users.find({"keywords": {'$regex': regex_word}}).limit(SEARCH_LIMIT)
+                for user in users_cursor:
+                    user.pop("_id", None)
+                    users.append(user)
+            
+                users_cursor = mongo.db.users.find({"projects.keywords": {'$regex': regex_word}}).limit(SEARCH_LIMIT)
+                for user in users_cursor:
+                    projects_array = user.get("projects", [])
+                    for project in projects_array:
+                        keywords = project.get("keywords", [])
+                        if (any(word in item for item in keywords)):
+                            project["username"] = user.get("username", "")
+                            projects.append(project)
 
-            users_cursor = mongo.db.users.find({"portfolio.media.keywords": {'$regex': regex_word}}).limit(SEARCH_LIMIT)
-            for user in users_cursor:
-                portfolio = user.get("portfolio", {}).get("media", [])
-                for media in portfolio:
-                     keywords = media.get("keywords", [])
-                     if (any(word in item for item in keywords)):
-                        media["username"] = user.get("username", "")
-                        portfolios.append(media)
+                users_cursor = mongo.db.users.find({"portfolio.media.keywords": {'$regex': regex_word}}).limit(SEARCH_LIMIT)
+                for user in users_cursor:
+                    portfolio = user.get("portfolio", {}).get("media", [])
+                    for media in portfolio:
+                         keywords = media.get("keywords", [])
+                         if (any(word in item for item in keywords)):
+                            media["username"] = user.get("username", "")
+                            portfolios.append(media)
 
 
         # get unique list of users, projects, portofolio
@@ -452,11 +455,8 @@ def search(search):
         projects = {project['id']:project for project in projects}.values()
         portfolios = {media['id']:media for media in portfolios}.values()
 
-        return render_template("search.html", users=users, projects=projects, portfolios=portfolios, search=search)
-
-    # there is no query term, return first 10
-    except Exception, e:
-        print e
+    # there is no query term
+    else:
         query = ''
         users_cursor = mongo.db.users.find().limit(SEARCH_LIMIT)
         for user in users_cursor:
@@ -466,12 +466,13 @@ def search(search):
             for project in projects_array:
                 project["username"] = user.get("username", "")
                 projects.append(project)
-            portfolio = user.get("portfolio", {})
+            portfolio = user.get("portfolio", {}).get("media", [])
             if portfolio:
-                portfolio["username"] = user.get("username", "")
-                portfolios.append(portfolio)
+                media = portfolio[0]
+                media["username"] = user.get("username", "")
+                portfolios.append(media)
 
-        return render_template("search.html", users=users, projects=projects, portfolios=portfolios, search=search)
+    return render_template("search.html", users=users, projects=projects, portfolios=portfolios, search=search)
 
 
 # launch a project
@@ -825,7 +826,7 @@ def get_project(username, project_id):
 def get_portfolio_media(username, media_id):
     user = mongo.db.users.find_one({"username": username})
     try:
-        portfolio = user["portfolio"]
+        portfolio = user.get("portfolio", {}).get("media", [])
         if portfolio:
             media = (item for item in portfolio if item["id"] == media_id).next()
             if media:

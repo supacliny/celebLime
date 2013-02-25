@@ -90,6 +90,7 @@
   </div>
 
   <div id="container">
+    {% if users %}
     {% for user in users %}
     <div class="box col2 profiles" data-category="profiles" id="{{ user.username }}">
       <div class="thumbnail">
@@ -98,6 +99,8 @@
       <p>{{ user.description | truncate(64) }}</p>
     </div>
     {% endfor %}
+    {% endif %}
+    {% if projects %}
     {% for project in projects %}
     <div class="box col2 projects" data-category="projects" id="{{ project.username }}/{{ project.id }}">
       <div class="thumbnail">
@@ -106,14 +109,16 @@
       <p>{{ project.description | truncate(64) }}</p>
     </div>
     {% endfor %}
+    {% endif %}
+    {% if portfolios %}
     {% for media in portfolios %}
-    <div class="box col2 portfolios" data-category="portfolios" id="{{ media.media[0].id }}">
+    <div class="box col2 portfolios" data-category="portfolios" id="{{ media.id }}">
       <div class="thumbnail">
-        <a href="{{ url_for('portfolio', username=media.username) }}"><img src="{{ process_image(media.media[0].file) }} "/></a>
+        <a href="{{ url_for('portfolio', username=media.username) }}"><img src="{{ process_image(media.file) }} "/></a>
       </div>
     </div>
     {% endfor %}
-
+    {% endif %}
     </div>
 
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>

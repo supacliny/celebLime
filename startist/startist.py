@@ -257,7 +257,7 @@ def register():
         projects = []
         words_list = convert_string_to_list(name) + convert_string_to_list(country) + convert_string_to_list(city) + convert_string_to_list(username) + convert_string_to_list(field) + convert_string_to_list(country_code)
         keywords = words_list
-        followers = {"profiles": [], "projects": []}
+        followers = {"profiles": []}
         following = {"profiles": [], "projects": []}
         portfolio = {}
 
@@ -291,7 +291,7 @@ def update():
         user = get_user(username_client)
         user_keywords = user.get("keywords", "")
 
-        if command == 'follow-profile':
+        if command == 'follow-profile' and origin == 'profile':
             profile = parameters.get("following", "")
             # add profile to username: username is following that profile
             mongo.db.users.update({"username": username_client, "following.profiles": {"$ne": profile}},{"$push": {"following.profiles": profile}}, upsert=False)
@@ -299,7 +299,7 @@ def update():
             # now add username to profile: username is a follower of that profile
             mongo.db.users.update({"username": profile, "followers.profiles": {"$ne": username_client}},{"$push": {"followers.profiles": username_client}}, upsert=False)
 
-        if command == 'unfollow-profile':
+        if command == 'unfollow-profile' and origin == 'profile':
             profile = parameters.get("following", "")
             # remove profile from username: username is now not following that profile
             mongo.db.users.update({"username": username_client} ,{"$pull": {"following.profiles": profile}}, upsert=False)
@@ -317,6 +317,26 @@ def update():
         if command == 'update-description' and origin == 'profile':
             description = parameters.get("description", "")
             mongo.db.users.update({"username": username_client}, {"$set": {"description": description}})
+
+        if command == 'follow-project' and origin == 'project':
+            profile = parameters.get("following", "")
+            project_id = parameters.get("project", "")
+
+            # add profile and project to username_client following
+            mongo.db.users.update({"username": username_client},{"$push": {"following.projects": {"username": profile, "project": project_id}}})
+
+            # add profile to project followers: username is a follower of that project
+            mongo.db.users.update({"username": profile, "projects.id": project_id}, {"$push": {"projects.$.followers": username_client}})
+
+        if command == 'unfollow-project' and origin == 'project':
+            profile = parameters.get("following", "")
+            project_id = parameters.get("project", "")
+
+            # remove profile and project from username_client following
+            mongo.db.users.update({"username": username_client},{"$pull": {"following.projects": {"username": profile, "project": project_id}}})
+
+            # remove profile from project followers
+            mongo.db.users.update({"username": profile, "projects.id": project_id}, {"$pull": {"projects.$.followers": username_client}})
 
         if command == 'update-name' and origin == 'project':
             project_id = parameters.get("project", "")
@@ -369,7 +389,7 @@ def update():
 
         if command == 'delete-box' and origin == 'portfolio':
             media_id = parameters.get("media", "")
-            mongo.db.users.update({"username": username_client}, {"$pull": {"portfolio.media": {"id": media_id}}}, upsert=False)
+            mongo.db.users.update({"username": username_client}, {"$pull": {"portfolio.media": {"id": media_id}}})
             delete_file(media)
 
         if command == 'submit-link' and origin == 'portfolio':
@@ -380,7 +400,7 @@ def update():
                     query = urlparse.parse_qs(url_data.query)
                     file_id = query["v"][0]
                     pic_link = "http://img.youtube.com/vi/" + file_id + "/0.jpg"
-                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"file": pic_link, "class": "videos", "id": str(file_id)}}}, upsert=True)
+                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"file": pic_link, "class": "videos", "id": str(file_id)}}})
                     data = {"link": "youtube", "id": str(file_id), "class": "videos", "file": pic_link}
                     data = json.dumps(data)
                     return data
@@ -391,7 +411,7 @@ def update():
                     result = response.json()
                     html = result.get("html", "")
                     pic_link = result.get("thumbnail_url", "")
-                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"file": pic_link, "class": "soundcloud", "id": str(path), "iframe": html}}}, upsert=True)
+                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"file": pic_link, "class": "soundcloud", "id": str(path), "iframe": html}}})
                     data = {"link": "soundcloud", "id": str(path), "class": "soundcloud", "file": pic_link, "iframe": html}
                     data = json.dumps(data)
                     return data
@@ -485,6 +505,8 @@ def launch_project():
     name = request.form["project-name"]
     description = request.form["project-description"]
     skills = request.form["project-skills"]
+    followers = []
+    partners = []
     keywords_name = convert_string_to_list(name)
     keywords_skills = convert_string_to_list(skills, ",")
     keywords = keywords_name + keywords_skills
@@ -498,7 +520,7 @@ def launch_project():
             filename = secure_filename(file.filename)
             file_id = fs.put(file, filename=filename)
 
-        mongo.db.users.update({"username": username},{"$push": {"projects": {"id": id, "name": name, "description": description, "skills": skills, "file": str(file_id), "keywords": keywords}}}, upsert=True)
+        mongo.db.users.update({"username": username},{"$push": {"projects": {"id": id, "name": name, "description": description, "skills": skills, "file": str(file_id), "keywords": keywords, "followers": followers, "partners": partners}}}, upsert=True)
 
     return redirect(url_for('project', username=username, project_id=id))
 

@@ -930,6 +930,7 @@ def process_image(image=None):
 app.jinja_env.globals.update(format_date=format_date)
 app.jinja_env.globals.update(get_user=get_user)
 app.jinja_env.globals.update(process_image=process_image)
+app.debug = True
 
 # ] TEMPLATE FUNCTIONS
 

@@ -255,8 +255,7 @@ def register():
         description_default = DEFAULT_DESCRIPTION
         skills = []
         projects = []
-        words_list = convert_string_to_list(name) + convert_string_to_list(country) + convert_string_to_list(city) + convert_string_to_list(username) + convert_string_to_list(field) + convert_string_to_list(country_code)
-        keywords = words_list
+        keywords = convert_string_to_list(name) + convert_string_to_list(country) + convert_string_to_list(city) + convert_string_to_list(username) + convert_string_to_list(field) + convert_string_to_list(country_code)
         followers = {"profiles": []}
         following = {"profiles": [], "projects": []}
         portfolio = {}

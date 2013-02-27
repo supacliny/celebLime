@@ -359,11 +359,37 @@ def update():
             project = get_project(username_client, project_id)
             project_keywords = project.get("keywords", [])
             old_skills = project.get("skills", [])
-            new_skills = parameters.get("skills", [])
-            new_keywords = update_keywords(project_keywords, new_skills, old_skills)
+            old_skills_keywords = [entry['skill'] for entry in old_skills]
+            new_skills_keywords = parameters.get("skills", [])
+            new_keywords = update_keywords(project_keywords, new_skills_keywords, old_skills_keywords)
+            new_skills = update_project_skills(new_skills_keywords, old_skills)
             mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$set": {"projects.$.skills": new_skills}})
             mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$set": {"projects.$.keywords": new_keywords}})
 
+        if command == 'add-candidate' and origin == 'project':
+            project_owner = parameters.get("owner", "")
+            project_id = parameters.get("project", "")
+            skill = parameters.get("skill", "")
+            project = get_project(project_owner, project_id)
+            old_skills = project.get("skills", [])
+            skills = update_project_candidates(skill, username_client, old_skills, True)
+            mongo.db.users.update({"username": project_owner, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": skills}})                  
+            data = {"candidate": username_client, "skill": skill}
+            data = json.dumps(data)
+            return data
+
+        if command == 'remove-candidate' and origin == 'project':
+            project_owner = parameters.get("owner", "")
+            project_id = parameters.get("project", "")
+            skill = parameters.get("skill", "")
+            project = get_project(project_owner, project_id)
+            old_skills = project.get("skills", [])
+            skills = update_project_candidates(skill, username_client, old_skills, False)
+            mongo.db.users.update({"username": project_owner, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": skills}})                  
+            data = {"candidate": username_client, "skill": skill}
+            data = json.dumps(data)
+            return data
+        
         if command == 'update-caption' and origin == 'portfolio':
             media_id = parameters.get("media", "")
             media = get_portfolio_media(username_client, media_id)
@@ -512,6 +538,7 @@ def launch_project():
     id = scrub_project_id_string(name)
     id = id.replace (" ", "-").lower()
     skills = skills.split(',') 
+    skills = initialize_project_skills(skills)
     if request.method == 'POST':
         file = request.files['file']
         file_id = 0
@@ -720,7 +747,7 @@ def upload_file():
                 mongo.db.users.update({"username": username, "projects.id": project_id},{"$set": {"projects.$.file": str(file_id)}}, upsert=True)
                 projects = user["projects"]
                 if projects:
-                    project = (item for item in projects if item["id"] == project_id).next()
+                    project = next((item for item in projects if item["id"] == project_id), None)
                     if project:
                         delete_file(project["file"])
                 data = {}
@@ -838,7 +865,7 @@ def get_project(username, project_id):
     try:
         projects = user['projects']
         if projects:
-            project = (item for item in projects if item["id"] == project_id).next()
+            project = next((item for item in projects if item["id"] == project_id), None)
             if project:
                 return project
             else:
@@ -852,7 +879,7 @@ def get_portfolio_media(username, media_id):
     try:
         portfolio = user.get("portfolio", {}).get("media", [])
         if portfolio:
-            media = (item for item in portfolio if item["id"] == media_id).next()
+            media = next((item for item in portfolio if item["id"] == media_id), None)
             if media:
                 return media
             else:
@@ -904,6 +931,7 @@ def scrub_project_id_string(string):
     scrubbed_string = scrubbed_string.strip()
     return scrubbed_string
 
+
 # a basic way of extracting the root stem of a word
 def stem_search_query(word):
     word = word.lower()
@@ -917,6 +945,48 @@ def stem_search_query(word):
     if word_suffix_three in WORD_SUFFIX:
         word = word[:-3]
     return word
+
+
+# on creation add an empty candidate list for each skill
+def initialize_project_skills(skills):
+    skills_with_empty_candidates = []
+    for skill in skills:
+        entry = {"skill": skill, "candidates": []}
+        skills_with_empty_candidates.append(entry)
+    return skills_with_empty_candidates
+
+
+# new_skills is the new list of skills, old_skills is pulled from mongo
+def update_project_skills(new_skills, old_skills):
+    updated_skills = []
+    for skill in new_skills:
+        entry = next((item for item in old_skills if item["skill"] == skill), None)
+        if entry:
+            updated_skills.append(entry)
+        else:
+            updated_skills.append({"skill": skill, "candidates": []})
+    return updated_skills
+
+
+# a helper function to update the entire skills field of a project
+# this is in an attempt to workaround the mongo's inability to deal with multiple positional operators ($)
+def update_project_candidates(skill, candidate, old_skills, command):
+    updated_skills = []
+    for entry in old_skills:
+        old_skill = entry["skill"]
+        candidates = entry["candidates"]
+        if (old_skill == skill):
+            if command:
+                candidates.append(candidate)
+            else:
+                try:
+                    candidates.remove(candidate)
+                except Exception, e:
+                    print e
+            updated_skills.append(entry)
+        else:
+            updated_skills.append({"skill": old_skill, "candidates": candidates})
+    return updated_skills
 
 # ] AUXILARY FUNCTIONS
 

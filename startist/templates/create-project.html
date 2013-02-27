@@ -100,10 +100,10 @@
 
     <div class="row-fluid">
       <div class="project-skills">
-        <div class="project-skills-input">
-        <hint>Add Skills</hint>
+        <div class="create-project-skills-input">
+        <hint>Add Project Skills</hint>
         </div>
-        <div class="project-skills-input-edit" style="display:none;">
+        <div class="create-project-skills-input-edit" style="display:none;">
           <input type="hidden" id="project-skills-id" name="project-skills" value=""/>
         </div>
       </div> 
@@ -205,22 +205,22 @@
           $(this).text("Finished");
 
           var skills = '';
-          $('.project-skills-input span').each(function(){
+          $('.create-project-skills-input span').each(function(){
               skills += $(this).text();
               skills += ','
           });
-          $('.project-skills-input').hide();
+          $('.create-project-skills-input').hide();
           $('#project-skills-id').importTags(skills);
-          $(".project-skills-input-edit").show();
-          $('.project-skills-input-edit').children('.tagsinput').click();
+          $('.create-project-skills-input-edit').show();
+          $('.create-project-skills-input-edit').children('.tagsinput').click();
         },
 
         function() {
           $(this).text("Edit");
 
           var skills = $('#project-skills-id').val();
-          $('.project-skills-input-edit').hide();
-          $('.project-skills-input').show();
+          $('.create-project-skills-input-edit').hide();
+          $('.create-project-skills-input').show();
           var content = '';
           var array = skills.split(',');
           if (array[0] == '')
@@ -231,7 +231,7 @@
           for (var i = 0; i < array.length; i++) {
             content += '<span>' + array[i] + '</span>';
           }
-          $('.project-skills-input').html(content);
+          $('.create-project-skills-input').html(content);
   
           var elem = document.getElementById("project-skills-id");
           elem.value = skills;

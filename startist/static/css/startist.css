@@ -564,14 +564,12 @@ textarea {
     transition: all 0.2s ease-in-out 0s;
     border-radius: 4px 4px 4px 4px; 
     background: #FFF; 
-    padding: 5px; 
-    height: 32px; 
+    padding: 5px 5px 0px;
+    height: auto; 
     overflow-y: auto;
     margin-top: 5px; 
     margin-bottom: 5px;
     background-color: #FAFAFA;
-    background-image: linear-gradient(to bottom, #FFFFFF, #F2F2F2);
-    background-repeat: repeat-x;
 }
 
 .project-skills-input span { 
@@ -585,13 +583,58 @@ textarea {
     background: #cde69c; 
     color: #638421; 
     margin-right: 5px; 
-    margin-bottom:5px;
     font-size:13px; 
     border-radius: 4px 4px 4px 4px;
 }
 
 .project-skills-input span a {
     color: #638421;
+}
+
+.create-project-skills-input { 
+    border: 1px solid #DDDDDD;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+    transition: all 0.2s ease-in-out 0s;
+    border-radius: 4px 4px 4px 4px; 
+    background: #FFF; 
+    padding: 5px; 
+    height: 32px; 
+    overflow-y: auto;
+    margin-top: 5px; 
+    margin-bottom: 5px;
+    background-color: #FAFAFA;
+    background-image: linear-gradient(to bottom, #FFFFFF, #F2F2F2);
+    background-repeat: repeat-x;
+}
+
+.create-project-skills-input span { 
+    border: 1px solid #a5d24a; 
+    -moz-border-radius: 4px; 
+    -webkit-border-radius: 4px; 
+    display: block; 
+    float: left; 
+    padding: 5px; 
+    text-decoration:none; 
+    background: #cde69c; 
+    color: #638421; 
+    margin-right: 5px; 
+    font-size:13px; 
+    border-radius: 4px 4px 4px 4px;
+}
+
+.create-project-skills-input span a {
+    color: #638421;
+}
+
+
+.well {
+    background-color: #F5F5F5;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    margin-bottom: 5px;
+    min-height: 20px;
+    padding: 19px;
 }
 
 /* isotope */

@@ -116,11 +116,12 @@
 
     <h3>Skills</h3>
     <div class="row-fluid">
+      {% if session.logged_in and session.username == user.username %}
       <div class="project-skills">
         <div class="project-skills-input">
         {% if project.skills %}
-        {% for skill in project.skills %}  
-          <span><a href="{{ url_for('search', search="all") }}?search={{skill}}">{{ skill }}</a></span>
+        {% for entry in project.skills %}  
+          <div class="well"><a href="{{ url_for('search', search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a></div>
         {% endfor %}
         {% else %}
         <hint>Add Skills</hint>
@@ -130,9 +131,22 @@
           <input name="tags" id="tags" value=""/>
         </div> 
       </div>  
-      {% if session.logged_in and session.username == user.username %}
       <button class="btn btn-small project-skills-trigger" type="button">Edit</button>
-      {% endif %}   
+      {% else %}
+        {% if project.skills %}
+        {% for entry in project.skills %}
+          {% if session.username in entry.candidates %} 
+          <div class="well">
+            <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a><a class="btn btn-small pull-right apply" id="{{ entry.skill }}">UNAPPLY <i class="icon-ban-circle"></i></a>
+          </div>
+          {% else %}
+          <div class="well">
+            <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a><a class="btn btn-small pull-right apply" id="{{ entry.skill }}">APPLY <i class="icon-heart"></i></a>
+          </div>
+          {% endif %}
+        {% endfor %}
+        {% endif %}
+      {% endif %}
       </div>
     <hr>
   </div>
@@ -185,6 +199,64 @@
               data: data,
               beforeSend: function() {},
               success: function(data) {$('#follow').html("FOLLOW <i class='icon-thumbs-up'></i>");},
+              dataType: 'json',
+              contentType: 'application/json',
+              processData: false
+            });         
+            return;
+          }
+      });
+
+      // apply button
+      $('.apply').click(
+
+        function(event){
+
+          var location = $(this).parent();
+
+          if ($(this).text() == 'APPLY ')
+          {
+            var url = '{{ url_for('update') }}';
+            var username = '{{ session.username }}';
+            var owner = '{{ user.username }}';
+            var project = '{{ project.id }}';
+            var skill = $(this).attr('id');
+            var origin = 'project';
+            var command = 'add-candidate';
+            data = JSON.stringify({"username": username, "parameters": {"owner": owner, "project": project, "skill": skill}, "origin": origin, "command": command});
+            jQuery.ajax({
+              type: 'POST',
+              url: url,
+              data: data,
+              beforeSend: function() {},
+              success: function(data) {
+                $('.apply', location).html("UNAPPLY <i class='icon-ban-circle'></i>");
+              },
+              dataType: 'json',
+              contentType: 'application/json',
+              processData: false
+            });    
+            return;
+          }
+
+          if ($(this).text() == 'UNAPPLY ')
+          {
+            var url = '{{ url_for('update') }}';
+            var username = '{{ session.username }}';
+            var owner = '{{ user.username }}';
+            var project = '{{ project.id }}';
+            var skill = $(this).attr('id');
+            var origin = 'project';
+            var command = 'remove-candidate';
+            data = JSON.stringify({"username": username, "parameters": {"owner": owner, "project": project, "skill": skill}, "origin": origin, "command": command});
+            jQuery.ajax({
+              type: 'POST',
+              url: url,
+              data: data,
+              beforeSend: function() {},
+              success: function(data) {
+                $('.apply', location).html("APPLY <i class='icon-heart'></i>");
+              },
               dataType: 'json',
               contentType: 'application/json',
               processData: false
@@ -294,7 +366,7 @@
           $(this).text('Finished');
 
           var skills = '';
-          $('.project-skills-input span').each(function(){
+          $('.project-skills-input .well a').each(function(){
               skills += $(this).text();
               skills += ','
           });
@@ -318,7 +390,7 @@
             content += '<hint>Add Project Skills</hint>';
           }
           for (var i = 0; i < array.length; i++) {
-            content += '<span><a href="{{ url_for("search", search="all") }}?search=' + array[i] + '">' + array[i] + '</a></span>';
+            content += '<div class="well"><a href="{{ url_for("search", search="all") }}?search=' + array[i] +'">' + array[i] +'</a></div>';
           }
           $('.project-skills-input').html(content);
   

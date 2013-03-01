@@ -116,36 +116,71 @@
 
     <h3>Skills</h3>
     <div class="row-fluid">
-      {% if session.logged_in and session.username == user.username %}
-      <div class="project-skills">
-        <div class="project-skills-input">
-        {% if project.skills %}
-        {% for entry in project.skills %}  
-          <div class="well"><a href="{{ url_for('search', search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a></div>
-        {% endfor %}
+      {% if session.logged_in %}
+        {% if session.username == user.username %}
+        <div class="project-skills">
+          <div class="project-skills-input">
+          {% if project.skills %}
+          {% for entry in project.skills %}  
+            <div class="well">
+              <div class="skill">
+                <a href="{{ url_for('search', search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a>
+              </div>
+              {% for username in entry.candidates %} 
+              <div class="candidates">
+                <a href="{{ url_for('user', username=username) }}">
+                  <div class="thumbnail" style="width: 40px; height: auto; float: right; margin-top: -35px; margin-right: 10px;">
+                    <img src="{{ process_image(get_user(username).pic) }}"/>
+                  </div>
+                </a>
+              </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+          {% else %}
+          <div class="bottomspace"><hint>Add Project Skills</hint></div>
+          {% endif %}
+          </div>
+          <div class="project-skills-input-edit" style="display:none;">
+            <input name="tags" id="tags" value=""/>
+          </div> 
+        </div>  
+        <button class="btn btn-small project-skills-trigger" type="button">Edit</button>
         {% else %}
-        <hint>Add Skills</hint>
-        {% endif %}
-        </div>
-        <div class="project-skills-input-edit" style="display:none;">
-          <input name="tags" id="tags" value=""/>
-        </div> 
-      </div>  
-      <button class="btn btn-small project-skills-trigger" type="button">Edit</button>
-      {% else %}
         {% if project.skills %}
         {% for entry in project.skills %}
           {% if session.username in entry.candidates %} 
           <div class="well">
-            <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a><a class="btn btn-small pull-right apply" id="{{ entry.skill }}">UNAPPLY <i class="icon-ban-circle"></i></a>
+            <div class="skill">
+              <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a><a class="btn btn-small pull-right apply" id="{{ entry.skill }}">UNAPPLY <i class="icon-ban-circle"></i></a>
+            </div>
           </div>
           {% else %}
           <div class="well">
-            <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a><a class="btn btn-small pull-right apply" id="{{ entry.skill }}">APPLY <i class="icon-heart"></i></a>
+            <div class="skill">
+              <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a><a class="btn btn-small pull-right apply" id="{{ entry.skill }}">APPLY <i class="icon-heart"></i></a>
+            </div>
           </div>
           {% endif %}
         {% endfor %}
         {% endif %}
+        {% endif %}
+      {% else %}
+      {% if project.skills %}
+      {% for entry in project.skills %}
+      <div class="well">
+        <div class="skill">
+          <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a><a class="btn btn-small pull-right" id="{{ entry.skill }}" href="{{ url_for('login') }}">APPLY <i class="icon-heart"></i></a>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="well">
+        <div class="skill">
+          <div class="bottomspace"><hint>Coming Soon!</hint></div>
+        </div>
+      </div>      
+      {% endif %}
       {% endif %}
       </div>
     <hr>
@@ -157,6 +192,8 @@
   <script src="{{ url_for('static', filename='js/jquery.tagsinput.js') }}"></script>
   <script>
     $(document).ready(function(){
+
+      var $root = {{ request.script_root|tojson|safe }};  
 
       // follow or unfollow project
       $('#follow').click(
@@ -360,7 +397,7 @@
           'minChars' : 1
         });
 
-      // edit project skills
+      // edit project skills and update dashboard
       $('.project-skills-trigger').toggle( 
         function() {
           $(this).text('Finished');
@@ -378,34 +415,43 @@
 
         function() {
           $(this).text('Edit');
-
           var skills = $('#tags').val();
           $('.project-skills-input-edit').hide();
           $('.project-skills-input').show();
-          var content = '';
           var array = skills.split(',');
-          if (array[0] == '')
-          {
-            array = [];
-            content += '<hint>Add Project Skills</hint>';
-          }
-          for (var i = 0; i < array.length; i++) {
-            content += '<div class="well"><a href="{{ url_for("search", search="all") }}?search=' + array[i] +'">' + array[i] +'</a></div>';
-          }
-          $('.project-skills-input').html(content);
-  
+          if (array[0] == '') { array = []; }
+          var content = '';
           var url = '{{ url_for('update') }}';
           var username = '{{ user.username }}';
           var project = '{{ project.id }}';
           var origin = 'project';
           var command = 'update-skills';
+  
           data = JSON.stringify({"username": username, "parameters": {"project": project, "skills": array}, "origin": origin, "command": command});
           jQuery.ajax({
                   type: "POST",
                   url: url,
                   data: data,
                   beforeSend: function() {},
-                  success: function(data) {},
+                  success: function(data) {
+                    var skills = data;
+                    if (skills.length > 0) {
+                        $.each(skills, function(index, entry) {
+                          var candidates = entry.candidates;
+                          content += '<div class="well"><div class="skill"><a href="{{ url_for("search", search="all") }}?search=' + entry.skill + '">' + entry.skill + '</a></div>';
+                          content += '<div class="candidates">';
+                          $.each(candidates, function(index, candidate) {
+                            var profile_link = $root + "/profile/" + candidate.username;
+                            content += '<a href="' + profile_link + '"><div class="thumbnail" style="width: 40px; height: auto; float: right; margin-top: -35px; margin-right: 10px;"><img src="' + candidate.pic + '"/></div></a>';
+                          });
+                          content += '</div></div>';
+                        });
+                      }
+                    else {
+                      content += '<div class="bottomspace"><hint>Add Project Skills</hint></div>';
+                    }
+                    $('.project-skills-input').html(content);
+                  },
                   dataType: "json",
                   contentType: "application/json",
                   processData: false

@@ -411,7 +411,7 @@ textarea {
     padding: 5px; 
     width: 900px; 
     height: 32px; 
-    overflow-y: auto; 
+    overflow: hidden; 
     margin-bottom: 5px;
     background-color: #FAFAFA;
     background-image: linear-gradient(to bottom, #FFFFFF, #F2F2F2);
@@ -566,7 +566,7 @@ textarea {
     background: #FFF; 
     padding: 5px 5px 0px;
     height: auto; 
-    overflow-y: auto;
+    overflow: hidden;
     margin-top: 5px; 
     margin-bottom: 5px;
     background-color: #FAFAFA;
@@ -599,7 +599,7 @@ textarea {
     background: #FFF; 
     padding: 5px; 
     height: 32px; 
-    overflow-y: auto;
+    overflow: hidden;
     margin-top: 5px; 
     margin-bottom: 5px;
     background-color: #FAFAFA;
@@ -625,7 +625,6 @@ textarea {
 .create-project-skills-input span a {
     color: #638421;
 }
-
 
 .well {
     background-color: #F5F5F5;

@@ -365,6 +365,9 @@ def update():
             new_skills = update_project_skills(new_skills_keywords, old_skills)
             mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$set": {"projects.$.skills": new_skills}})
             mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$set": {"projects.$.keywords": new_keywords}})
+            data = update_candidate_data(new_skills)
+            data = json.dumps(data)
+            return data
 
         if command == 'add-candidate' and origin == 'project':
             project_owner = parameters.get("owner", "")
@@ -969,7 +972,7 @@ def update_project_skills(new_skills, old_skills):
 
 
 # a helper function to update the entire skills field of a project
-# this is in an attempt to workaround the mongo's inability to deal with multiple positional operators ($)
+# this is an attempt to work around mongo's inability to deal with multiple positional operators ($)
 def update_project_candidates(skill, candidate, old_skills, command):
     updated_skills = []
     for entry in old_skills:
@@ -987,6 +990,22 @@ def update_project_candidates(skill, candidate, old_skills, command):
         else:
             updated_skills.append({"skill": old_skill, "candidates": candidates})
     return updated_skills
+
+
+# send any data concerning the user back to the client when updating project skills.
+# for now we'll send the name, username and pic
+def update_candidate_data(skills):
+    for entry in skills:
+        candidates = entry.get("candidates", [])
+        updated = []
+        for candidate in candidates:
+            user = get_user(candidate)
+            if user:
+                pic = process_image(user["pic"])
+                new_entry = {"name": user["name"], "username": user["username"], "pic": pic}
+                updated.append(new_entry)
+        entry["candidates"] = updated
+    return skills
 
 # ] AUXILARY FUNCTIONS
 

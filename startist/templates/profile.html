@@ -119,7 +119,11 @@
           <span><a href="{{ url_for('search', search="all") }}?search={{skill}}">{{ skill }}</a></span>
         {% endfor %}
         {% else %}
+        {% if session.logged_in and session.username == user.username %}
         <hint>Add Skills</hint>
+        {% else %}
+        <hint>No Skills!</hint>
+        {% endif %}
         {% endif %}
         </div>
         <div class="profile-skills-input-edit" style="display:none;">

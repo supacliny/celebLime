@@ -29,7 +29,7 @@ ANONYMOUS = os.path.realpath('.') + '/static/img/anonymous.jpg'
 SEARCH_LIMIT = 10
 DEFAULT_DESCRIPTION = "Say something nice about yourself."
 COMMON_WORDS = ['a', 'able', 'about', 'across', 'after', 'all', 'almost', 'also', 'am', 'among', 'an', 'and', 'any', 'are', 'as', 'at', 'be', 'because', 'been', 'but', 'by', 'can', 'cannot', 'could', 'dear', 'did', 'do', 'does', 'either', 'else', 'ever', 'every', 'for', 'from', 'get', 'got', 'had', 'has', 'have', 'he', 'her', 'hers', 'him', 'his', 'how', 'however', 'i', 'if', 'in', 'into', 'is', 'it', 'its', 'just', 'least', 'let', 'like', 'likely', 'may', 'me', 'might', 'most', 'must', 'my', 'neither', 'no', 'nor', 'not', 'of', 'off', 'often', 'on', 'only', 'or', 'other', 'our', 'own', 'rather', 'said', 'say', 'says', 'she', 'should', 'since', 'so', 'some', 'than', 'that', 'the', 'their', 'them', 'then', 'there', 'these', 'they', 'this', 'tis', 'to', 'too', 'twas', 'us', 'wants', 'was', 'we', 'were', 'what', 'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'will', 'with', 'would', 'yet', 'you', 'your']
-WORD_SUFFIX = ['s', 'ed', 'er', 'ing']
+WORD_SUFFIX = ['s', 'ed', 'er', 'ing', 'mer']
 
 
 app = Flask(__name__)
@@ -167,7 +167,10 @@ def email_signup():
 @app.route('/profile/<username>', methods = ['GET'])
 def user(username):
     user = get_user(username)
-    return render_template("profile.html", user=user)
+    if user:
+        return render_template("profile.html", user=user)
+    else:
+        abort(404)
 
 
 # projects
@@ -175,21 +178,36 @@ def user(username):
 def project(username, project_id):
     user = get_user(username)
     project = get_project(username, project_id)
-    return render_template("project.html", user=user, project=project)
+    if user and project:
+        return render_template("project.html", user=user, project=project)
+    else:
+        abort(404)
 
 
 # create project
 @app.route('/profile/<username>/create', methods = ['GET'])
 def create_project(username):
     user = get_user(username)
-    return render_template("create-project.html", user=user)
+    if user:
+        return render_template("create-project.html", user=user)
+    else:
+        abort(404)
 
 
 # portfolios
 @app.route('/profile/<username>/portfolio', methods = ['GET'])
 def portfolio(username):
     user = get_user(username)
-    return render_template("portfolio.html", user=user)
+    if user:
+        return render_template("portfolio.html", user=user)
+    else:
+        abort(404)
+
+
+# user not found
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('404.html'), 404
 
 
 # register new user
@@ -375,9 +393,9 @@ def update():
             skill = parameters.get("skill", "")
             project = get_project(project_owner, project_id)
             old_skills = project.get("skills", [])
-            skills = update_project_candidates(skill, username_client, old_skills, True)
-            mongo.db.users.update({"username": project_owner, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": skills}})                  
-            data = {"candidate": username_client, "skill": skill}
+            new_skills = update_project_candidates(skill, username_client, old_skills, True)
+            mongo.db.users.update({"username": project_owner, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": new_skills}})
+            data = update_candidate_data(new_skills)
             data = json.dumps(data)
             return data
 
@@ -387,12 +405,38 @@ def update():
             skill = parameters.get("skill", "")
             project = get_project(project_owner, project_id)
             old_skills = project.get("skills", [])
-            skills = update_project_candidates(skill, username_client, old_skills, False)
-            mongo.db.users.update({"username": project_owner, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": skills}})                  
-            data = {"candidate": username_client, "skill": skill}
+            new_skills = update_project_candidates(skill, username_client, old_skills, False)
+            mongo.db.users.update({"username": project_owner, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": new_skills}})                  
+            data = update_candidate_data(new_skills)
             data = json.dumps(data)
             return data
         
+        if command == 'approve-candidate' and origin == 'project':
+            candidate = parameters.get("candidate", "")
+            project_id = parameters.get("project", "")
+            skill = parameters.get("skill", "")
+            project = get_project(username_client, project_id)
+            old_skills = project.get("skills", [])
+            new_skills = remove_project_skill(skill, old_skills)
+            mongo.db.users.update({"username": username_client, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": new_skills}})
+            #mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$addToSet": {"projects.$.partners": {"skill": skill, "partner":candidate}}}) 
+            data = update_candidate_data(new_skills)
+            data = json.dumps(data)
+            return data
+
+        if command == 'reject-candidate' and origin == 'project':
+            candidate = parameters.get("candidate", "")
+            project_id = parameters.get("project", "")
+            skill = parameters.get("skill", "")
+            project = get_project(username_client, project_id)
+            old_skills = project.get("skills", [])
+            new_skills = update_project_candidates(skill, candidate, old_skills, False)
+            mongo.db.users.update({"username": username_client, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": new_skills}})
+            #mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$addToSet": {"projects.$.partners": {"skill": skill, "partner":candidate}}}) 
+            data = update_candidate_data(new_skills)
+            data = json.dumps(data)
+            return data
+
         if command == 'update-caption' and origin == 'portfolio':
             media_id = parameters.get("media", "")
             media = get_portfolio_media(username_client, media_id)
@@ -991,6 +1035,17 @@ def update_project_candidates(skill, candidate, old_skills, command):
             updated_skills.append({"skill": old_skill, "candidates": candidates})
     return updated_skills
 
+
+# remove a skill from the skills array
+def remove_project_skill(skill, old_skills):
+    new_skills = [x["skill"] for x in old_skills]
+    try:
+        new_skills.remove(skill)
+        return update_project_skills(new_skills, old_skills)
+    except Exception, e:
+        print e 
+        return old_skills
+    
 
 # send any data concerning the user back to the client when updating project skills.
 # for now we'll send the name, username and pic

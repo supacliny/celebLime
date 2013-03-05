@@ -122,19 +122,21 @@
           <div class="project-skills-input">
           {% if project.skills %}
           {% for entry in project.skills %}  
-            <div class="well">
-              <div class="skill">
-                <a href="{{ url_for('search', search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a>
+            <div class="project-well">
+              <div class="skill" style="margin-top: 15px;">
+                  <a href="{{ url_for('search', search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a>
               </div>
+              <div class="candidates pull-right">
               {% for username in entry.candidates %} 
-              <div class="candidates">
-                <a href="{{ url_for('user', username=username) }}">
-                  <div class="thumbnail" style="width: 40px; height: auto; float: right; margin-top: -35px; margin-right: 10px;">
-                    <img src="{{ process_image(get_user(username).pic) }}"/>
+                  <div class="candidate pull-right" style="margin-top: -50px; margin-right: 10px;">
+                    <div class="thumbnail" style="width: 46px; height: auto;">
+                      <a href="{{ url_for('user', username=username) }}"><img src="{{ process_image(get_user(username).pic) }}"/></a>
+                    </div>
+                    <div class="approve" skill="{{ entry.skill }}" candidate="{{ username }}" style="float: left;"><a class="btn btn-mini"><i class="icon-ok"></i></a></div>
+                    <div class="reject" skill="{{ entry.skill }}" candidate="{{ username }}" style="float: left;"><a class="btn btn-mini"><i class="icon-remove"></i></a></div>                    
                   </div>
-                </a>
-              </div>
               {% endfor %}
+              </div>
             </div>
           {% endfor %}
           {% else %}
@@ -148,32 +150,78 @@
         <button class="btn btn-small project-skills-trigger" type="button">Edit</button>
         {% else %}
         {% if project.skills %}
+        <div class="project-skills">
         {% for entry in project.skills %}
           {% if session.username in entry.candidates %} 
-          <div class="well">
-            <div class="skill">
-              <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a><a class="btn btn-small pull-right apply" id="{{ entry.skill }}">UNAPPLY <i class="icon-ban-circle"></i></a>
+            <div class="well">
+              <div class="skill">
+                <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a>
+              </div>
+              <div class="apply-unapply pull-right" style="margin-top: -25px;">
+                <a class="btn btn-small apply" id="{{ entry.skill }}">UNAPPLY <i class="icon-ban-circle"></i></a>
+              </div>
+              <div class="candidates pull-right">
+              {% for username in entry.candidates %}               
+                  <div class="candidate pull-right" style="margin-top: -35px; margin-right: 10px;">
+                    <div class="thumbnail" style="width: 40px; height: auto;">
+                      <a href="{{ url_for('user', username=username) }}"><img src="{{ process_image(get_user(username).pic) }}"/></a>
+                    </div>
+                  </div>
+              {% endfor %}
+              </div>
             </div>
-          </div>
           {% else %}
-          <div class="well">
-            <div class="skill">
-              <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a><a class="btn btn-small pull-right apply" id="{{ entry.skill }}">APPLY <i class="icon-heart"></i></a>
-            </div>
-          </div>
+            <div class="well">
+              <div class="skill">
+                <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a>
+              </div>
+              <div class="apply-unapply pull-right" style="margin-top: -25px;">
+                <a class="btn btn-small apply" id="{{ entry.skill }}">APPLY <i class="icon-heart"></i></a>
+              </div>
+              <div class="candidates pull-right">
+              {% for username in entry.candidates %}               
+                  <div class="candidate pull-right" style="margin-top: -35px; margin-right: 10px;">
+                    <div class="thumbnail" style="width: 40px; height: auto;">
+                      <a href="{{ url_for('user', username=username) }}"><img src="{{ process_image(get_user(username).pic) }}"/></a>
+                    </div>
+                  </div>
+              {% endfor %}
+              </div>
+          </div> 
           {% endif %}
         {% endfor %}
+        </div>
+        {% else %}
+        <div class="well">
+          <div class="skill">
+            <div class="bottomspace"><hint>Coming Soon!</hint></div>
+          </div>
+        </div>              
         {% endif %}
         {% endif %}
       {% else %}
       {% if project.skills %}
+      <div class="project-skills">
       {% for entry in project.skills %}
-      <div class="well">
-        <div class="skill">
-          <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a><a class="btn btn-small pull-right" id="{{ entry.skill }}" href="{{ url_for('login') }}">APPLY <i class="icon-heart"></i></a>
-        </div>
-      </div>
+        <div class="well">
+          <div class="skill">
+            <a href="{{ url_for("search", search="all") }}?search={{ entry.skill }}">{{ entry.skill }}</a>
+          </div>
+          <div class="apply-unapply pull-right" style="margin-top: -25px;">
+            <a class="btn btn-small" id="{{ entry.skill }}" href="{{ url_for('login') }}">APPLY <i class="icon-heart"></i></a>
+          </div>
+          <div class="candidates pull-right">
+          {% for username in entry.candidates %}               
+              <div class="candidate pull-right" style="margin-top: -35px; margin-right: 10px;">
+                <div class="thumbnail" style="width: 40px; height: auto;">
+                  <a href="{{ url_for('user', username=username) }}"><img src="{{ process_image(get_user(username).pic) }}"/></a>
+                </div>
+              </div>
+          {% endfor %}
+          </div>
+         </div> 
       {% endfor %}
+      </div>
       {% else %}
       <div class="well">
         <div class="skill">
@@ -244,12 +292,95 @@
           }
       });
 
-      // apply button
-      $('.apply').click(
+      // approve button
+      $('body').on('click', '.approve', function(event) { 
+          var content = '';
+          var location = $(this).parent();
+          var skill = $(this).attr("skill");
+          var candidate = $(this).attr("candidate");
+          var url = '{{ url_for('update') }}';
+          var username = '{{ user.username }}';
+          var project = '{{ project.id }}';
+          var origin = 'project';
+          var command = 'approve-candidate';
+          data = JSON.stringify({"username": username, "parameters": {"candidate": candidate, "project": project, "skill": skill}, "origin": origin, "command": command});
+          jQuery.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            beforeSend: function() {},
+            success: function(data) {
+              var skills = data;
+              if (skills.length > 0) {
+                  $.each(skills, function(index, entry) {
+                    var candidates = entry.candidates;
+                    content += '<div class="project-well"><div class="skill" style="margin-top: 15px;"><a href="{{ url_for("search", search="all") }}?search=' + entry.skill + '">' + entry.skill + '</a></div>';
+                    content += '<div class="candidates">';
+                    $.each(candidates, function(index, candidate) {
+                     var profile_link = $root + "/profile/" + candidate.username;
+                     content += '<div class="candidate" style="float: right; margin-top: -50px; margin-right: 10px;"><div class="thumbnail" style="width: 46px; height: auto;"><a href="' + profile_link + '"><img src="' + candidate.pic + '"/></a></div><div class="approve" skill="' + entry.skill + '" candidate="' + candidate.username + '" style="float: left;"><a class="btn btn-mini"><i class="icon-ok"></i></a></div><div class="reject" skill="' + entry.skill + '" candidate="' + candidate.username + '" style="float: left;"><a class="btn btn-mini"><i class="icon-remove"></i></a></div></div>';
+                    });
+                    content += '</div></div>';
+                  });
+                }
+              else {
+                content += '<div class="bottomspace"><hint>Add Project Skills</hint></div>';
+              }
+              $('.project-skills-input').html(content);
+            },
+          dataType: 'json',
+          contentType: 'application/json',
+          processData: false
+        });
+      });  
 
-        function(event){
+      // reject button
+      $('body').on('click', '.reject', function(event) { 
+          var content = '';
+          var location = $(this).parent();
+          var skill = $(this).attr("skill");
+          var candidate = $(this).attr("candidate");
+          var url = '{{ url_for('update') }}';
+          var username = '{{ user.username }}';
+          var project = '{{ project.id }}';
+          var origin = 'project';
+          var command = 'reject-candidate';
+          data = JSON.stringify({"username": username, "parameters": {"candidate": candidate, "project": project, "skill": skill}, "origin": origin, "command": command});
+          jQuery.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            beforeSend: function() {},
+            success: function(data) {
+              var skills = data;
+              if (skills.length > 0) {
+                  $.each(skills, function(index, entry) {
+                    var candidates = entry.candidates;
+                    content += '<div class="project-well"><div class="skill" style="margin-top: 15px;"><a href="{{ url_for("search", search="all") }}?search=' + entry.skill + '">' + entry.skill + '</a></div>';
+                    content += '<div class="candidates">';
+                    $.each(candidates, function(index, candidate) {
+                     var profile_link = $root + "/profile/" + candidate.username;
+                     content += '<div class="candidate" style="float: right; margin-top: -50px; margin-right: 10px;"><div class="thumbnail" style="width: 46px; height: auto;"><a href="' + profile_link + '"><img src="' + candidate.pic + '"/></a></div><div class="approve" skill="' + entry.skill + '" candidate="' + candidate.username + '" style="float: left;"><a class="btn btn-mini"><i class="icon-ok"></i></a></div><div class="reject" skill="' + entry.skill + '" candidate="' + candidate.username + '" style="float: left;"><a class="btn btn-mini"><i class="icon-remove"></i></a></div></div>';
+                    });
+                    content += '</div></div>';
+                  });
+                }
+              else {
+                content += '<div class="bottomspace"><hint>Add Project Skills</hint></div>';
+              }
+              $('.project-skills-input').html(content);
+            },
+          dataType: 'json',
+          contentType: 'application/json',
+          processData: false
+        });
+      });            
+
+      // apply button
+      $('body').on('click', '.apply', function(event) { 
 
           var location = $(this).parent();
+          var content = '';
 
           if ($(this).text() == 'APPLY ')
           {
@@ -267,7 +398,32 @@
               data: data,
               beforeSend: function() {},
               success: function(data) {
-                $('.apply', location).html("UNAPPLY <i class='icon-ban-circle'></i>");
+                  var skills = data;
+                  if (skills.length > 0) {
+                      $.each(skills, function(index, entry) {
+                        var candidates = entry.candidates;
+                        var candidates_list = [];
+                        for (var i = 0, len = candidates.length; i < len; i++) {
+                            candidates_list.push(candidates[i].username);
+                        }                        
+                        if (candidates_list.indexOf(username) >= 0) {
+                           content += '<div class="well"><div class="skill"><a href="{{ url_for("search", search="all") }}?search=' + entry.skill + '">' + entry.skill + '</a></div><div class="apply-unapply pull-right" style="margin-top: -25px;"><a class="btn btn-small apply" id="' + entry.skill + '">UNAPPLY <i class="icon-ban-circle"></i></a></div>';
+                          }
+                        else {
+                           content += '<div class="well"><div class="skill"><a href="{{ url_for("search", search="all") }}?search=' + entry.skill + '">' + entry.skill + '</a></div><div class="apply-unapply pull-right" style="margin-top: -25px;"><a class="btn btn-small apply" id="' + entry.skill + '">APPLY <i class="icon-heart"></i></a></div>';
+                        }
+                        content += '<div class="candidates pull-right">';                        
+                        $.each(candidates, function(index, candidate) {
+                         var profile_link = $root + "/profile/" + candidate.username;
+                         content += '<div class="candidate pull-right" style="margin-top: -35px; margin-right: 10px;"><div class="thumbnail" style="width: 40px; height: auto;"><a href="' + profile_link +'"><img src="' + candidate.pic + '"/></a></div></div>';
+                        });
+                        content += '</div></div>';
+                      });
+                    }
+                  else {
+                    content += '<div class="bottomspace"><hint>Add Project Skills</hint></div>';
+                  }
+                  $('.project-skills').html(content);
               },
               dataType: 'json',
               contentType: 'application/json',
@@ -292,7 +448,32 @@
               data: data,
               beforeSend: function() {},
               success: function(data) {
-                $('.apply', location).html("APPLY <i class='icon-heart'></i>");
+                  var skills = data;
+                  if (skills.length > 0) {
+                      $.each(skills, function(index, entry) {
+                        var candidates = entry.candidates;
+                        var candidates_list = [];
+                        for (var i = 0, len = candidates.length; i < len; i++) {
+                            candidates_list.push(candidates[i].username);
+                        }                        
+                        if (candidates_list.indexOf(username) >= 0) {
+                           content += '<div class="well"><div class="skill"><a href="{{ url_for("search", search="all") }}?search=' + entry.skill + '">' + entry.skill + '</a></div><div class="apply-unapply pull-right" style="margin-top: -25px;"><a class="btn btn-small apply" id="' + entry.skill + '">UNAPPLY <i class="icon-ban-circle"></i></a></div>';
+                          }
+                        else {
+                           content += '<div class="well"><div class="skill"><a href="{{ url_for("search", search="all") }}?search=' + entry.skill + '">' + entry.skill + '</a></div><div class="apply-unapply pull-right" style="margin-top: -25px;"><a class="btn btn-small apply" id="' + entry.skill + '">APPLY <i class="icon-heart"></i></a></div>';
+                        }
+                        content += '<div class="candidates pull-right">';                        
+                        $.each(candidates, function(index, candidate) {
+                         var profile_link = $root + "/profile/" + candidate.username;
+                         content += '<div class="candidate pull-right" style="margin-top: -35px; margin-right: 10px;"><div class="thumbnail" style="width: 40px; height: auto;"><a href="' + profile_link +'"><img src="' + candidate.pic + '"/></a></div></div>';
+                        });
+                        content += '</div></div>';
+                      });
+                    }
+                  else {
+                    content += '<div class="bottomspace"><hint>Add Project Skills</hint></div>';
+                  }
+                  $('.project-skills').html(content);                
               },
               dataType: 'json',
               contentType: 'application/json',
@@ -403,7 +584,7 @@
           $(this).text('Finished');
 
           var skills = '';
-          $('.project-skills-input .well a').each(function(){
+          $('.project-skills-input .project-well a').each(function(){
               skills += $(this).text();
               skills += ','
           });
@@ -426,7 +607,6 @@
           var project = '{{ project.id }}';
           var origin = 'project';
           var command = 'update-skills';
-  
           data = JSON.stringify({"username": username, "parameters": {"project": project, "skills": array}, "origin": origin, "command": command});
           jQuery.ajax({
                   type: "POST",
@@ -438,11 +618,11 @@
                     if (skills.length > 0) {
                         $.each(skills, function(index, entry) {
                           var candidates = entry.candidates;
-                          content += '<div class="well"><div class="skill"><a href="{{ url_for("search", search="all") }}?search=' + entry.skill + '">' + entry.skill + '</a></div>';
+                          content += '<div class="project-well"><div class="skill" style="margin-top: 15px;"><a href="{{ url_for("search", search="all") }}?search=' + entry.skill + '">' + entry.skill + '</a></div>';
                           content += '<div class="candidates">';
                           $.each(candidates, function(index, candidate) {
-                            var profile_link = $root + "/profile/" + candidate.username;
-                            content += '<a href="' + profile_link + '"><div class="thumbnail" style="width: 40px; height: auto; float: right; margin-top: -35px; margin-right: 10px;"><img src="' + candidate.pic + '"/></div></a>';
+                           var profile_link = $root + "/profile/" + candidate.username;
+                           content += '<div class="candidate" style="float: right; margin-top: -50px; margin-right: 10px;"><div class="thumbnail" style="width: 46px; height: auto;"><a href="' + profile_link + '"><img src="' + candidate.pic + '"/></a></div><div class="approve" skill="' + entry.skill + '" candidate="' + candidate.username + '" style="float: left;"><a class="btn btn-mini"><i class="icon-ok"></i></a></div><div class="reject" skill="' + entry.skill + '" candidate="' + candidate.username + '" style="float: left;"><a class="btn btn-mini"><i class="icon-remove"></i></a></div></div>';
                           });
                           content += '</div></div>';
                         });

@@ -607,9 +607,7 @@ def get_image(id=None):
         response = make_response(file.read())
         response.headers['Content-Type'] = 'image/jpeg'
         return response
-
     id = str(id)
-
     file_oid = bson.objectid.ObjectId(id)
     file = fs.get(file_oid).read()
     response = make_response(file)
@@ -982,16 +980,19 @@ def scrub_project_id_string(string):
 # a basic way of extracting the root stem of a word
 def stem_search_query(word):
     word = word.lower()
+    word_temp = word
     word_suffix_one = word[-1:]
     word_suffix_two = word[-2:]
     word_suffix_three = word[-3:]
     if word_suffix_one in WORD_SUFFIX:
-        word = word[:-1]
+        word_temp = word[:-1]
     if word_suffix_two in WORD_SUFFIX:
-        word = word[:-2]
+        word_temp = word[:-2]
     if word_suffix_three in WORD_SUFFIX:
-        word = word[:-3]
-    return word
+        word_temp = word[:-3]
+    if word in WORD_SUFFIX:
+        word_temp = word
+    return word_temp
 
 
 # on creation add an empty candidate list for each skill

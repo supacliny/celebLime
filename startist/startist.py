@@ -169,8 +169,7 @@ def user(username):
     user = get_user(username)
     if user:
         return render_template("profile.html", user=user)
-    else:
-        abort(404)
+    abort(404)
 
 
 # projects
@@ -180,8 +179,7 @@ def project(username, project_id):
     project = get_project(username, project_id)
     if user and project:
         return render_template("project.html", user=user, project=project)
-    else:
-        abort(404)
+    abort(404)
 
 
 # create project
@@ -190,8 +188,7 @@ def create_project(username):
     user = get_user(username)
     if user:
         return render_template("create-project.html", user=user)
-    else:
-        abort(404)
+    abort(404)
 
 
 # portfolios
@@ -200,8 +197,20 @@ def portfolio(username):
     user = get_user(username)
     if user:
         return render_template("portfolio.html", user=user)
-    else:
-        abort(404)
+    abort(404)
+
+
+# messages
+@app.route('/profile/<username>/messages', methods = ['GET'])
+def messages(username):
+    username_session = session.get("username", "")
+    if username_session == username:
+        user = get_user(username)
+        if user:
+            messages_cursor = mongo.db.messages.find({"$or": [{ "from": username }, { "to": username}]}).sort([("time", -1)])
+            messages = update_message_data(messages_cursor)
+            return render_template("messages.html", user=user, messages=messages)
+    abort(404)
 
 
 # user not found
@@ -285,6 +294,8 @@ def register():
         mongo.db.users.ensure_index([("twitter.screen_name", ASCENDING)], sparse=True, background=True)
 
         user_id = mongo.db.users.insert(user)
+        # maintain a list of all users for autocompletion
+        mongo.db.globals.update({},{"$push": {"users": username}}, upsert=True)
         login_user(username)
 
     data = {"name": name_signal, "username": username_signal, "email": email_signal, "password": password_signal}
@@ -437,6 +448,11 @@ def update():
             data = json.dumps(data)
             return data
 
+        if command == 'change-status' and origin == 'messages':
+            message_id = parameters.get("message_id", "")
+            message_oid = bson.objectid.ObjectId(message_id)
+            mongo.db.messages.update({"_id": message_oid}, {"$set": {"status": 0}})
+            
         if command == 'update-caption' and origin == 'portfolio':
             media_id = parameters.get("media", "")
             media = get_portfolio_media(username_client, media_id)
@@ -570,6 +586,15 @@ def search(search):
     return render_template("search.html", users=users, projects=projects, portfolios=portfolios, search=search)
 
 
+# autocomplete usernames
+@app.route('/autocomplete', methods = ['GET'])
+def autocomplete():
+    data = mongo.db.globals.find()[0]
+    data = data.get("users", [])
+    data = json.dumps(data)
+    return data
+
+
 # launch a project
 @app.route('/create', methods=['GET', 'POST'])
 def launch_project():
@@ -596,6 +621,39 @@ def launch_project():
         mongo.db.users.update({"username": username},{"$push": {"projects": {"id": id, "name": name, "description": description, "skills": skills, "file": str(file_id), "keywords": keywords, "followers": followers, "partners": partners}}}, upsert=True)
 
     return redirect(url_for('project', username=username, project_id=id))
+
+
+# send internal messages
+@app.route('/send', methods = ['POST'])
+def send():
+    username = session["username"]
+    sender = request.json['from']
+    recipient = request.json['to']
+    message = request.json['message']
+
+    recipient_list = recipient.split(',')
+    if len(recipient_list) > 1:
+        data = {"error": "Only one recipient allowed."}
+        data = json.dumps(data)
+        return data
+
+    recipient_user = get_user(recipient)
+    if not recipient_user:
+        data = {"error": "User " + recipient + " does not exist."}
+        data = json.dumps(data)
+        return data
+
+    if username == sender:
+        current_time = int(time())
+        entry = {"from": sender, "to": recipient, "time": current_time, "message": message, "status": 1}
+        message_id = mongo.db.messages.insert(entry)
+        new_entry = update_message_entry(entry, message_id)
+        data = json.dumps(new_entry)
+        return data
+
+    data = {}
+    data = json.dumps(data)
+    return data
 
 
 # serve only image files stored in gridfs
@@ -1062,6 +1120,48 @@ def update_candidate_data(skills):
                 updated.append(new_entry)
         entry["candidates"] = updated
     return skills
+
+
+# repackage message data for front-end
+def update_message_data(messages_cursor):
+    updated = []
+    for entry in messages_cursor:
+        message_id = entry.get("_id", "")
+        new_entry = update_message_entry(entry, message_id)
+        updated.append(new_entry)
+    return updated
+
+
+# get the actual to and from user data for a message
+def update_message_entry(entry, message_oid):
+    message_id = str(message_oid)
+    entry.pop("_id", None)
+    entry["id"] = message_id
+    from_username = entry.get("from", "")
+    to_username = entry.get("to", "")
+    from_user = get_user(from_username)
+    if from_user:
+        entry.pop("from", None)
+        from_pic = process_image(from_user["pic"])
+        new_entry = {"name": from_user["name"], "username": from_user["username"], "pic": from_pic}
+        entry["from"] = new_entry
+    else:
+        entry.pop("from", None)
+        from_pic = process_image()
+        new_entry = {"name": "", "username": from_username, "pic": from_pic}
+        entry["from"] = new_entry
+    to_user = get_user(to_username)
+    if to_user:
+        entry.pop("to", None)
+        to_pic = process_image(to_user["pic"])
+        new_entry = {"name": to_user["name"], "username": to_user["username"], "pic": to_pic}
+        entry["to"] = new_entry
+    else:
+        entry.pop("to", None)
+        from_pic = process_image()
+        new_entry = {"name": "", "username": to_username, "pic": from_pic}
+        entry["to"] = new_entry
+    return entry
 
 # ] AUXILARY FUNCTIONS
 

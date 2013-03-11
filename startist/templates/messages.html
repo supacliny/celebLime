@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Messages &middot; Startist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An online platform for talented users to collaborate on awesome projects">
+    <meta name="author" content="cvstechnology">
+
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}" rel="shortcut icon" type="image/x-icon"/>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/startist.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/bootstrap-fileupload.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/jquery.tagsinput.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='css/jquery-ui.min.css') }}" rel="stylesheet" type="text/css"/>
+  </head>
+  
+  <body>
+
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <a href="{{ url_for('home') }}"><img class="brand" src="{{ url_for('static', filename='img/startist.gif') }}"/></a>
+        <div class="lander">
+          <div class="nav-collapse collapse pull-right">
+            <form class="navbar-search" action="{{ url_for('search', search="all") }}">
+              <input type="text" name="search" class="search-query" placeholder="Search">
+              <div class="icon-search" style="background-image:url('{{ url_for('static', filename='img/glyphicons-halflings.png') }}');"></div>
+            </form>
+              <ul class="nav">
+              {% if not session.logged_in %}
+                <li><a href="{{ url_for('login') }}" data-toggle="modal">login</a></li>
+                <li><a href="{{ url_for('join') }}" data-toggle="modal">join</a></li>
+              {% else %}
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ session.name }} <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="{{ url_for('messages', username=session.username) }}">Messages</a></li>
+                    <li><a href="{{ url_for('user', username=session.username) }}">Profile</a></li>
+                    <li><a href="{{ url_for('portfolio', username=session.username) }}">Portfolio</a></li>
+                    <li class="divider"></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                  </ul>
+                </li>
+              {% endif %}
+              </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-narrow">
+    <button class="btn btn-small new-message pull-right" type="button">New Message</button>
+    <br><br>
+    <div class="row-fluid">
+      <div class="span4">
+        <div class="message-pane">
+          {% if messages %}
+          {% for message in messages %}
+          <div class="message-well">
+            {% if message.status and message.from.username != session.username %}
+            <div class="unread">
+              <div class="to pull-left">
+                <div class="thumbnail pull-left" style="width: 35px; height: auto; margin-right: 5px;">
+                  <a href="{{ url_for('user', username=message.to.username) }}"><img src="{{ message.to.pic }}"/></a>
+                </div>
+                <div class="message-summary pull-left">To: <br>{{ message.to.username | truncate(10) }}</div>
+              </div>
+              <div class="from pull-left">
+                <div class="thumbnail pull-left" style="width: 35px; height: auto; margin-right: 5px; margin-left: 5px;">
+                  <a href="{{ url_for('user', username=message.from.username) }}"><img src="{{ message.from.pic }}"/></a>
+                </div>
+                <div class="message-summary pull-left">From: <br>{{ message.from.username | truncate(10) }}</div>
+              </div>
+            </div>
+            {% else %}
+            <div class="read">
+              <div class="to pull-left">
+                <div class="thumbnail pull-left" style="width: 35px; height: auto; margin-right: 5px;">
+                  <a href="{{ url_for('user', username=message.to.username) }}"><img src="{{ message.to.pic }}"/></a>
+                </div>
+                <div class="message-summary pull-left">To: <br>{{ message.to.username | truncate(10) }}</div>
+              </div>
+              <div class="from pull-left">
+                <div class="thumbnail pull-left" style="width: 35px; height: auto; margin-right: 5px; margin-left: 5px;">
+                  <a href="{{ url_for('user', username=message.from.username) }}"><img src="{{ message.from.pic }}"/></a>
+                </div>
+                <div class="message-summary pull-left">From: <br>{{ message.from.username | truncate(10) }}</div>
+              </div>
+            </div>
+            {% endif %}
+            <div class="message-data invisible" id="{{ message.id }}" to="{{ message.to.username }}" from="{{ message.from.username }}" content="{{ message.message }}" read="{{ message.status }}" time="{{ message.time }}"></div>
+          </div>  
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+      <div class="span8">
+        <div class="message-window">To: <input name="tags" class="tags" value=""/></div>
+        <div class="username-error"></div>
+        <div class="message-send">
+          <textarea style="resize: none;" rows="5"></textarea>
+          <button class="btn btn-small message pull-right" type="button">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap-fileupload.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.tagsinput.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+
+  <script>
+    $(document).ready(function(){
+
+      var $root = {{ request.script_root|tojson|safe }};  
+
+      $('.tags').tagsInput(
+      {
+        'height':'33px',
+        'minChars' : 1,
+        'defaultText':'',
+        'autocomplete_url':'{{ url_for('autocomplete') }}',
+      });
+
+      $('.message').click(
+        function(event) { 
+          var new_message = false;
+          var username = '{{ user.username }}';
+          var message = $('textarea').val();
+          var url = '{{ url_for('send') }}';
+          var from = $('.message-window .from').text();
+          if (from == '') {
+            from = username;
+            new_message = true;
+          }
+          var to = $('.message-window .to').text();
+          if (to == '') {
+            to = $('.tags').val();
+            if (to == '') {
+              return;
+            }
+          }
+          if (new_message == false) {
+            if (to == username) {
+              to = from;
+              from = username;
+            }
+          }
+          if ($.trim(message) == '') {
+            return;
+          }
+          data = JSON.stringify({"from": from, "to": to, "message": message});
+          jQuery.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            beforeSend: function() {},
+            success: function(data) {
+              if ("error" in data) {
+                $('.username-error').html(data.error);
+                $('.tags').importTags('');
+                $('div.tagsinput input').click();
+                return;
+              }
+              $('textarea').val('');
+              $('.tags').removeTag(to);
+              var to_profile_link = $root + "/profile/" + data.to.username;
+              var from_profile_link = $root + "/profile/" + data.from.username;
+              var old_content = $('.message-pane').html();
+              var new_entry = '<div class="message-well"><div class="read"><div class="to pull-left"><div class="thumbnail pull-left" style="width: 35px; height: auto; margin-right: 5px;"><a href="' + to_profile_link + '"><img src="' + data.to.pic +'"/></a></div><div class="message-summary pull-left">To: <br>' + data.to.username + '</div></div><div class="from pull-left"><div class="thumbnail pull-left" style="width: 35px; height: auto; margin-right: 5px; margin-left: 5px;"><a href="' + from_profile_link + '"><img src="' + data.from.pic + '"/></a></div><div class="message-summary pull-left">From: <br>' + data.from.username +'</div></div></div><div class="message-data invisible" id="' + data.id + '" to="' + data.to.username + '" from="' + data.from.username + '" content="' + data.message + '" read="' + data.status + '" time="' + data.time + '"></div></div>';
+              $('.message-pane').html(new_entry + old_content);
+            },
+          dataType: 'json',
+          contentType: 'application/json',
+          processData: false
+        });
+      });
+
+      $('body').on('click', '.message-well', function(event) { 
+          $('.username-error').html('');  
+          var content = '';
+          var location = $(this).children();
+          var message_id = $(this).children(".message-data").attr("id");
+          var to = $(this).children(".message-data").attr("to");
+          var from = $(this).children(".message-data").attr("from"); 
+          var status = $(this).children(".message-data").attr("read"); 
+          var message = $(this).children(".message-data").attr("content");
+          message = message.replace(/\r?\n/g, "<br>\n");
+          var time = $(this).children(".message-data").attr("time");
+          var epoch_time = parseInt(time);
+          var epoch_date = new Date(epoch_time*1000);
+          content += '<div class="message-header">To: <div class="to">' + to + '</div></div><div class="message-header">From: <div class="from">' + from + '</div></div><div class="message-time">Date: <br>' + epoch_date + '</div><div class="message-content">Message: <br>' + message + '</div>';
+          $('.message-window').html(content);
+          $("html, body").animate({ scrollTop: 0 }, "slow");
+          var username = '{{ user.username }}';
+          if (status == 1 && username == to){
+            var url = '{{ url_for('update') }}';
+            var origin = 'messages';
+            var command = 'change-status';
+            data = JSON.stringify({"username": username, "parameters": {"message_id": message_id}, "origin": origin, "command": command});
+            jQuery.ajax({
+              type: 'POST',
+              url: url,
+              data: data,
+              context: $(this),
+              beforeSend: function() {},
+              success: function(data) {
+                $(this).children().removeClass('unread').addClass('read');
+                $(this).children(".message-data").attr("read", "0"); 
+              },
+              dataType: 'json',
+              contentType: 'application/json',
+              processData: false
+            });
+          }
+      });  
+
+      $('.new-message').click(
+        function(event) {
+          $('.username-error').html('');  
+          var content = '';
+          content += 'To: <input name="tags" class="tags" value=""/>';
+          $('.message-window').html(content);
+          $('.tags').tagsInput(
+          {
+            'height':'33px',
+            'minChars' : 1,
+            'defaultText':'',
+            'autocomplete_url':'{{ url_for('autocomplete') }}',
+          });
+          $("html, body").animate({ scrollTop: 0 }, "slow");
+      });  
+    });
+  </script>
+  </body>
+</html>

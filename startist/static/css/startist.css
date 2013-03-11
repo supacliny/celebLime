@@ -626,6 +626,16 @@ textarea {
     color: #638421;
 }
 
+.well {
+    background-color: #F5F5F5;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    margin-bottom: 5px;
+    min-height: 20px;
+    padding: 19px;
+}
+
 .project-well {
     background-color: #F5F5F5;
     border: 1px solid #E3E3E3;
@@ -636,14 +646,55 @@ textarea {
     padding: 19px;
 }
 
-.well {
+/* messaging */
+.message-well {
     background-color: #F5F5F5;
     border: 1px solid #E3E3E3;
     border-radius: 4px 4px 4px 4px;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
     margin-bottom: 5px;
-    min-height: 20px;
-    padding: 19px;
+    height: 45px;
+    padding: 5px;
+}
+
+.message-well:hover {
+    background-color: #E0E0E0;
+}
+
+.message-header {
+    background-color: #F0F0F0;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    margin-bottom: 5px;
+    padding: 10px;
+}
+
+.message-content {
+    background-color: #F0F0F0;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    margin-bottom: 5px;
+    padding: 10px;
+}
+
+.message-time {
+    background-color: #F0F0F0;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    margin-bottom: 5px;
+    padding: 10px;
+}
+
+.unread {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.read {
+    font-size: 14px;
 }
 
 /* isotope */

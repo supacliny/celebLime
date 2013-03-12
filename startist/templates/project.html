@@ -252,6 +252,11 @@
 
     <div style="clear: both;"></div>
 
+    <hr>
+    
+    {% if session.logged_in and session.username == user.username %}
+    <button class="btn delete" type="button">Delete</button>
+    {% endif %}
   </div>
 
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
@@ -676,6 +681,29 @@
         $('#submit-iframe').load(function() {
           $('form').removeClass('fileupload-exists');
           $('form').addClass('fileupload-new');     
+        });
+
+        // delete project
+        $('.delete').click(
+          function(event) { 
+            var url = '{{ url_for('update') }}';
+            var username = '{{ user.username }}';
+            var project = '{{ project.id }}';
+            var origin = 'project';
+            var command = 'delete-project';
+            data = JSON.stringify({"username": username, "parameters": {"project": project}, "origin": origin, "command": command});
+            jQuery.ajax({
+              type: 'POST',
+              url: url,
+              data: data,
+              beforeSend: function() {},
+              success: function(data) {
+                document.location.href = '{{ url_for("user", username=user.username) }}';
+              },
+            dataType: 'json',
+            contentType: 'application/json',
+            processData: false
+          });
         });
 
       });

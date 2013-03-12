@@ -458,6 +458,16 @@ def update():
             data = json.dumps(data)
             return data
 
+        if command == 'delete-project' and origin == 'project':
+            project_id = parameters.get("project", "")
+            project = get_project(username_client, project_id)
+            project_file = project.get("file", "")
+            mongo.db.users.update({"username": username_client},{"$pull": {"projects": {"id": project_id}}})
+            delete_file(project_file)
+            data = {}
+            data = json.dumps(data)
+            return data
+
         if command == 'change-status' and origin == 'messages':
             message_id = parameters.get("message_id", "")
             message_oid = bson.objectid.ObjectId(message_id)
@@ -619,11 +629,14 @@ def launch_project():
     keywords = keywords_name + keywords_skills
     id = scrub_project_id_string(name)
     id = id.replace (" ", "-").lower()
+    project = get_project(username, id)
+    if project:
+        id = id + "-a"
     skills = skills.split(',') 
     skills = initialize_project_skills(skills)
     if request.method == 'POST':
         file = request.files['file']
-        file_id = 0
+        file_id = ""
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_id = fs.put(file, filename=filename)

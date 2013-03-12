@@ -232,7 +232,26 @@
       {% endif %}
       {% endif %}
       </div>
+
     <hr>
+
+    <h3>Partners</h3>
+      <div class="row-fluid">
+        <div class="partners">
+          {% if project.partners %}
+          {% for entry in project.partners %}
+          <a href="{{ url_for('user', username=entry.partner) }}">
+            <div class="thumbnail dash" style="width: 60px; height: auto; float: left; margin-right: 10px;">
+              <img src="{{ process_image(get_user(entry.partner).pic) }}"/>{{ entry.skill | truncate(7, true) }}
+            </div>
+          </a>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+    <div style="clear: both;"></div>
+
   </div>
 
   <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
@@ -243,6 +262,12 @@
     $(document).ready(function(){
 
       var $root = {{ request.script_root|tojson|safe }};  
+
+      // truncate strings
+      function shorten(string, limit)
+      {
+         return string = string.length > limit ? string.substring(0,limit) + "...": string;
+      }
 
       // follow or unfollow project
       $('#follow').click(
@@ -311,7 +336,13 @@
             data: data,
             beforeSend: function() {},
             success: function(data) {
-              var skills = data;
+              var partner = data.partner;
+              var partner_skill = shorten(partner.skill, 7);
+              var partner_link = $root + "/profile/" + partner.username;
+              var partner_pic = partner.pic;
+              var old_content = $('.partners').html();
+              var new_entry = '<a href="' + partner_link + '"><div class="thumbnail dash" style="width: 60px; height: auto; float: left; margin-right: 10px;"><img src="'+ partner_pic +'"/>' + partner_skill +'</div></a>';
+              var skills = data.skills;
               if (skills.length > 0) {
                   $.each(skills, function(index, entry) {
                     var candidates = entry.candidates;
@@ -328,6 +359,7 @@
                 content += '<div class="bottomspace"><hint>Add Project Skills</hint></div>';
               }
               $('.project-skills-input').html(content);
+              $('.partners').html(old_content + new_entry);
             },
           dataType: 'json',
           contentType: 'application/json',

@@ -430,10 +430,16 @@ def update():
             old_skills = project.get("skills", [])
             new_skills = remove_project_skill(skill, old_skills)
             mongo.db.users.update({"username": username_client, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": new_skills}})
-            #mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$addToSet": {"projects.$.partners": {"skill": skill, "partner":candidate}}}) 
+            mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$addToSet": {"projects.$.partners": {"skill": skill, "partner":candidate}}}) 
             data = update_candidate_data(new_skills)
-            data = json.dumps(data)
-            return data
+            candidate_user = get_user(candidate)
+            candidate_user_details = {}
+            if candidate_user:
+                pic = process_image(candidate_user["pic"])
+                candidate_user_details = {"name": candidate_user["name"], "username": candidate_user["username"], "pic": pic, "skill": skill}
+            appended_data = {"skills": data, "partner": candidate_user_details}
+            appended_data = json.dumps(appended_data)
+            return appended_data
 
         if command == 'reject-candidate' and origin == 'project':
             candidate = parameters.get("candidate", "")
@@ -443,7 +449,6 @@ def update():
             old_skills = project.get("skills", [])
             new_skills = update_project_candidates(skill, candidate, old_skills, False)
             mongo.db.users.update({"username": username_client, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": new_skills}})
-            #mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$addToSet": {"projects.$.partners": {"skill": skill, "partner":candidate}}}) 
             data = update_candidate_data(new_skills)
             data = json.dumps(data)
             return data

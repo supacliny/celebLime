@@ -103,7 +103,11 @@
         </div>
       </div>
       <div class="span8">
+        {% if to %}
+        <div class="message-window">To: <input name="tags" class="tags" value="{{ to }}"/></div>
+        {% else %}
         <div class="message-window">To: <input name="tags" class="tags" value=""/></div>
+        {% endif %}
         <div class="username-error"></div>
         <div class="message-send">
           <textarea style="resize: none;" rows="5"></textarea>

@@ -207,14 +207,15 @@ def portfolio(username):
 
 # messages
 @app.route('/profile/<username>/messages', methods = ['GET'])
-def messages(username):
+@app.route('/profile/<username>/messages/<to>', methods = ['GET'])
+def messages(username, to=None):
     username_session = session.get("username", "")
     if username_session == username:
         user = get_user(username)
         if user:
             messages_cursor = mongo.db.messages.find({"$or": [{ "from": username }, { "to": username}]}).sort([("time", -1)])
             messages = update_message_data(messages_cursor)
-            return render_template("messages.html", user=user, messages=messages)
+            return render_template("messages.html", user=user, messages=messages, to=to)
     abort(404)
 
 

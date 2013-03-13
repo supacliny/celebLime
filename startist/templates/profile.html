@@ -102,8 +102,12 @@
           <div>Partners: {% if user.projects %} {{ user.projects.partners | length }} {% else %} 0 {% endif %}</div>
           <div>Followers: {% if user.followers %} {{ user.followers.profiles | length }} {% else %} 0 {% endif %}</div>
           <div>Following: {% if user.following %} {{ user.following.profiles | length }} {% else %} 0 {% endif %}</div>
-          <div>Contact</div>
           <div>Member Since: {{ format_date(user.added_at) }}</div>
+          {% if session.logged_in %}
+            {% if session.username != user.username %}
+          <div><a class="btn" href="{{ url_for('messages', username=session.username, to=user.username) }}"><i class="icon-envelope"></i> Contact</a></div>
+            {% endif %}
+          {% endif %}
         </div>  
       </div>     
     </div>

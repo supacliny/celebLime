@@ -351,6 +351,38 @@ a:hover {
     text-decoration: none;
 }
 
+/* sign-up page */
+.signup-input {
+    background: linear-gradient(to bottom, #FFFFFF, #F2F2F2) repeat-x scroll 0 0 #FAFAFA;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+    height: 75px;
+    margin-bottom: 5px;
+    margin-right: auto;
+    margin-left: auto;
+    overflow: hidden;
+    padding: 10px;
+    transition: all 0.2s ease-in-out 0s;
+    width: 500px;
+}
+.signup-input span {
+    background: none repeat scroll 0 0 #F0F0F0;
+    border: 1px solid #A5D24A;
+    border-radius: 4px 4px 4px 4px;
+    color: #638421;
+    display: block;
+    float: left;
+    font-size: 13px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    padding: 5px;
+    text-decoration: none;
+}
+.signup-input span a {
+    color: #638421;
+}
+
 /* profile page */
 textarea {
   -webkit-box-sizing: border-box;

@@ -50,6 +50,23 @@
             <div class="heading">Location</div>
             <div><select class="input-medium countries space" name="country" data-country="US"></select><input type="text" name="city" class="span2" placeholder="City"></div>
             <div class="heading topspace">Creative Field</div>
+            <div class="signup-input">
+                <span><a href="#">Art</a></span>
+                <span><a href="#">Comics</a></span>
+                <span><a href="#">Dance</a></span>
+                <span><a href="#">Design</a></span>
+                <span><a href="#">Fashion</a></span>
+                <span><a href="#">Film</a></span>
+                <span><a href="#">Food</a></span>
+                <span><a href="#">Games</a></span>
+                <span><a href="#">Music</a></span>
+                <span><a href="#">Photography</a></span>
+                <span><a href="#">Publishing</a></span>
+                <span><a href="#">Technology</a></span>
+                <span><a href="#">Theater</a></span>
+                <span><a href="#">Other</a></span>
+            </div>
+            <div class="invisible">
             <div>
               <select class="span2" name="field">
                 <option value="art">Art</option>
@@ -68,7 +85,6 @@
                 <option value="other">Other</option>
               </select> 
             </div>
-            <div class="invisible">
             <div class="heading">Profile Picture</div>
             <div class="signup-pic"><img src="{{ pic }}"/></div> 
             <div><input type="text" id="link" name="pic" class="span2" value="{{ pic }}" placeholder="Picture Link"><i class="space icon-refresh"></i></div>
@@ -87,7 +103,30 @@
   <script>
     $(document).ready(function(){
 
-      $(".icon-refresh").click(function() {
+      // choose fields
+      var fields = new Array();
+      $('.signup-input span').toggle(
+        function(event) {
+          event.preventDefault();
+          var selected = $(this).text();
+          fields.push(selected);
+          $(this).css('background-color', '#CDE69C');
+          $(this).css('font-weight', 'bold');
+        },
+
+        function(event) {
+          event.preventDefault();
+          var unselected = $(this).text();
+          var index = fields.indexOf(unselected);
+          if (index !== -1) {
+              fields.splice(index, 1);
+          }
+          $(this).css('background-color', '#F0F0F0');
+          $(this).css('font-weight', 'normal');
+        }
+      );
+
+      $('.icon-refresh').click(function() {
         var link = $("#link").val();
         $(".signup-pic").html('<img style="height: 100px;" src="' + link + '"/>');
       });
@@ -109,10 +148,9 @@
             country = $form.find('select[name="country"] option:selected').text();
             code = $form.find('select[name="country"] option:selected').val();
             city = $form.find( 'input[name="city"]' ).val(),
-            field = $form.find( 'select[name="field"]' ).val(),
             url = $form.attr( 'action' );
 
-        jdata = JSON.stringify({"group": group, "name": name, "username": username, "email": email, "password": password, "pic": pic, "country": country, "code": code, "city": city, "field": field});
+        jdata = JSON.stringify({"group": group, "name": name, "username": username, "email": email, "password": password, "pic": pic, "country": country, "code": code, "city": city, "fields": fields});
         jQuery.ajax({
                 type: "POST",
                 url: url,

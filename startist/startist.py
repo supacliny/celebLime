@@ -238,7 +238,7 @@ def register():
     country = request.json['country']
     country_code = request.json['code']
     city = request.json['city']
-    field = request.json['field']
+    fields = request.json['fields']
 
     try:
         is_email_valid = validate_email(email)
@@ -288,12 +288,12 @@ def register():
         description_default = DEFAULT_DESCRIPTION
         skills = []
         projects = []
-        keywords = convert_string_to_list(name) + convert_string_to_list(country) + convert_string_to_list(city) + convert_string_to_list(username) + convert_string_to_list(field) + convert_string_to_list(country_code)
+        keywords = convert_string_to_list(name) + convert_string_to_list(country) + convert_string_to_list(city) + convert_string_to_list(username) + convert_string_to_list((', '.join(fields))) + convert_string_to_list(country_code)
         followers = {"profiles": []}
         following = {"profiles": [], "projects": []}
         portfolio = {}
 
-        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "country_code": country_code, "city": city, "field": field, "description": description_default, "skills": skills, "projects": projects, "followers": followers, "following": following, "keywords": keywords, "portfolio": portfolio}
+        user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "country_code": country_code, "city": city, "field": fields, "description": description_default, "skills": skills, "projects": projects, "followers": followers, "following": following, "keywords": keywords, "portfolio": portfolio}
 
         mongo.db.users.ensure_index([("username", ASCENDING)], unique=True, background=True)
         mongo.db.users.ensure_index([("facebook.username", ASCENDING)], sparse=True, background=True)

@@ -624,7 +624,7 @@
           var skills = '';
           $('.project-skills-input .project-well a').each(function(){
               skills += $(this).text();
-              skills += ','
+              skills += ',';
           });
           $('.project-skills-input').hide();
           $('#tags').importTags(skills);

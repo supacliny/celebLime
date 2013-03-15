@@ -440,10 +440,10 @@ textarea {
     transition: all 0.2s ease-in-out 0s;
     border-radius: 4px 4px 4px 4px; 
     background: #FFF; 
-    padding: 5px; 
-    width: 900px; 
-    height: 32px; 
-    overflow: hidden; 
+    padding: 5px 5px 0px;
+    height: auto; 
+    overflow: hidden;
+    margin-top: 5px; 
     margin-bottom: 5px;
     background-color: #FAFAFA;
     background-image: linear-gradient(to bottom, #FFFFFF, #F2F2F2);
@@ -461,13 +461,21 @@ textarea {
     background: #cde69c; 
     color: #638421; 
     margin-right: 5px; 
-    margin-bottom:5px;
-    font-size:13px; 
+    font-size: 13px; 
     border-radius: 4px 4px 4px 4px;
 }
 
 .profile-skills-input span a {
     color: #638421;
+}
+
+.profile-well {
+    background-color: #F5F5F5;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    margin-bottom: 5px;
+    padding: 19px;
 }
 
 /* portfolio page */
@@ -615,7 +623,7 @@ textarea {
     background: #cde69c; 
     color: #638421; 
     margin-right: 5px; 
-    font-size:13px; 
+    font-size: 13px; 
     border-radius: 4px 4px 4px 4px;
 }
 

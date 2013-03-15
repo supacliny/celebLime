@@ -288,7 +288,7 @@ def register():
         description_default = DEFAULT_DESCRIPTION
         skills = []
         projects = []
-        keywords = convert_string_to_list(name) + convert_string_to_list(country) + convert_string_to_list(city) + convert_string_to_list(username) + convert_string_to_list((', '.join(fields))) + convert_string_to_list(country_code)
+        keywords = convert_string_to_list(name) + convert_string_to_list(country) + convert_string_to_list(city) + convert_string_to_list(username) + convert_string_to_list((','.join(fields)), ',') + convert_string_to_list(country_code)
         followers = {"profiles": []}
         following = {"profiles": [], "projects": []}
         portfolio = {}
@@ -342,15 +342,43 @@ def update():
             mongo.db.users.update({"username": profile}, {"$pull": {"followers.profiles": username_client}}, upsert=False)
 
         if command == 'update-skills' and origin == 'profile':
-            old_skills = user.get("skills", [])
-            new_skills = parameters.get("skills", [])
-            new_keywords = update_keywords(user_keywords, new_skills, old_skills)
+            skills = user.get("skills", [])
+            new_skills_keywords = parameters.get("skills", [])
+            old_skills_keywords = [entry['skill'] for entry in skills]
+            new_keywords = update_keywords(user_keywords, new_skills_keywords, old_skills_keywords)
+            new_skills = update_skills(new_skills_keywords, skills, "endorsers")
             mongo.db.users.update({"username": username_client}, {"$set": {"skills": new_skills}})
             mongo.db.users.update({"username": username_client}, {"$set": {"keywords": new_keywords}})
+            data = update_users_data(new_skills, "endorsers")
+            data = json.dumps(data)
+            return data
 
         if command == 'update-description' and origin == 'profile':
             description = parameters.get("description", "")
             mongo.db.users.update({"username": username_client}, {"$set": {"description": description}})
+
+
+        if command == 'endorse-user' and origin == 'profile':
+            project_owner = parameters.get("owner", "")
+            project_owner_user = get_user(project_owner)
+            skill = parameters.get("skill", "")
+            old_skills = project_owner_user.get("skills", [])
+            new_skills = update_user_in_skills(skill, username_client, old_skills, True, "endorsers")
+            mongo.db.users.update({"username": project_owner}, {"$set": {"skills": new_skills}})
+            data = update_users_data(new_skills, "endorsers")
+            data = json.dumps(data)
+            return data
+
+        if command == 'unendorse-user' and origin == 'profile':
+            project_owner = parameters.get("owner", "")
+            project_owner_user = get_user(project_owner)
+            skill = parameters.get("skill", "")
+            old_skills = project_owner_user.get("skills", [])
+            new_skills = update_user_in_skills(skill, username_client, old_skills, False, "endorsers")
+            mongo.db.users.update({"username": project_owner}, {"$set": {"skills": new_skills}})
+            data = update_users_data(new_skills, "endorsers")
+            data = json.dumps(data)
+            return data
 
         if command == 'follow-project' and origin == 'project':
             profile = parameters.get("following", "")
@@ -397,10 +425,10 @@ def update():
             old_skills_keywords = [entry['skill'] for entry in old_skills]
             new_skills_keywords = parameters.get("skills", [])
             new_keywords = update_keywords(project_keywords, new_skills_keywords, old_skills_keywords)
-            new_skills = update_project_skills(new_skills_keywords, old_skills)
+            new_skills = update_skills(new_skills_keywords, old_skills, "candidates")
             mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$set": {"projects.$.skills": new_skills}})
             mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$set": {"projects.$.keywords": new_keywords}})
-            data = update_candidate_data(new_skills)
+            data = update_users_data(new_skills, "candidates")
             data = json.dumps(data)
             return data
 
@@ -410,9 +438,9 @@ def update():
             skill = parameters.get("skill", "")
             project = get_project(project_owner, project_id)
             old_skills = project.get("skills", [])
-            new_skills = update_project_candidates(skill, username_client, old_skills, True)
+            new_skills = update_user_in_skills(skill, username_client, old_skills, True, "candidates")
             mongo.db.users.update({"username": project_owner, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": new_skills}})
-            data = update_candidate_data(new_skills)
+            data = update_users_data(new_skills, "candidates")
             data = json.dumps(data)
             return data
 
@@ -422,9 +450,9 @@ def update():
             skill = parameters.get("skill", "")
             project = get_project(project_owner, project_id)
             old_skills = project.get("skills", [])
-            new_skills = update_project_candidates(skill, username_client, old_skills, False)
+            new_skills = update_user_in_skills(skill, username_client, old_skills, False, "candidates")
             mongo.db.users.update({"username": project_owner, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": new_skills}})                  
-            data = update_candidate_data(new_skills)
+            data = update_users_data(new_skills, "candidates")
             data = json.dumps(data)
             return data
         
@@ -434,10 +462,10 @@ def update():
             skill = parameters.get("skill", "")
             project = get_project(username_client, project_id)
             old_skills = project.get("skills", [])
-            new_skills = remove_project_skill(skill, old_skills)
+            new_skills = remove_project_skill(skill, old_skills, "candidates")
             mongo.db.users.update({"username": username_client, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": new_skills}})
             mongo.db.users.update({"username": username_client, "projects.id": project_id}, {"$addToSet": {"projects.$.partners": {"skill": skill, "partner":candidate}}}) 
-            data = update_candidate_data(new_skills)
+            data = update_users_data(new_skills, "candidates")
             candidate_user = get_user(candidate)
             candidate_user_details = {}
             if candidate_user:
@@ -453,9 +481,9 @@ def update():
             skill = parameters.get("skill", "")
             project = get_project(username_client, project_id)
             old_skills = project.get("skills", [])
-            new_skills = update_project_candidates(skill, candidate, old_skills, False)
+            new_skills = update_user_in_skills(skill, candidate, old_skills, False, "candidates")
             mongo.db.users.update({"username": username_client, "projects.id": project_id, "projects.skills.skill": skill}, {"$set": {"projects.$.skills": new_skills}})
-            data = update_candidate_data(new_skills)
+            data = update_users_data(new_skills, "candidates")
             data = json.dumps(data)
             return data
 
@@ -634,7 +662,7 @@ def launch_project():
     if project:
         id = id + "-a"
     skills = skills.split(',') 
-    skills = initialize_project_skills(skills)
+    skills = initialize_skills(skills, "candidates")
     if request.method == 'POST':
         file = request.files['file']
         file_id = ""
@@ -1039,7 +1067,7 @@ def delete_file(file_id):
 
 def update_keywords(keywords, new, old):
     keywords = list(set(keywords) - set(old))
-    keywords = keywords + new
+    keywords = list(set(keywords + new))
     keywords = [word.lower() for word in keywords]
     return keywords
 
@@ -1077,34 +1105,34 @@ def stem_search_query(word):
     return word_temp
 
 
-# on creation add an empty candidate list for each skill
-def initialize_project_skills(skills):
-    skills_with_empty_candidates = []
+# on creation add an empty list for each skill
+def initialize_skills(skills, list_type):
+    skills_with_empty_list = []
     for skill in skills:
-        entry = {"skill": skill, "candidates": []}
-        skills_with_empty_candidates.append(entry)
-    return skills_with_empty_candidates
+        entry = {"skill": skill, list_type: []}
+        skills_with_empty_list.append(entry)
+    return skills_with_empty_list
 
 
 # new_skills is the new list of skills, old_skills is pulled from mongo
-def update_project_skills(new_skills, old_skills):
+def update_skills(new_skills, old_skills, list_type):
     updated_skills = []
     for skill in new_skills:
         entry = next((item for item in old_skills if item["skill"] == skill), None)
         if entry:
             updated_skills.append(entry)
         else:
-            updated_skills.append({"skill": skill, "candidates": []})
+            updated_skills.append({"skill": skill, list_type: []})
     return updated_skills
 
 
 # a helper function to update the entire skills field of a project
 # this is an attempt to work around mongo's inability to deal with multiple positional operators ($)
-def update_project_candidates(skill, candidate, old_skills, command):
+def update_user_in_skills(skill, candidate, old_skills, command, list_type):
     updated_skills = []
     for entry in old_skills:
         old_skill = entry["skill"]
-        candidates = entry["candidates"]
+        candidates = entry[list_type]
         if (old_skill == skill):
             if command:
                 candidates.append(candidate)
@@ -1115,16 +1143,16 @@ def update_project_candidates(skill, candidate, old_skills, command):
                     print e
             updated_skills.append(entry)
         else:
-            updated_skills.append({"skill": old_skill, "candidates": candidates})
+            updated_skills.append({"skill": old_skill, list_type: candidates})
     return updated_skills
 
 
 # remove a skill from the skills array
-def remove_project_skill(skill, old_skills):
+def remove_project_skill(skill, old_skills, list_type):
     new_skills = [x["skill"] for x in old_skills]
     try:
         new_skills.remove(skill)
-        return update_project_skills(new_skills, old_skills)
+        return update_skills(new_skills, old_skills, list_type)
     except Exception, e:
         print e 
         return old_skills
@@ -1132,9 +1160,9 @@ def remove_project_skill(skill, old_skills):
 
 # send any data concerning the user back to the client when updating project skills.
 # for now we'll send the name, username and pic
-def update_candidate_data(skills):
+def update_users_data(skills, list_type):
     for entry in skills:
-        candidates = entry.get("candidates", [])
+        candidates = entry.get(list_type, [])
         updated = []
         for candidate in candidates:
             user = get_user(candidate)
@@ -1142,7 +1170,7 @@ def update_candidate_data(skills):
                 pic = process_image(user["pic"])
                 new_entry = {"name": user["name"], "username": user["username"], "pic": pic}
                 updated.append(new_entry)
-        entry["candidates"] = updated
+        entry[list_type] = updated
     return skills
 
 

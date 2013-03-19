@@ -23,14 +23,16 @@ import gridfs
 
 DEBUG = False
 KEY = 'H\xb8\x8do\x8a\xfc\x80\x18\x06\xaf!i\x028\x1bPs\x85\xe7\x87\x11\xe6j\xb1'
-UPLOAD_FOLDER = os.path.realpath('.') + '/static/pics/'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS_PICS = set(['png', 'jpg', 'jpeg', 'gif', 'pdf'])
+ALLOWED_EXTENSIONS_VIDS = set(['mp4', 'mov', 'ogg', 'webm', 'ogv'])
+ALLOWED_EXTENSIONS = ALLOWED_EXTENSIONS_PICS.union(ALLOWED_EXTENSIONS_VIDS)
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 APP_STATIC = os.path.join(APP_ROOT, 'static')
 APP_STATIC_IMG = os.path.join(APP_STATIC, 'img')
 APP_STATIC_JS = os.path.join(APP_STATIC, 'js')
 APP_STATIC_CSS = os.path.join(APP_STATIC, 'css')
-ANONYMOUS = os.path.join(APP_STATIC_IMG, 'anonymous.jpg')
+ANONYMOUS_IMAGE = os.path.join(APP_STATIC_IMG, 'anonymous.jpg')
+ANONYMOUS_VIDEO = os.path.join(APP_STATIC_IMG, 'video.png')
 SEARCH_LIMIT = 10
 DEFAULT_DESCRIPTION = "Say something nice about yourself."
 COMMON_WORDS = ['a', 'able', 'about', 'across', 'after', 'all', 'almost', 'also', 'am', 'among', 'an', 'and', 'any', 'are', 'as', 'at', 'be', 'because', 'been', 'but', 'by', 'can', 'cannot', 'could', 'dear', 'did', 'do', 'does', 'either', 'else', 'ever', 'every', 'for', 'from', 'get', 'got', 'had', 'has', 'have', 'he', 'her', 'hers', 'him', 'his', 'how', 'however', 'i', 'if', 'in', 'into', 'is', 'it', 'its', 'just', 'least', 'let', 'like', 'likely', 'may', 'me', 'might', 'most', 'must', 'my', 'neither', 'no', 'nor', 'not', 'of', 'off', 'often', 'on', 'only', 'or', 'other', 'our', 'own', 'rather', 'said', 'say', 'says', 'she', 'should', 'since', 'so', 'some', 'than', 'that', 'the', 'their', 'them', 'then', 'there', 'these', 'they', 'this', 'tis', 'to', 'too', 'twas', 'us', 'wants', 'was', 'we', 'were', 'what', 'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'will', 'with', 'would', 'yet', 'you', 'your']
@@ -40,7 +42,6 @@ WORD_SUFFIX = ['s', 'ed', 'er', 'ing', 'mer', 'ist']
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = KEY
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 mongo = PyMongo(app)
 with app.test_request_context():
     fs = gridfs.GridFS(mongo.db)
@@ -527,7 +528,7 @@ def update():
         if command == 'delete-box' and origin == 'portfolio':
             media_id = parameters.get("media", "")
             mongo.db.users.update({"username": username_client}, {"$pull": {"portfolio.media": {"id": media_id}}})
-            delete_file(media)
+            delete_file(media_id)
 
         if command == 'submit-link' and origin == 'portfolio':
             link = parameters.get("link", "")
@@ -537,8 +538,8 @@ def update():
                     query = urlparse.parse_qs(url_data.query)
                     file_id = query["v"][0]
                     pic_link = "http://img.youtube.com/vi/" + file_id + "/0.jpg"
-                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"file": pic_link, "class": "videos", "id": str(file_id)}}})
-                    data = {"link": "youtube", "id": str(file_id), "class": "videos", "file": pic_link}
+                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"file": pic_link, "class": "youtube", "id": str(file_id)}}})
+                    data = {"link": "youtube", "id": str(file_id), "class": "youtube", "file": pic_link}
                     data = json.dumps(data)
                     return data
 
@@ -666,7 +667,7 @@ def launch_project():
     if request.method == 'POST':
         file = request.files['file']
         file_id = ""
-        if file and allowed_file(file.filename):
+        if file and (get_file_extension(file.filename) in ALLOWED_EXTENSIONS):
             filename = secure_filename(file.filename)
             file_id = fs.put(file, filename=filename)
 
@@ -713,7 +714,7 @@ def send():
 @app.route('/image/<path:id>')
 def get_image(id=None):
     if id == None:
-        file = open(ANONYMOUS, "rb")
+        file = open(ANONYMOUS_IMAGE, "rb")
         response = make_response(file.read())
         response.headers['Content-Type'] = 'image/jpeg'
         return response
@@ -724,6 +725,23 @@ def get_image(id=None):
     response.headers['Content-Type'] = 'image/jpeg'
     return response
 
+
+# serve only video files stored in gridfs
+@app.route('/video/')
+@app.route('/video/<path:id>')
+def get_video(id=None):
+    if id == None:
+        file = open(ANONYMOUS_VIDEO, "rb")
+        response = make_response(file.read())
+        response.headers['Content-Type'] = 'image/jpeg'
+        return response
+
+    id = str(id)
+    file_oid = bson.objectid.ObjectId(id)
+    file = fs.get(file_oid).read()
+    response = make_response(file)
+    response.headers['Content-Type'] = 'video/mp4'
+    return response
 
 # SOCIAL MEDIA LOGIN [
 
@@ -880,22 +898,27 @@ def upload_file():
     if request.method == 'POST':
         origin = request.form['origin']
         file = request.files['file']
-        if file and allowed_file(file.filename):
+        file_extension = get_file_extension(file.filename)
+        if file and file_extension in ALLOWED_EXTENSIONS:
             filename = secure_filename(file.filename)
             file_id = fs.put(file, filename=filename)
             if origin == "profile":
                 mongo.db.users.update({"username": username},{"$set": {"pic": str(file_id)}}, upsert=True)
                 if user["pic"]:
                     delete_file(user["pic"])
-                data = {}
-                data = json.dumps(data)
-                return data
 
             if origin == "portfolio":
-                mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"file": str(file_id), "class": "pictures", "id": str(file_id)}}}, upsert=True)
-                data = {"id": str(file_id), "class": "pictures", "file": str(file_id)}
-                data = json.dumps(data)
-                return data
+                if file_extension in ALLOWED_EXTENSIONS_PICS:
+                    mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"file": str(file_id), "class": "pictures", "id": str(file_id)}}}, upsert=True)
+                    data = {"id": str(file_id), "class": "pictures", "file": str(file_id)}
+                    data = json.dumps(data)
+                    return data
+
+                if file_extension in ALLOWED_EXTENSIONS_VIDS:
+                    mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"file": str(file_id), "class": "videos", "id": str(file_id)}}}, upsert=True)
+                    data = {"id": str(file_id), "class": "videos", "file": str(file_id)}
+                    data = json.dumps(data)
+                    return data
 
             if origin == "project":
                 project_id = request.form['id']
@@ -905,11 +928,11 @@ def upload_file():
                     project = next((item for item in projects if item["id"] == project_id), None)
                     if project:
                         delete_file(project["file"])
-                data = {}
-                data = json.dumps(data)
-                return data
 
-    return redirect(url_for('portfolio', username=username))
+    data = {}
+    data = json.dumps(data)
+    return data
+
 
 # ] FILE UPLOAD
 
@@ -1051,9 +1074,9 @@ def update_tw_info(username, user_details):
     mongo.db.users.update({"username": username},{"$set": {"twitter": user_details}})
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+def get_file_extension(filename):
+    if '.' in filename:
+        return filename.rsplit('.', 1)[1]
 
 
 # delete file from gridfs

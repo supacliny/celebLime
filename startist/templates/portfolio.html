@@ -109,46 +109,46 @@
     </section> <!-- #options --> 
 
     <div id="container">
-    {% if user.portfolio %}
-    {% for media in user.portfolio.media %}
-    <div class="box col2 {{ media.class }}" data-category="{{ media.class }}" id="{{ media.id }}">
+    {% if media %}
+    {% for entry in media %}
+    <div class="box col2 {{ entry.class }}" data-category="{{ entry.class }}" id="{{ entry.media_id }}" file="{{ entry.file_id }}">
       <div class="box-container">
 
         {% if session.logged_in and session.username == user.username %}
         <a class="delete" style="display: none; background: url('{{ url_for('static', filename='img/delete.png')}}') repeat scroll left top transparent;"></a>
         {% endif %}
 
-        {% if media.class == "pictures" %}
+        {% if entry.class == "pictures" %}
         <div class="thumbnail">
-          <img src="{{ process_image(media.file) }}"/>
+          <img src="{{ process_image(entry.file_id) }}"/>
         </div>
         {% endif %}
 
-        {% if media.class == "videos" %}
+        {% if entry.class == "videos" %}
         <div class="thumbnail">
-          <img src="{{ url_for('get_video') }}"/>
+          <img src="{{ process_image(entry.file_id, type=entry.class) }}"/>
         </div>
         {% endif %}
 
-        {% if media.class == "youtube" %}
+        {% if entry.class == "youtube" %}
         <div class="thumbnail">
-          <img src="{{ process_image(media.file) }}"/>
+          <img src="{{ process_image(entry.link) }}"/>
         </div>
         {% endif %}
 
-        {% if media.class == "soundcloud" %}
+        {% if entry.class == "soundcloud" %}
         <div class="thumbnail">
           <div class="soundcloud_thumbnail">
-            <img src="{{ process_image(media.file) }}"/>
+            <img src="{{ process_image(entry.link) }}"/>
           </div>
           <div class="soundcloud_iframe" style="display: none;">
-            {{ media.iframe | safe() }}
+            {{ entry.iframe | safe() }}
           </div>
         </div>
         {% else %}
         <div class="caption" style="display: none;">
-            {% if media.caption %}
-            <div class="caption-input">{{ media.caption }}</div>
+            {% if entry.caption %}
+            <div class="caption-input">{{ entry.caption }}</div>
             {% else %}
             <div class="caption-input">Add a caption</div>
             {% endif %}
@@ -159,8 +159,8 @@
 
         <div class="labels" style="display: none;">
             <div class="labels-input">
-            {% if media.labels %}
-            {% for label in media.labels %}  
+            {% if entry.labels %}
+            {% for label in entry.labels %}  
               <span><a href="{{ url_for('search', search="all") }}?search={{label}}">{{ label }}</a></span>
             {% endfor %}
             {% else %}
@@ -231,30 +231,30 @@
                     beforeSend: function() {},
                     success: function(data) {
                       $('input[type="text"]').val('');
-                      var type = data.link;
+                      var file_class = data.class;
 
-                      if (type == 'youtube')
+                      if (file_class == 'youtube')
                       {
-                        var file_id = data.id;
-                        var file_class = data.class;
-                        var file_src =  data.file;
+                        var media_id = data.media_id;
+                        var file_id = data.file_id;
+                        var file_src =  data.link;
                         var delete_button = $root + "/static/img/delete.png";
-                        var $newItems = $('<div class="box col2 ' + file_class + '" data-category="' + file_class + '" id="' + file_id + '"><div class="box-container"><a class="delete" style="display: none; background: url(' + delete_button + ') repeat scroll left top transparent;"></a><div class="thumbnail"><img src="' + file_src + '"/></div><div class="caption" style="display: none;"><div class="caption-input">Add a caption</div><button class="btn btn-small trigger" type="button">Edit</button></div><div class="labels" style="display: none;"><div class="labels-input"><hint>Add Labels</hint></div><div class="labels-input-edit" style="display:none;"><input name="tags" class="tags" id="' + file_id + '_tags"  value=""/></div><button class="btn btn-small edit" type="button">Edit</button></div></div></div>');
+                        var $newItems = $('<div class="box col2 ' + file_class + '" data-category="' + file_class + '" id="' + media_id + '" file="' + file_id +'"><div class="box-container"><a class="delete" style="display: none; background: url(' + delete_button + ') repeat scroll left top transparent;"></a><div class="thumbnail"><img src="' + file_src + '"/></div><div class="caption" style="display: none;"><div class="caption-input">Add a caption</div><button class="btn btn-small trigger" type="button">Edit</button></div><div class="labels" style="display: none;"><div class="labels-input"><hint>Add Labels</hint></div><div class="labels-input-edit" style="display:none;"><input name="tags" class="tags" id="' + media_id + '_tags"  value=""/></div><button class="btn btn-small edit" type="button">Edit</button></div></div></div>');
                       }
 
-                      if (type == 'soundcloud')
+                      if (file_class == 'soundcloud')
                       {
-                        var file_id = data.id;
-                        var file_class = data.class;
-                        var file_src = data.file;
+                        var media_id = data.media_id;
+                        var file_id = data.file_id;
+                        var file_src = data.link;
                         var iframe = data.iframe;
                         var delete_button = $root + "/static/img/delete.png";
-                        var $newItems = $('<div class="box col2 ' + file_class + '" data-category="' + file_class + '" id="' + file_id + '"><div class="box-container"><a class="delete" style="display: none; background: url(' + delete_button + ') repeat scroll left top transparent;"></a><div class="thumbnail"><div class="soundcloud_thumbnail"><img src="' + file_src + '"/></div><div class="soundcloud_iframe" style="display: none;">' + iframe + '</div></div>');
+                        var $newItems = $('<div class="box col2 ' + file_class + '" data-category="' + file_class + '" id="' + media_id + '" file="' + file_id +'"><div class="box-container"><a class="delete" style="display: none; background: url(' + delete_button + ') repeat scroll left top transparent;"></a><div class="thumbnail"><div class="soundcloud_thumbnail"><img src="' + file_src + '"/></div><div class="soundcloud_iframe" style="display: none;">' + iframe + '</div></div>');
                       }
 
                       $('#container').isotope( 'insert', $newItems );
 
-                      $('#'+ file_id + '_tags').tagsInput(
+                      $('#'+ media_id + '_tags').tagsInput(
                       {
                           'height':'32px',
                           'width':'338px',
@@ -278,14 +278,14 @@
 
               var category = $(this).parent().attr('data-category');
               if (category == 'videos'){
-                var video_id = $(this).parent().attr('id');
+                var video_id = $(this).parent().attr('file');
                 var video_src = $root + "/video/";
                 var content = '<img src="' + video_src + '"/>';
                 $(this).children('.thumbnail').html(content);
               }
 
               if (category == 'youtube'){
-                var video_id = $(this).parent().attr('id');
+                var video_id = $(this).parent().attr('file');
                 var content = '<img src="http://img.youtube.com/vi/' +  video_id + '/0.jpg"/>';
                 $(this).children('.thumbnail').html(content);
               }
@@ -308,7 +308,7 @@
 
               var category = $(this).parent().attr('data-category');
               if (category == 'videos'){
-                var video_id = $(this).parent().attr('id');
+                var video_id = $(this).parent().attr('file');
                 var video_src = $root + "/video/" + video_id;
                 var content = '<object width="340" height="340" type="application/x-shockwave-flash" data="{{ url_for("static", filename="js/jwplayer.flash.swf") }}"><param name="movie" value="{{ url_for("static", filename="js/jwplayer.flash.swf") }}" /><param name="flashvars" value="controlbar=over&amp;file=' + video_src + '" /><img src="{{ url_for("get_video") }}" width="340" height="340" alt="__TITLE__" title="No video playback capabilities, please download the video below" /></object><strong>Download Video: </strong><a href="' + video_src + '">Closed Format</a>';
 
@@ -316,7 +316,7 @@
                }
 
               if (category == 'youtube'){
-                var video_id = $(this).parent().attr('id');
+                var video_id = $(this).parent().attr('file');
                 var content = '<iframe class="youtube-player" type="text/html" width="340" height="300" src="http://www.youtube.com/embed/' + video_id + '" frameborder="0"></iframe>';
                 $(this).children('.thumbnail').html(content);
               }
@@ -542,40 +542,14 @@
           $("#"+checked).show();
       }); 
 
-      // test file upload without page refresh
-      $('#submit-iframe').load(function() {
-
-        var response = frames['submit-iframe'].document.getElementsByTagName("body")[0].innerHTML; 
-        var return_json = JSON.parse(response);
-        var file_id = return_json.id;
-        var file_class = return_json.class;
-
-        var delete_button = $root + "/static/img/delete.png";
-        var file_src = $root + "/image/" + file_id;
-
-        var $newItems = $('<div class="box col2 ' + file_class + '" data-category="' + file_class + '" id="' + file_id + '"><div class="box-container"><a class="delete" style="display: none; background: url(' + delete_button + ') repeat scroll left top transparent;"></a><div class="thumbnail"><img src="' + file_src + '"/></div><div class="caption" style="display: none;"><div class="caption-input">Add a caption</div><button class="btn btn-small trigger" type="button">Edit</button></div><div class="labels" style="display: none;"><div class="labels-input"><hint>Add Labels</hint></div><div class="labels-input-edit" style="display:none;"><input name="tags" class="tags" id="' + file_id + '_tags"  value=""/></div><button class="btn btn-small edit" type="button">Edit</button></div></div></div>');
-
-        $('#container').prepend( $newItems).isotope( 'reloadItems' ).isotope({ sortBy: 'original-order' });
-
-        $('#'+ file_id + '_tags').tagsInput(
-        {
-            'height':'32px',
-            'width':'338px',
-            'minChars' : 1
-        });
-
-        $('form').removeClass('fileupload-exists');
-        $('form').addClass('fileupload-new');
-        $('.fileupload-preview').html("");
-        $('input[type="text"]').val('');
-      });
-
+      // handle drag and drop
       Dropzone.options.myAwesomeDropzone = {
         init: function() {
           this.on("success", function(file, data) { 
             var response = JSON.parse(data);
             if (jQuery.isEmptyObject(response)){ return; }
-            var file_id = response.id;
+            var media_id = response.media_id;
+            var file_id = response.file_id;
             var file_class = response.class;
 
             var delete_button = $root + "/static/img/delete.png";
@@ -584,11 +558,11 @@
               file_src = $root + "/video/";
             }
 
-            var $newItems = $('<div class="box col2 ' + file_class + '" data-category="' + file_class + '" id="' + file_id + '"><div class="box-container"><a class="delete" style="display: none; background: url(' + delete_button + ') repeat scroll left top transparent;"></a><div class="thumbnail"><img src="' + file_src + '"/></div><div class="caption" style="display: none;"><div class="caption-input">Add a caption</div><button class="btn btn-small trigger" type="button">Edit</button></div><div class="labels" style="display: none;"><div class="labels-input"><hint>Add Labels</hint></div><div class="labels-input-edit" style="display:none;"><input name="tags" class="tags" id="' + file_id + '_tags"  value=""/></div><button class="btn btn-small edit" type="button">Edit</button></div></div></div>');
+            var $newItems = $('<div class="box col2 ' + file_class + '" data-category="' + file_class + '" id="' + media_id + '" file="' + file_id +'"><div class="box-container"><a class="delete" style="display: none; background: url(' + delete_button + ') repeat scroll left top transparent;"></a><div class="thumbnail"><img src="' + file_src + '"/></div><div class="caption" style="display: none;"><div class="caption-input">Add a caption</div><button class="btn btn-small trigger" type="button">Edit</button></div><div class="labels" style="display: none;"><div class="labels-input"><hint>Add Labels</hint></div><div class="labels-input-edit" style="display:none;"><input name="tags" class="tags" id="' + media_id + '_tags"  value=""/></div><button class="btn btn-small edit" type="button">Edit</button></div></div></div>');
 
             $('#container').isotope( 'insert', $newItems );
 
-            $('#'+ file_id + '_tags').tagsInput(
+            $('#'+ media_id + '_tags').tagsInput(
             {
                 'height':'32px',
                 'width':'338px',

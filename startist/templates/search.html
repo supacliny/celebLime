@@ -56,38 +56,27 @@
   </div>
 
   <div class="container-narrow">
+    {% if search == "profiles" %}
+    <h1>Profiles</h1>
+    {% endif %}
+    {% if search == "projects" %}
+    <h1>Projects</h1>
+    {% endif %}
+    {% if search == "portfolios" %}
+    <h1>Portfolios</h1>
+    {% endif %}
 
     <section id="options">
+    {% if search == "all" %}
         <h3>Filters</h3>
         <ul id="filters" class="option-set clearfix" data-option-key="filter">
-
-          {% if search == "all" %}
           <li><a href="#filter" data-option-value="*" class="selected">show all</a></li>
           <li><a href="#filter" data-option-value=".profiles">profiles</a></li>
           <li><a href="#filter" data-option-value=".projects">projects</a></li>
           <li><a href="#filter" data-option-value=".portfolios">portfolios</a></li>
-          {% endif %}
-          {% if search == "profiles" %}
-          <li><a href="#filter" data-option-value="*">show all</a></li>
-          <li><a href="#filter" data-option-value=".profiles" class="selected">profiles</a></li>
-          <li><a href="#filter" data-option-value=".projects">projects</a></li>
-          <li><a href="#filter" data-option-value=".portfolios">portfolios</a></li>
-          {% endif %}
-          {% if search == "projects" %}
-          <li><a href="#filter" data-option-value="*">show all</a></li>
-          <li><a href="#filter" data-option-value=".profiles">profiles</a></li>
-          <li><a href="#filter" data-option-value=".projects" class="selected">projects</a></li>
-          <li><a href="#filter" data-option-value=".portfolios">portfolios</a></li>
-          {% endif %}
-          {% if search == "portfolios" %}
-          <li><a href="#filter" data-option-value="*">show all</a></li>
-          <li><a href="#filter" data-option-value=".profiles">profiles</a></li>
-          <li><a href="#filter" data-option-value=".projects">projects</a></li>
-          <li><a href="#filter" data-option-value=".portfolios" class="selected">portfolios</a></li>
-          {% endif %}
-
         </ul>
-    </section> <!-- #options --> 
+    </section>
+    {% endif %}
   </div>
 
   <div id="container">
@@ -113,9 +102,18 @@
     {% endif %}
     {% if portfolios %}
     {% for media in portfolios %}
-    <div class="box col2 portfolios" data-category="portfolios" id="{{ media.id }}">
+    <div class="box col2 portfolios" data-category="portfolios" id="{{ media.media_id }}">
       <div class="thumbnail">
-        <a href="{{ url_for('portfolio', username=media.username) }}"><img src="{{ process_image(media.file) }} "/></a>
+        <a href="{{ url_for('portfolio', username=media.username) }}">
+          {% if media.class == "pictures" %}
+          <img src="{{ process_image(media.file_id) }} "/></a>
+          {% endif %}
+          {% if media.class == "videos" %}
+          <img src="{{ process_image(media.file_id, media.class) }} "/></a>
+          {% endif %}
+          {% if media.class == "youtube" or media.class == "soundcloud" %}
+          <img src="{{ process_image(media.link) }} "/></a>
+          {% endif %}
       </div>
     </div>
     {% endfor %}
@@ -139,9 +137,6 @@
               itemSelector : '.box',
               transformsEnabled: false,
               containerStyle: { position: 'relative' },
-              {% if search != 'all' %}
-              filter: '.{{ search }}'
-              {% endif %}
           });
         });
 

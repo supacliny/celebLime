@@ -202,7 +202,16 @@ def create_project(username):
 def portfolio(username):
     user = get_user(username)
     if user:
-        return render_template("portfolio.html", user=user)
+        media = []
+        portfolio = user.get("portfolio", [])
+        for media_id in portfolio:
+            media_entry = get_portfolio_media(username, media_id)
+            media_oid = media_entry.get("_id", "")
+            media_id = str(media_oid)
+            media_entry.pop("_id", None)
+            media_entry["media_id"] = media_id
+            media.append(media_entry)
+        return render_template("portfolio.html", user=user, media=media)
     abort(404)
 
 
@@ -292,7 +301,7 @@ def register():
         keywords = convert_string_to_list(name) + convert_string_to_list(country) + convert_string_to_list(city) + convert_string_to_list(username) + convert_string_to_list((','.join(fields)), ',') + convert_string_to_list(country_code)
         followers = {"profiles": []}
         following = {"profiles": [], "projects": []}
-        portfolio = {}
+        portfolio = []
 
         user = {"group": group, "name": name, "username": username, "email": email, "password": salted_password, "logins": 0, "facebook": facebook, "twitter": twitter, "added_at": current_time, "last_login_at": current_time, "ip": ip, "pic": pic, "country": country, "country_code": country_code, "city": city, "field": fields, "description": description_default, "skills": skills, "projects": projects, "followers": followers, "following": following, "keywords": keywords, "portfolio": portfolio}
 
@@ -319,6 +328,7 @@ def update():
     parameters = request.json['parameters']
     origin = request.json['origin']
     command = request.json['command']
+    current_time = int(time())
 
     # check authentication
     if username_client == username_session:
@@ -512,8 +522,11 @@ def update():
             new_caption_keywords = convert_string_to_list(new_caption)
             media_keywords = media.get("keywords", [])
             new_keywords = update_keywords(media_keywords, new_caption_keywords, old_caption_keywords)
-            mongo.db.users.update({"username": username_client, "portfolio.media.id": media_id}, {"$set": {"portfolio.media.$.caption": new_caption}})
-            mongo.db.users.update({"username": username_client, "portfolio.media.id": media_id}, {"$set": {"portfolio.media.$.keywords": new_keywords}})
+            media_oid = bson.objectid.ObjectId(media_id)
+            mongo.db.portfolios.update({"_id": media_oid}, {"$set": {"caption": new_caption}})
+            mongo.db.portfolios.update({"_id": media_oid}, {"$set": {"updated_at": current_time}})
+            mongo.db.portfolios.update({"_id": media_oid}, {"$set": {"keywords": new_keywords}})
+
 
         if command == 'update-labels' and origin == 'portfolio':
             media_id = parameters.get("media", "")
@@ -522,13 +535,21 @@ def update():
             old_labels = media.get("labels", [])
             media_keywords = media.get("keywords", [])
             new_keywords = update_keywords(media_keywords, new_labels, old_labels)
-            mongo.db.users.update({"username": username_client, "portfolio.media.id": media_id}, {"$set": {"portfolio.media.$.labels": new_labels}})
-            mongo.db.users.update({"username": username_client, "portfolio.media.id": media_id}, {"$set": {"portfolio.media.$.keywords": new_keywords}})
+            media_oid = bson.objectid.ObjectId(media_id)
+            mongo.db.portfolios.update({"_id": media_oid}, {"$set": {"labels": new_labels}})
+            mongo.db.portfolios.update({"_id": media_oid}, {"$set": {"updated_at": current_time}})
+            mongo.db.portfolios.update({"_id": media_oid}, {"$set": {"keywords": new_keywords}})
+
 
         if command == 'delete-box' and origin == 'portfolio':
             media_id = parameters.get("media", "")
-            mongo.db.users.update({"username": username_client}, {"$pull": {"portfolio.media": {"id": media_id}}})
-            delete_file(media_id)
+            media = get_portfolio_media(username_client, media_id)
+            file_id = media.get("file_id", "")
+            delete_file(file_id)
+            media_oid = bson.objectid.ObjectId(media_id)
+            mongo.db.portfolios.remove({"_id": media_oid})
+            mongo.db.users.update({"username": username_client}, {"$pull": {"portfolio": media_id}})
+            
 
         if command == 'submit-link' and origin == 'portfolio':
             link = parameters.get("link", "")
@@ -538,19 +559,24 @@ def update():
                     query = urlparse.parse_qs(url_data.query)
                     file_id = query["v"][0]
                     pic_link = "http://img.youtube.com/vi/" + file_id + "/0.jpg"
-                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"file": pic_link, "class": "youtube", "id": str(file_id)}}})
-                    data = {"link": "youtube", "id": str(file_id), "class": "youtube", "file": pic_link}
+                    media = {"class": "youtube", "file_id": str(file_id), "username": username_client, "added_at": current_time, "updated_at": current_time, "link": pic_link}
+                    media_id = mongo.db.portfolios.insert(media)
+                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio": str(media_id)}}, upsert=True)
+                    data = {"media_id": str(media_id), "class": "youtube", "file_id": str(file_id), "username": username_client, "added_at": current_time, "updated_at": current_time, "link": pic_link}
                     data = json.dumps(data)
                     return data
+
 
                 if 'soundcloud' in link:
                     path = urlparse.urlparse(link).path
                     response = requests.get('http://soundcloud.com/oembed?format=json&url=https://soundcloud.com' + str(path) + '&iframe=true&callback=')
                     result = response.json()
-                    html = result.get("html", "")
+                    iframe = result.get("html", "")
                     pic_link = result.get("thumbnail_url", "")
-                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio.media": {"file": pic_link, "class": "soundcloud", "id": str(path), "iframe": html}}})
-                    data = {"link": "soundcloud", "id": str(path), "class": "soundcloud", "file": pic_link, "iframe": html}
+                    media = {"class": "soundcloud", "file_id": str(path), "username": username_client, "added_at": current_time, "updated_at": current_time, "link": pic_link, "iframe": iframe}
+                    media_id = mongo.db.portfolios.insert(media)
+                    mongo.db.users.update({"username": username_client},{"$push": {"portfolio": str(media_id)}}, upsert=True)
+                    data = {"media_id": str(media_id), "class": "soundcloud", "file_id": str(path), "username": username_client, "added_at": current_time, "updated_at": current_time, "link": pic_link, "iframe": iframe}
                     data = json.dumps(data)
                     return data
 
@@ -575,9 +601,18 @@ def search(search):
     # there is a query term
     if query:
         query = query['search']
+
+        # but it is blank
+        if query == '':
+            users_cursor = mongo.db.users.find().limit(SEARCH_LIMIT)
+            users = users_cursor[:]
+            portfolios_cursor = mongo.db.portfolios.find().limit(SEARCH_LIMIT)
+            portfolios = portfolios_cursor[:]
+            return render_template("search.html", users=users, projects=projects, portfolios=portfolios, search=search)
+
         mongo.db.users.ensure_index([("keywords",ASCENDING)], sparse=True, background=True)
         mongo.db.users.ensure_index([("projects.keywords",ASCENDING)], sparse=True, background=True)
-        mongo.db.users.ensure_index([("portfolio.media.keywords",ASCENDING)], sparse=True, background=True)
+        mongo.db.portfolios.ensure_index([("keywords",ASCENDING)], sparse=True, background=True)
         query = query.split(' ')
         for word in query:
             word = stem_search_query(word)
@@ -598,20 +633,21 @@ def search(search):
                             project["username"] = user.get("username", "")
                             projects.append(project)
 
-                users_cursor = mongo.db.users.find({"portfolio.media.keywords": {'$regex': regex_word}}).limit(SEARCH_LIMIT)
-                for user in users_cursor:
-                    portfolio = user.get("portfolio", {}).get("media", [])
-                    for media in portfolio:
-                         keywords = media.get("keywords", [])
-                         if (any(word in item for item in keywords)):
-                            media["username"] = user.get("username", "")
-                            portfolios.append(media)
+                portfolios_cursor = mongo.db.portfolios.find({"keywords": {'$regex': regex_word}}).limit(SEARCH_LIMIT)
+                for media in portfolios_cursor:
+                     keywords = media.get("keywords", [])
+                     if (any(word in item for item in keywords)):
+                        media_oid = media.get("_id", "")
+                        media_id = str(media_oid)
+                        media.pop("_id", None)
+                        media["media_id"] = media_id
+                        portfolios.append(media)
 
 
         # get unique list of users, projects, portofolio
         users = {user['username']:user for user in users}.values()
         projects = {project['id']:project for project in projects}.values()
-        portfolios = {media['id']:media for media in portfolios}.values()
+        portfolios = {media['media_id']:media for media in portfolios}.values()
 
     # there is no query term
     else:
@@ -625,11 +661,7 @@ def search(search):
                 for project in projects_array:
                     project["username"] = user.get("username", "")
                     projects.append(project)
-                portfolio = user.get("portfolio", {}).get("media", [])
-                if portfolio:
-                    media = portfolio[0]
-                    media["username"] = user.get("username", "")
-                    portfolios.append(media)
+
             users = []
             portfolios = []        
 
@@ -735,13 +767,13 @@ def get_video(id=None):
         response = make_response(file.read())
         response.headers['Content-Type'] = 'image/jpeg'
         return response
-
     id = str(id)
     file_oid = bson.objectid.ObjectId(id)
     file = fs.get(file_oid).read()
     response = make_response(file)
     response.headers['Content-Type'] = 'video/mp4'
     return response
+
 
 # SOCIAL MEDIA LOGIN [
 
@@ -902,6 +934,7 @@ def upload_file():
         if file and file_extension in ALLOWED_EXTENSIONS:
             filename = secure_filename(file.filename)
             file_id = fs.put(file, filename=filename)
+            current_time = int(time())
             if origin == "profile":
                 mongo.db.users.update({"username": username},{"$set": {"pic": str(file_id)}}, upsert=True)
                 if user["pic"]:
@@ -909,14 +942,18 @@ def upload_file():
 
             if origin == "portfolio":
                 if file_extension in ALLOWED_EXTENSIONS_PICS:
-                    mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"file": str(file_id), "class": "pictures", "id": str(file_id)}}}, upsert=True)
-                    data = {"id": str(file_id), "class": "pictures", "file": str(file_id)}
+                    media = {"class": "pictures", "file_id": str(file_id), "username": username, "added_at": current_time, "updated_at": current_time}
+                    media_id = mongo.db.portfolios.insert(media)
+                    mongo.db.users.update({"username": username},{"$push": {"portfolio": str(media_id)}}, upsert=True)
+                    data = {"media_id": str(media_id), "class": "pictures", "file_id": str(file_id), "username": username, "added_at": current_time, "updated_at": current_time}
                     data = json.dumps(data)
                     return data
 
                 if file_extension in ALLOWED_EXTENSIONS_VIDS:
-                    mongo.db.users.update({"username": username},{"$push": {"portfolio.media": {"file": str(file_id), "class": "videos", "id": str(file_id)}}}, upsert=True)
-                    data = {"id": str(file_id), "class": "videos", "file": str(file_id)}
+                    media = {"class": "videos", "file_id": str(file_id), "username": username, "added_at": current_time, "updated_at": current_time}
+                    media_id = mongo.db.portfolios.insert(media)
+                    mongo.db.users.update({"username": username},{"$push": {"portfolio": str(media_id)}}, upsert=True)
+                    data = {"media_id": str(media_id), "class": "videos", "file_id": str(file_id), "username": username, "added_at": current_time, "updated_at": current_time}
                     data = json.dumps(data)
                     return data
 
@@ -1053,17 +1090,13 @@ def get_project(username, project_id):
 
 
 def get_portfolio_media(username, media_id):
-    user = mongo.db.users.find_one({"username": username})
-    try:
-        portfolio = user.get("portfolio", {}).get("media", [])
-        if portfolio:
-            media = next((item for item in portfolio if item["id"] == media_id), None)
-            if media:
-                return media
-            else:
-                return {}
-    except Exception:
-        return {}
+    media_oid = bson.objectid.ObjectId(media_id)
+    media = mongo.db.portfolios.find_one({"_id": media_oid})
+    if media:
+        media_username = media.get("username", "")
+        if media_username == username:
+            return media
+    return {}
 
 
 def update_fb_info(username, user_details):
@@ -1264,12 +1297,13 @@ def format_date(time):
     return date_time.strftime('%d %b %Y')
 
 
-# a pic can be an external http or local file
-def process_image(image=None):
+# a pic can be an external http or local file associated with a pic or video poster type
+def process_image(image=None, type=None):
     image = str(image)
     if "http" in image:
         return image
-
+    if type == 'videos':
+        return url_for('get_video', id=None)
     return url_for('get_image', id=image)
 
 

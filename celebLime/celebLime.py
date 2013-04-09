@@ -21,7 +21,6 @@ import requests
 ## CONFIG SETTINGS ##
 
 DEBUG = False
-# DEBUG = True
 CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"
 CONSUMER_SECRET = "cXfqDfMFBQutTMf9KpZWGt2HWDhBVxTajAqVDuFH7U"
@@ -32,6 +31,7 @@ else:
     CALLBACK_URL = "http://www.cvstechnology.ca/projects/celebLime/verify"
 
 app = Flask(__name__)
+app.debug = True
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = "\x89\x06\xc4\xf0\xc8&\x91\x01\x01\x8d^:\xb4b$\xa5u\x0b\xa8\xd7\x15\xa3\xd0\xab"
 mongo = PyMongo(app)
@@ -436,10 +436,15 @@ def user(screen_name, template="userpage.html"):
     return render_template(template, user=user, playlists=playlists, streaming=streaming, top_songs=top_songs, top_artists=top_artists, logged_in=logged_in, name=name, debug=DEBUG)
 
 
-def make_song_playlists(plist):
+def make_song_playlists(plist, inplace=True):
     playlist = []
     yt = []
     for song in plist:
+        if inplace:
+            try:
+                song["itunes"]["artworkUrl600"] = song["itunes"].get('artworkUrl100', "").replace("100x100","600x600")
+            except:
+                pass
         spotify_link = song.get("spotify",[]).get("href", "")
         if spotify_link:
             spotify_link = spotify_link.split(":")
@@ -448,11 +453,32 @@ def make_song_playlists(plist):
         vidid = song.get("youtube", []).get("videoid", "")
         if vidid:
             yt.append(vidid)
-    for index, song in enumerate(plist):
-        string_list = ','.join(map(str, playlist[index:]))
-        song["playlists"] = string_list
-        song["youtube_playlist"] = json.dumps(yt[index:])
+    if inplace:
+        for index, song in enumerate(plist):
+            string_list = ','.join(map(str, playlist[index:]))
+            song["playlists"] = string_list
+            song["youtube_playlist"] = json.dumps(yt[index:])
+    else:
+        string_list = ','.join(map(str, playlist))
+        pls = string_list
+        ytpls = json.dumps(yt)
+        return (pls, ytpls)
 
+def jsonify_playlist(p):
+    # { _id, songs: [{title, song}], spotify, youtube, played}
+    pl = []
+    pl["_id"] = p["_id"]
+    pl["songs"] = []
+    for s in p["songs"]:
+        ss = {"title":s["title"], "artist":s["artist"]}
+        pl["songs"].append(ss)
+    t = make_song_playlists(p["songs"], False)
+    pl["spotify"] = t[0]
+    pl["youtube"] = t[1]
+
+    pl["played"] = p["songs"][0].get("played_at", 0)
+
+    p['js'] = pl
 
 # ajax query to update the recently listened playlist
 @app.route("/old/poll/<screen_name>", methods = ["POST"])
@@ -1104,12 +1130,49 @@ def format_date(time):
         return date_time.strftime('%a %d %b %Y at %H:%M:%S')
 
 
+
+#rest get playlist data
+
+@app.route("/rest/playlist/<pid>", methods = ["GET"])
+def user_view_pid(pid):
+    playlist = []
+
+    # get all visible playlists for this userid and sort by descending updated date!
+    try:
+        p_id = bson.objectid.ObjectId(pid)
+        playlist = mongo.db.playlists.find_one(p_id)
+    except:
+        playlist = {}
+
+    songs = []
+    if playlist:
+        del playlist["_id"]
+        del playlist["token"]
+        song_ids = playlist.get("songs", [])
+    else :
+        song_ids = []
+
+
+    for song_id in song_ids:
+        # song_id is a dict string, convert to ObjectID
+        song_id = song_id["song_id"]
+        song_id = bson.objectid.ObjectId(song_id)
+        songinfo = mongo.db.songs.find_one(song_id)
+        if songinfo:
+            del songinfo["_id"]
+            songs.append(songinfo)
+            playlist["songs"] = songs
+
+    #print playlist
+
+    return Response(json.dumps(playlist), status=200, mimetype="application/json")
+
 # now apply this jinja2 template
 app.jinja_env.globals.update(format_date=format_date)
 app.debug = True
 
 if __name__ == "__main__":
     if DEBUG:
-        app.run(port=8000)
+        app.run(host="0.0.0.0", port=8000)
     else:
         app.run()

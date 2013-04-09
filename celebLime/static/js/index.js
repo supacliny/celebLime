@@ -76,9 +76,14 @@ $(document).on('click', '.music-links .spotify',function(event){
 
 
 // youtube player
+function onYouTubeIframeAPIReady() {
+    //maybe do something here later
+}
+
 $(document).on('click','.music-links .youtube', function(event){
+
   event.preventDefault();
-  var playerHeight = $(window).height() - 80 - 130 // compensate for main nav and thumbnails at bottom
+  var playerHeight = $(window).height() - 80 - 130; // compensate for main nav and thumbnails at bottom
   var track = $(this).attr('data-track'),
     artist = $(this).attr('data-artist');
 
@@ -89,10 +94,15 @@ $(document).on('click','.music-links .youtube', function(event){
   var container = $('<div id="youtubeplayer"></div>');
   container.css({'height':playerHeight});
 
+    var vidID = $(this).attr('href');
+    vidIDs = ytplist;
+    allvidIDs = vidIDs.slice(0);
+    allvidIDs.shift(5);
+    vidIDs.shift(1);
 
   // will hold video and info
-  var vid = $('<div class="videoholder"></div>');
-  vid.html('<iframe src="http://www.youtube.com/embed/'+$(this).attr('href')+'?rel=0&showinfo=0&autoplay=1&playlist='+ ytplist.slice(1).join() +'" frameborder="0" allowfullscreen></iframe>');
+  var vid = $('<div class="videoholder"><div id="ytPlayer"></div></div>');
+  //vid.html('<iframe src="http://www.youtube.com/embed/'+$(this).attr('href')+'?enablejsapi=1&rel=0&showinfo=0&autoplay=1&playlist='+ ytplist.slice(1).join() +'" frameborder="0" allowfullscreen></iframe>');
 
   // set up the info pane
   var videoInfo = $('<div class="videoinfo"></div>');
@@ -123,6 +133,33 @@ $(document).on('click','.music-links .youtube', function(event){
       });
     });
   });
+
+
+    //youtube stuff
+    //var player;
+    player = new YT.Player('ytPlayer', {
+        height: playerHeight,
+        width: '640',
+        videoId: vidID,
+        playerVars: {playlist:[vidIDs]},
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
+    });
+
+    function onPlayerReady(event) {
+        //player.loadPlaylist(vidIDs);
+        //player.setLoop(false);
+        event.target.playVideo();
+    }
+    function onPlayerStateChange(event) {
+        console.log(event.data);
+    }
+    function stopVideo() {
+        player.stopVideo();
+    }
+
 
 });
 

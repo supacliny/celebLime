@@ -5,6 +5,8 @@
   <title>CelebLime</title>
   <link rel="stylesheet" href="/projects/celebLime/static/css/styles.css" />
   <link rel="stylesheet" href="/projects/celebLime/static/css/extras.css" />
+  <script src="/projects/celebLime/static/js/jquery-1.9.1.min.js"></script>
+
 </head>
 <body>
   <header>
@@ -83,7 +85,9 @@
       {% for playlist in playlists %}
       <ul id="playlist_{{ playlist._id }}" class="aplaylist" style="display:none;">
         <script>
-            //var playlist_{{playlist._id}} = eval(" {{playlist | safe}} ");
+	    var tx = '{{playlist.js | safe}}';
+	    //tx = '('+tx+')';
+            var playlist_{{playlist._id}} = $.parseJSON(tx);
         </script>
         {% for song in playlist.songs %}
         <script>
@@ -133,7 +137,6 @@
 
     </div>
   </div>
-  <script src="/projects/celebLime/static/js/jquery-1.9.1.min.js"></script>
   <script src="/projects/celebLime/static/js/index.js"></script>
 </body>
 

@@ -380,6 +380,8 @@ def user(screen_name, template="userpage.html"):
             playlist["songs"] = songs
 
         make_song_playlists(playlist["songs"])
+        jsonify_playlist(playlist)
+
 
         playlists.append(playlist)
 
@@ -466,18 +468,22 @@ def make_song_playlists(plist, inplace=True):
 
 def jsonify_playlist(p):
     # { _id, songs: [{title, song}], spotify, youtube, played}
-    pl = []
-    pl["_id"] = p["_id"]
+    def es(x):
+        #return x
+        return x.replace("'", "&#39")
+    pl = {}
+    #pl["_id"] = p["_id"]
     pl["songs"] = []
     for s in p["songs"]:
-        ss = {"title":s["title"], "artist":s["artist"]}
+        ss = {"title":es(s["title"]), "artist":es(s["artist"])}
         pl["songs"].append(ss)
     t = make_song_playlists(p["songs"], False)
     pl["spotify"] = t[0]
-    pl["youtube"] = t[1]
+    pl["youtube"] = json.loads(t[1])
 
     pl["played"] = p["songs"][0].get("played_at", 0)
 
+    pl = json.dumps(pl)
     p['js'] = pl
 
 # ajax query to update the recently listened playlist

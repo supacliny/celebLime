@@ -23,6 +23,10 @@
     <script src="{{ url_for('static', filename='js/bootstrap-dropdown.js') }}"></script>
 
     <script>
+        //globals for the livestreaming to work
+        currentlyLivestreaming = false;
+        livestreamingLastplayed = 0;
+
         $(function() {
 
         $(".celeb").click(function() {
@@ -40,9 +44,9 @@
         });
 
         function store(name){
-              $.post("{ url_for('store') }}"+name, function() {
-              $('.tabs a:last').tab('show')  
-            });
+          $.post("{ url_for('store') }}"+name, function() {
+          $('.tabs a:last').tab('show')  
+          });
         }
 
     </script>
@@ -91,7 +95,7 @@
     </ul>
 
     <div class="tab-content">
-    {% if active %}      
+    {% if active %}
       <div class="tab-pane fade in active" id="celebrities">
     {% else %}
       <div class="tab-pane fade" id="celebrities">
@@ -100,7 +104,7 @@
 
 
       {% for c in celebs %}
- 
+
       <!-- row of columns -->
         <div rel="{{c.screen_name}}" class="span4 celeb" style="background-image: url('{{c.profile_image_url}}'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
           <h2>{{c.name | truncate(30)}}</h2>
@@ -126,7 +130,7 @@
      <div class="tab-pane fade" id="fans">
     {% else %}
      <div class="tab-pane fade in active" id="fans">
-    {% endif %}    
+    {% endif %}
       <div class="row">
       {% for f in fans %}
           <div rel="{{f.screen_name}}" class="span4 song celeb" style="color: #eeeddd; padding: 10px">
@@ -145,7 +149,7 @@
               {% endif %}
             {% endif %}
             </div>
-          </div> 
+          </div>
          {% if loop.last %}
            </div>
          {% else %}
@@ -155,7 +159,7 @@
            {% endif %}
          {% endif %}
       {% endfor %}
-      
+
      </div> <!-- /tab-content -->
     </div> <!-- /container -->
 

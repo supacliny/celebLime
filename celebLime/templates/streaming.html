@@ -8,7 +8,7 @@
             <div class="music-links">
               <a href="#" class="itunes"></a>
               <a href="spotify:trackset:Recent:{{ song.playlists }}" class="spotify"></a>
-              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" data-playlist='{{song.youtube_playlist | safe}}' class="youtube"></a>
+              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" data-playlist='{{song.youtube_playlist | safe}}'  data-id="streaming" data-idx="{{loop.index}}" class="youtube"></a>
               <a href="#" class="share"></a>
             </div>
           </div>

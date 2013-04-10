@@ -86,13 +86,9 @@
       <ul id="playlist_{{ playlist._id }}" class="aplaylist" style="display:none;">
         <script>
 	    var tx = '{{playlist.js | safe}}';
-	    //tx = '('+tx+')';
             var playlist_{{playlist._id}} = $.parseJSON(tx);
         </script>
         {% for song in playlist.songs %}
-        <script>
-            var youtube_{{playlist._id}} = {{song.youtube_playlist | safe}};
-        </script>
         <li>
           <img src="{{ song.itunes.artworkUrl600 }}">
           <div class="details">
@@ -101,7 +97,7 @@
             <div class="music-links">
               <a href="#" class="itunes"></a>
               <a href="spotify:trackset:{{ playlist.name }}:{{ song.playlists }}" class="spotify"></a>
-              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" data-playlist='{{song.youtube_playlist | safe}}' class="youtube"></a>
+              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" data-playlist='{{song.youtube_playlist | safe}}' data-id="{{playlist._id}}" data-idx="{{loop.index}}" class="youtube"></a>
               <a href="#" class="share"></a>
             </div>
           </div>
@@ -121,7 +117,7 @@
             <div class="music-links">
               <a href="#" class="itunes"></a>
               <a href="spotify:trackset:Top Songs:{{ song.playlists }}" class="spotify"></a>
-              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" data-playlist='{{song.youtube_playlist | safe}}' class="youtube"></a>
+              <a href="{{ song.youtube.videoid }}" data-artist="{{ song.artist }}" data-track="{{ song.title }}" data-playlist='{{song.youtube_playlist | safe}}' data-id="toptracks" data-idx="{{loop.index}}" class="youtube"></a>
               <a href="#" class="share"></a>
             </div>
           </div>

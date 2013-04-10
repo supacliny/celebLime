@@ -488,7 +488,10 @@ def jsonify_playlist(p):
     pl["spotify"] = t[0]
     pl["youtube"] = json.loads(t[1])
 
-    pl["played"] = p["songs"][0].get("played_at", 0)
+    try:
+        pl["played"] = p["songs"][0].get("played_at", 0)
+    except Exception, e:
+        print e
 
     pl = json.dumps(pl)
     p['js'] = pl

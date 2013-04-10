@@ -8,45 +8,25 @@
     <meta name="keywords" content="fanlime athlete celebrity fan music playlist">
     <meta name="author" content="cvstechnolgy">
 
-{% if debug %}
     <!-- styles -->
-    <link href="/static/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-    <link href="/static/css/docs.css" rel="stylesheet">
-    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="/static/css/bootstrap.css" rel="stylesheet">
-    <link href="/static/css/prettify.css" rel="stylesheet">
-    <link href="/static/css/index.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='img/icons/favicon.co') }}" rel="shortcut icon" type="image/x-icon"/>
+    <link href="{{ url_for('static', filename='css/docs.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-responsive.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/prettify.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
 
     <!-- javascript -->
-    <script src="/static/js/jquery.min.js"></script>
-    <script src="/static/js/bootstrap-tooltip.js"></script>
-    <script src="/static/js/bootstrap-tab.js"></script>
-    <script src="/static/js/bootstrap-dropdown.js"></script>
-{% else %}
-    <!-- styles -->
-    <link href="/projects/celebLime/static/img/icons/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
-    <link href="/projects/celebLime/static/css/docs.css" rel="stylesheet">
-    <link href="/projects/celebLime/static/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="/projects/celebLime/static/css/bootstrap.css" rel="stylesheet">
-    <link href="/projects/celebLime/static/css/prettify.css" rel="stylesheet">
-    <link href="/projects/celebLime/static/css/index.css" rel="stylesheet">
-
-    <!-- javascript -->
-    <script src="/projects/celebLime/static/js/jquery.min.js"></script>
-    <script src="/projects/celebLime/static/js/bootstrap-tooltip.js"></script>
-    <script src="/projects/celebLime/static/js/bootstrap-tab.js"></script>
-    <script src="/projects/celebLime/static/js/bootstrap-dropdown.js"></script>
-{% endif %}
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-tooltip.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-tab.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-dropdown.js') }}"></script>
 
     <script>
         $(function() {
 
         $(".celeb").click(function() {
-          {% if debug %}
-          document.location.href = "user/" + $(this).attr("rel");
-          {% else %}
-          document.location.href = "/projects/celebLime/user/" + $(this).attr("rel");
-          {% endif %}
+          document.location.href = "{{ url_for('user_view', screen_name=None) }}" + $(this).attr("rel");
         });
 
         });
@@ -60,12 +40,8 @@
         });
 
         function store(name){
-            {% if debug %}
-            $.post("/store/"+name, function() {
-            {% else %}
-            $.post("/projects/celebLime/store/"+name, function() {
-            {% endif %}  
-                $('.tabs a:last').tab('show')  
+              $.post("{ url_for('store') }}"+name, function() {
+              $('.tabs a:last').tab('show')  
             });
         }
 

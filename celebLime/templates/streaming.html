@@ -1,5 +1,14 @@
 {% if streaming %}
-        {% for song in streaming %}
+{% if now %}
+<a class="live" href="#">LIVE</a>
+{% else %}
+<a class="live" href="#">OFFLINE</a>
+{% endif %}
+<script>
+    var tx = '{{streaming.js | safe}}';
+    var playlist_streaming = $.parseJSON(tx);
+</script>
+        {% for song in streaming.songs %}
         <li>
           <img src="{{ song.itunes.artworkUrl100 }}">
           <div class="details">

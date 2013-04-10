@@ -8,3 +8,20 @@
     margin-right: 25px;
     margin-top: 25px;
 }
+
+.live {
+    background-color: #480000;
+    border: 1px solid #C57817;
+    border-radius: 3px 3px 3px 3px;
+    color: white;
+    display: block;
+    height: 25px;
+    line-height: 22px;
+    position: absolute;
+    top: -48px;
+    left: 200px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    width: 75px;
+}

@@ -382,10 +382,8 @@ def user(screen_name, template="userpage.html"):
         make_song_playlists(playlist["songs"])
         jsonify_playlist(playlist)
 
-
         playlists.append(playlist)
 
-#    raise Exception(playlists[0])
     streaming = []
 
     # sort recently played songs in descending order by date
@@ -396,9 +394,14 @@ def user(screen_name, template="userpage.html"):
         songinfo = mongo.db.songs.find_one({"_id": song_id})
         if songinfo:
             songinfo["played_at"] = song["played_at"]
+            songinfo["played_count"] = song["played_count"]
             streaming.append(songinfo)
 
-    make_song_playlists(streaming)
+    # added to make recent songs like a playlist
+    streaming_playlist = {}
+    streaming_playlist["songs"] = streaming
+    make_song_playlists(streaming_playlist["songs"])
+    jsonify_playlist(streaming_playlist)
 
     top_songs = []
 
@@ -410,7 +413,11 @@ def user(screen_name, template="userpage.html"):
         songinfo = mongo.db.songs.find_one({"_id": song_id})
         top_songs.append(songinfo)
 
-    make_song_playlists(top_songs)
+    # added to make top songs like a playlist
+    top_songs_playlist = {}
+    top_songs_playlist["songs"] = top_songs
+    make_song_playlists(top_songs_playlist["songs"])
+    jsonify_playlist(top_songs_playlist)
 
     artists = []
 
@@ -435,7 +442,7 @@ def user(screen_name, template="userpage.html"):
     top_artists = sorted(counter, key=counter.get, reverse=True)
     top_artists = top_artists[:6]
 
-    return render_template(template, user=user, playlists=playlists, streaming=streaming, top_songs=top_songs, top_artists=top_artists, logged_in=logged_in, name=name, debug=DEBUG)
+    return render_template(template, user=user, playlists=playlists, streaming=streaming_playlist, top_songs=top_songs_playlist, top_artists=top_artists, logged_in=logged_in, name=name, debug=DEBUG)
 
 
 def make_song_playlists(plist, inplace=True):
@@ -486,6 +493,7 @@ def jsonify_playlist(p):
     pl = json.dumps(pl)
     p['js'] = pl
 
+
 # ajax query to update the recently listened playlist
 @app.route("/old/poll/<screen_name>", methods = ["POST"])
 def poll_view_depr(screen_name):
@@ -528,9 +536,13 @@ def poll(screen_name, template="streaming.html"):
         if ((int(most_recent_song_start) + int(most_recent_song_duration)) >= int(time())):
             now = True
 
-    make_song_playlists(recent_songs)
+    # added to make recent songs like a playlist
+    streaming_playlist = {}
+    streaming_playlist["songs"] = recent_songs
+    make_song_playlists(streaming_playlist["songs"])
+    jsonify_playlist(streaming_playlist)
 
-    return render_template(template, streaming=recent_songs, now=now, debug=DEBUG)
+    return render_template(template, streaming=streaming_playlist, now=now, debug=DEBUG)
 
 
 # store session preferences - right place or use g?
@@ -1168,8 +1180,6 @@ def user_view_pid(pid):
             del songinfo["_id"]
             songs.append(songinfo)
             playlist["songs"] = songs
-
-    #print playlist
 
     return Response(json.dumps(playlist), status=200, mimetype="application/json")
 

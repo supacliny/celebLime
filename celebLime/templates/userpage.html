@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <title>CelebLime</title>
-  <link rel="stylesheet" href="/projects/celebLime/static/css/styles.css" />
-  <link rel="stylesheet" href="/projects/celebLime/static/css/extras.css" />
-  <script src="/projects/celebLime/static/js/jquery-1.9.1.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/extras.css') }}" />
+  <script src="{{ url_for('static', filename='js/jquery-1.9.1.min.js') }}"></script>
 
 </head>
 <body>
   <header>
     <div class="container">
-      <a href="/projects/celebLime/"><img src="/projects/celebLime/static/img/logo-music.png" alt="music" width="141" height="29" class="logo" /></a>
+      <a href="/"><img src="{{ url_for('static', filename='img/logo-music.png') }}" alt="music" width="141" height="29" class="logo" /></a>
       <a href="#" class="login">LOGIN</a>
     </div>
   </header>
   <div class="hero">
-      <div class="heroimage" style="background-image:url(/projects/celebLime/static/img/usain/hero.jpg);"></div>
+      <div class="heroimage" style="background-image:url({{ url_for('static', filename='img/usain/hero.jpg') }});"></div>
   </div>
   <div class="profile">
     <div class="container">
@@ -85,7 +85,7 @@
       {% for playlist in playlists %}
       <ul id="playlist_{{ playlist._id }}" class="aplaylist" style="display:none;">
         <script>
-	    var tx = '{{playlist.js | safe}}';
+	          var tx = '{{playlist.js | safe}}';
             var playlist_{{playlist._id}} = $.parseJSON(tx);
         </script>
         {% for song in playlist.songs %}
@@ -108,7 +108,12 @@
 
       {% if top_songs %}
       <ul id="playlist_toptracks" class="aplaylist" style="display:none">
-        {% for song in top_songs %}
+        <script>
+            var tx = '{{top_songs.js | safe}}';
+            var playlist_top_songs = $.parseJSON(tx);
+        </script>
+
+        {% for song in top_songs.songs %}
         <li>
           <img src="{{ song.itunes.artworkUrl100 }}">
           <div class="details">
@@ -133,7 +138,8 @@
 
     </div>
   </div>
-  <script src="/projects/celebLime/static/js/index.js"></script>
+  
+  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 
 
@@ -153,7 +159,7 @@
 
 
     function doPoll() {
-     $.post("/projects/celebLime/poll/{{ user.screen_name }}", function(data) {
+     $.post("{{ url_for('poll_view', screen_name=user.screen_name) }}", function(data) {
          $("#playlist_streaming").html(data);
          setTimeout(doPoll,10000);
      });

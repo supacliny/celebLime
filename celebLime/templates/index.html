@@ -44,7 +44,7 @@
         });
 
         function store(name){
-          $.post("{{ url_for('store') }}"+name, function() {
+          $.post("{{ url_for('store', pref=name) }}", function() {
           $('.tabs a:last').tab('show')  
           });
         }

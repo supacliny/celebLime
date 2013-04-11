@@ -1,14 +1,19 @@
 {% if streaming %}
-{% if now %}
-<a class="live" href="#">LIVE</a>
-{% else %}
-<a class="live" href="#">OFFLINE</a>
-{% endif %}
+<a class="listenLive" href="#">LISTEN LIVE</a>
 <script>
     var tx = '{{streaming.js | safe}}';
     var playlist_streaming = $.parseJSON(tx);
+
+    if (currentlyLivestreaming == true && livestreamingLastplayed != playlist_streaming['played']) {
+      makeYoutube('streaming', 1);
+      console.log('yes');
+    }
+    livestreamingLastplayed = playlist_streaming['played'];
+
+    console.log('tick');
 </script>
-        {% for song in streaming.songs %}
+
+{% for song in streaming.songs %}
         <li>
           <img src="{{ song.itunes.artworkUrl100 }}">
           <div class="details">

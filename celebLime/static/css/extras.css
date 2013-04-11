@@ -9,7 +9,7 @@
     margin-top: 25px;
 }
 
-.live {
+.listenLive {
     background-color: #480000;
     border: 1px solid #C57817;
     border-radius: 3px 3px 3px 3px;
@@ -23,5 +23,5 @@
     text-align: center;
     text-decoration: none;
     text-transform: uppercase;
-    width: 75px;
+    width: 120px;
 }

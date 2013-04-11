@@ -84,7 +84,6 @@ function onYouTubeIframeAPIReady() {
 
 function makeYoutube(id, idx) {
 
-
     var playerHeight = $(window).height() - 80 - 130; // compensate for main nav and thumbnails at bottom
     // var track = $(this).attr('data-track'),
         // artist = $(this).attr('data-artist');
@@ -96,12 +95,13 @@ function makeYoutube(id, idx) {
 
     var playlist = window['playlist_' + id];
     //needs to be global
+    YTindex = idx;
     YTplaylist = playlist;
     //console.log(playlist);
-    var songs = playlist['songs'];
+    // var songs = playlist['songs'];
     var ytplist = playlist['youtube'];
-    var artist = songs[idx]['artist'];
-    var track = songs[idx]['title'];
+    // var artist = songs[idx]['artist'];
+    // var track = songs[idx]['title'];
 
     // will contain the whole shebang
     var container = $("#youtubeplayer");
@@ -111,7 +111,7 @@ function makeYoutube(id, idx) {
     container.css({'height':playerHeight});
 
     //var vidID = $(this).attr('href');
-    var vidIDs = ytplist;
+    var vidIDs = ytplist.slice(0);
     var vidID =  vidIDs[0];
     var allvidIDs = vidIDs.slice(0);
     vidIDs.shift(1);
@@ -122,7 +122,8 @@ function makeYoutube(id, idx) {
 
         // set up the info pane
     var videoInfo = $('<div class="videoinfo"></div>');
-    videoInfo.html('<div class="title">'+track+'</div><div class="artist">'+artist+'</div><a href="#" class="share"></a><a href="#" class="close"></a>');
+    // videoInfo.html('<div class="title">'+track+'</div><div class="artist">'+artist+'</div><a href="#" class="share"></a><a href="#" class="close"></a>');
+    videoInfo.html('<div class="title"></div><div class="artist"></div><a href="#" class="share"></a><a href="#" class="close"></a>');
 
 
     // set up thumbnails
@@ -145,6 +146,7 @@ function makeYoutube(id, idx) {
             $('#youtubeplayer').animate({
                 'opacity': 0
             }, 500, function(){
+                currentlyLivestreaming = false;
                 $('#youtubeplayer').remove();
             });
         });
@@ -153,6 +155,7 @@ function makeYoutube(id, idx) {
 
     //youtube stuff
     //var player;
+    delete player;
     player = new YT.Player('ytPlayer', {
         height: playerHeight,
         width: '640',
@@ -163,30 +166,30 @@ function makeYoutube(id, idx) {
             'onStateChange': onPlayerStateChange
         }
     });
-
-    function onPlayerReady(event) {
-        //player.loadPlaylist(vidIDs);
-        //player.setLoop(false);
-        event.target.playVideo();
-    }
-
     lastPlayerState = -1;
-    function onPlayerStateChange(event) {
-        //player.playVideoAt()
-        var currentState = event.data;
-        if (lastPlayerState == -1 && currentState == 1) {
-            var idx = player.getPlaylistIndex();
-            setYoutubeVideoInfo(idx);
-        }
-        lastPlayerState = currentState;
-        //console.log(event.data);
-    }
-    function stopVideo() {
-        player.stopVideo();
-    }
+
 }
 
+function onPlayerReady(event) {
+    //player.loadPlaylist(vidIDs);
+    //player.setLoop(false);
+    event.target.playVideoAt(YTindex);
+    setYoutubeVideoInfo(YTindex);
+}
 
+function onPlayerStateChange(event) {
+    //player.playVideoAt()
+    var currentState = event.data;
+    if (lastPlayerState == -1 && currentState == 1) {
+        var idx = player.getPlaylistIndex();
+        setYoutubeVideoInfo(idx);
+    }
+    lastPlayerState = currentState;
+    console.log('state',event.data);
+}
+function stopVideo() {
+    player.stopVideo();
+}
 
 $(document).on('click','.music-links .youtube', function(event) {
     event.preventDefault();
@@ -265,3 +268,14 @@ function setYoutubeVideoInfo(idx) {
     $(".videoinfo .artist").html(artist);
     return;
 }
+
+
+$(document).on('click', '.listenLive', function(event){
+    event.preventDefault();
+
+    currentlyLivestreaming = true;
+    livestreamingLastplayed = playlist_streaming['played'];
+
+    makeYoutube('streaming', 1);
+});
+

@@ -23,10 +23,6 @@
     <script src="{{ url_for('static', filename='js/bootstrap-dropdown.js') }}"></script>
 
     <script>
-        //globals for the livestreaming to work
-        currentlyLivestreaming = false;
-        livestreamingLastplayed = 0;
-
         $(function() {
 
         $(".celeb").click(function() {
@@ -45,7 +41,7 @@
 
         function store(name){
           $.post("{{ url_for('store', pref=name) }}"+name, function() {
-          $('.tabs a:last').tab('show')  
+          $('.tabs a:last').tab('show')
           });
         }
 

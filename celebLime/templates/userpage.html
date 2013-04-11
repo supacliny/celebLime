@@ -12,7 +12,9 @@
   <header>
     <div class="container">
       <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='img/logo-music.png') }}" alt="music" width="141" height="29" class="logo" /></a>
+      {% if not logged_in %}
       <a href="{{ url_for('login') }}" class="login">LOGIN</a>
+      {% endif %}
     </div>
   </header>
   <div class="hero">
@@ -110,7 +112,7 @@
       <ul id="playlist_toptracks" class="aplaylist" style="display:none">
         <script>
             var tx = '{{top_songs.js | safe}}';
-            var playlist_top_songs = $.parseJSON(tx);
+            var playlist_toptracks = $.parseJSON(tx);
         </script>
 
         {% for song in top_songs.songs %}
@@ -138,13 +140,17 @@
 
     </div>
   </div>
-  
+
   <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 
 
 <script>
     $(function () {
+    //globals for the livestreaming to work
+    currentlyLivestreaming = false;
+    livestreamingLastplayed = 0;
+
 
     $(".sidebar .show_playlist a").click(function() {
       var show = $(this).attr("data-link");
@@ -161,7 +167,7 @@
     function doPoll() {
      $.post("{{ url_for('poll_view', screen_name=user.screen_name) }}", function(data) {
          $("#playlist_streaming").html(data);
-         setTimeout(doPoll,10000);
+         setTimeout(doPoll,3000);
      });
     }
 

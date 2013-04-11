@@ -1,5 +1,9 @@
 {% if streaming %}
+{% if now %}
 <a class="listenLive" href="#">LISTEN LIVE</a>
+{% else %}
+<a class="listenLive" href="#">OFFLINE</a>
+{% endif %}
 <script>
     var tx = '{{streaming.js | safe}}';
     var playlist_streaming = $.parseJSON(tx);

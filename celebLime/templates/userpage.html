@@ -117,7 +117,7 @@
 
         {% for song in top_songs.songs %}
         <li>
-          <img src="{{ song.itunes.artworkUrl100 }}">
+          <img src="{{ song.itunes.artworkUrl600 }}">
           <div class="details">
             <div class="track">{{ song.title | truncate(60) }}</div>
             <div class="artist">{{ song.artist | truncate(60) }}</div>

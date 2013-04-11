@@ -53,7 +53,7 @@ table {
 /* colors */
 /* global etc */
 body {
-  background: url(/static/img/bg-body.png) repeat white;
+  background: url({{ url_for('static', filename='img/bg-body.png') }}) repeat white;
   font-family: "walsheim", Verdana, Arial, san-serif; }
 
 .container {
@@ -171,7 +171,7 @@ header {
       .profile .info .social a {
         color: #2f9397;
         text-decoration: none;
-        background: url(../img/social.png) no-repeat;
+        background: url({{ url_for('static', filename='img/social.png') }}) no-repeat;
         margin-right: 15px;
         line-height: 20px;
         padding: 5px 0 5px 25px; }
@@ -213,7 +213,7 @@ header {
       font-family: walsheim_bold, verdana, arial;
       text-transform: uppercase; }
     .content .sidebar li.add {
-      background: url(../img/icon-add.png) 170px center no-repeat; }
+      background: url({{ url_for('static', filename='img/icon-add.png') }}) 170px center no-repeat; }
       .content .sidebar li.add a {
         color: #d48119; }
         .content .sidebar li.add a:hover {
@@ -271,7 +271,7 @@ header {
       display: inline;
       width: 40px;
       height: 40px;
-      background: url("../img/icons-music.png");
+      background: url({{ url_for('static', filename='img/icons-music.png') }});
       background-repeat: no-repeat;
       margin-right: 30px; }
       .main.grid .music-links a.itunes {
@@ -316,7 +316,7 @@ header {
         display: inline;
         width: 28px;
         height: 28px;
-        background: url("../img/icons-music-small.png");
+        background: url({{ url_for('static', filename='img/icons-music-small.png') }});
         background-repeat: no-repeat;
         margin-right: 15px; }
         .main.list li .details .music-links a.itunes {
@@ -335,7 +335,7 @@ header {
   width: 113px; }
   .toggleview a {
     background-color: #d9d9d9;
-    background-image: url(../img/icons-music-view.png);
+    background-image: url({{ url_for('static', filename='img/icons-music-view.png') }});
     background-repeat: no-repeat;
     position: absolute;
     top: 0;
@@ -373,7 +373,7 @@ header {
   width: 100%;
   top: 80px;
   position: fixed;
-  background: url(/static/img/bg-infobar.png) repeat;
+  background: url({{ url_for('static', filename='img/bg-infobar.png') }}) repeat;
   z-index: 9999;
   display: none; }
   #infobar .toggleview {
@@ -396,7 +396,7 @@ header {
 #spotifyplayer {
   background-color: white;
   background-color: rgba(255, 255, 255, 0.8);
-  background-image: url(../img/loading.gif);
+  background-image: url({{ url_for('static', filename='img/loading.gif') }});
   background-position: center center;
   background-repeat: no-repeat;
   position: fixed;
@@ -468,7 +468,7 @@ header {
         font-size: 0.8em;
         margin: 0 20px; }
       #youtubeplayer .videoholder .videoinfo .close {
-        background: url(../img/icon-youtubeclose.png) no-repeat;
+        background: url({{ url_for('static', filename='img/icons-youtubeclose.png') }}) no-repeat;
         position: absolute;
         top: 20px;
         right: 20px;
@@ -477,7 +477,7 @@ header {
       #youtubeplayer .videoholder .videoinfo .share {
         width: 40px;
         height: 40px;
-        background-image: url("../img/icons-music.png");
+        background-image: url({{ url_for('static', filename='img/icons-music.png') }});
         background-position: -200px 0;
         background-repeat: no-repeat;
         position: absolute;
@@ -495,7 +495,7 @@ header {
     position: absolute;
     bottom: -130px;
     left: 0;
-    background: url(/static/img/bg-infobar.png) repeat; }
+    background: url({{ url_for('static', filename='img/bg-infobar.png') }}) repeat; }
     #youtubeplayer .videothumbnails .thumbs {
       overflow: hidden;
       height: 130px; }
@@ -504,7 +504,7 @@ header {
       height: 42px;
       position: absolute;
       top: 47px;
-      background-image: url(/img/youtubebuttons.png);
+      background-image: url({{ url_for('static', filename='img/youtubebuttons.png') }});
       background-repeat: no-repeat;
       z-index: 9; }
     #youtubeplayer .videothumbnails .yt-prev {

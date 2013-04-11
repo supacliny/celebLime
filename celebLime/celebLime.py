@@ -477,7 +477,9 @@ def jsonify_playlist(p):
     # { _id, songs: [{title, song}], spotify, youtube, played}
     def es(x):
         #return x
-        return x.replace("'", "&#39")
+        x = x.replace("'", "&#39;")
+        x = x.replace("\"", "&#34;")
+        return x
     pl = {}
     #pl["_id"] = p["_id"]
     pl["songs"] = []

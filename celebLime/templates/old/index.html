@@ -50,38 +50,23 @@
  </head>
 
   <body>
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-        {% if not logged_in %}
-          <a class="brand" href="{{ url_for('home') }}">
-              <img src="{{ url_for('static', filename='img/logo-music.png') }}" alt="music" width="141" height="29" class="logo">
-          </a>
-          <a class="manage" href="{{ url_for('login') }}">login</a>
-        {% else %}
-          <a class="brand" href="{{ url_for('home') }}">celebLime</a>
-          <div class="dropdown">
-            <b class="caret"></b>
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">{{ name }}</a>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-              <li>
-                <a href="{{ url_for('logout') }}" tabindex="-1">Sign out celebLime</a>
-              </li>
-            </ul>
-          </div>
-          <div class="manage">Welcome</div>
-        {% endif %}
-        </div>
-      </div>
-    </div>
 
-    <div class="container">
+    <header>
+      <div class="container">
+	<a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='img/logo-music.png') }}" alt="music" width="141" height="29" class="logo" /></a>
+	{% if not logged_in %}
+	<a href="{{ url_for('login') }}" class="login">LOGIN</a>
+	{% endif %}
+      </div>
+    </header>
 
       <!-- Main banner -->
       <div class="hero-unit">
         <h1>Look. Listen. Live.</h1>
         <p>Sync your music with the playlists of celebrities.</p>
       </div>
+
+    <div class="container">
 
     <ul class="nav nav-tabs">
     {% if active %}
@@ -104,14 +89,14 @@
 
       {% for c in celebs %}
       <!-- row of columns -->
-        <div rel="{{c.screen_name}}" class="span4 celeb" style="background-image: url('{{c.profile_image_url}}'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px; background-size: cover; background-repeat: repeat; background-position: 50% 50%;">
+        <div rel="{{c.screen_name}}" class="span4 celeb" style="background-image: url('{{c.profile_image_url}}'); color: #eeeddd; padding: 10px; width: 353px; height: 165px; border-radius: 3px; background-size: cover; background-repeat: repeat; background-position: 50% 50%;">
           <h2>{{c.name | truncate(30)}}</h2>
           <div class="headphones">
           {% if c.now %}
-            <now>Now Playing</now><div class="name" rel="tooltip" title="{{ c.mr_song_title }} by {{ c.mr_song_artist }}">{{ c.mr_song_title | truncate(20) }}</div>
+            <now>Now Playing</now><div class="name" rel="tooltip" title="{{ c.mr_song_title }} by {{ c.mr_song_artist }}">{{ c.mr_song_title | truncate(25) }}</div>
           {% else %}
             {% if c.mr_song_title %}
-            <last>Last Played</last><div class="name" rel="tooltip" title="{{ c.mr_song_title }} by {{ c.mr_song_artist }}">{{ c.mr_song_title | truncate(20) }}</div>
+            <last>Last Played</last><div class="name" rel="tooltip" title="{{ c.mr_song_title }} by {{ c.mr_song_artist }}">{{ c.mr_song_title | truncate(25) }}</div>
             {% else %}
             <empty>Nothing Played</empty>
             {% endif %}
@@ -138,10 +123,10 @@
             </div>
             <div class="rowB">
             {% if f.now %}
-              <nowfan>Now Playing</nowfan><div class="namefan" rel="tooltip" title="{{ f.mr_song_title }} by {{ f.mr_song_artist }}">{{ f.mr_song_title | truncate(15) }}</div>
+              <nowfan>Now Playing</nowfan><div class="namefan" rel="tooltip" title="{{ f.mr_song_title }} by {{ f.mr_song_artist }}">{{ f.mr_song_title | truncate(25) }}</div>
             {% else %}
               {% if f.mr_song_title %}
-              <lastfan>Last Played</lastfan><div class="namefan" rel="tooltip" title="{{ f.mr_song_title }} by {{ f.mr_song_artist }}">{{ f.mr_song_title | truncate(15) }}</div>
+              <lastfan>Last Played</lastfan><div class="namefan" rel="tooltip" title="{{ f.mr_song_title }} by {{ f.mr_song_artist }}">{{ f.mr_song_title | truncate(25) }}</div>
               {% else %}
               <emptyfan>Nothing Played</emptyfan>
               {% endif %}

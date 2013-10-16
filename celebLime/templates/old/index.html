@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>celebLime</title>
+    <title>CelebLime</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="A web application that publishes music playlists from a mobile application by celebrities.">
     <meta name="keywords" content="fanlime athlete celebrity fan music playlist">
@@ -103,9 +103,8 @@
 
 
       {% for c in celebs %}
-
       <!-- row of columns -->
-        <div rel="{{c.screen_name}}" class="span4 celeb" style="background-image: url('{{c.profile_image_url}}'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px;">
+        <div rel="{{c.screen_name}}" class="span4 celeb" style="background-image: url('{{c.profile_image_url}}'); color: #eeeddd; padding: 10px; width: 280px; height: 165px; border-radius: 3px; background-size: cover; background-repeat: repeat; background-position: 50% 50%;">
           <h2>{{c.name | truncate(30)}}</h2>
           <div class="headphones">
           {% if c.now %}

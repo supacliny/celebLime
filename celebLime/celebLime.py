@@ -200,6 +200,9 @@ def home():
 
     for i in tfans:
         if i["screen_name"] in ["fanlimeDRose", "fanlimeBolt"]:
+            # replace normal size image to big size                                                                                                                                                        
+            celeb_image = i["profile_image_url"]
+            i["profile_image_url"] = celeb_image.replace('_normal', '')
             celebs.append(i)
         else:
             fans.append(i)

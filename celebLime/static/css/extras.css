@@ -2,11 +2,15 @@
     background-color: #54b2bf;
     color: white; }
 
-.profile .avatar img {
+.profile .avatar .image {
     border: 5px solid #E0E0E0;
-    margin-left: 25px;
-    margin-right: 25px;
-    margin-top: 25px;
+    margin-left: 15px;
+    margin-top: 15px;
+    width: 150px;
+    height: 160px;
+    background-size: cover;
+    background-repeat: repeat;
+    background-position: 50% 50%;
 }
 
 .listenLive {

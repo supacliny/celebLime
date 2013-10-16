@@ -353,6 +353,10 @@ def user(screen_name, template="userpage.html"):
     screen_name = str(screen_name)
     user = mongo.db.users.find_one({"screen_name": screen_name})
 
+    # get the bigger profile image url
+    user_image = user["profile_image_url"]
+    user["profile_image_url"] = user_image.replace('_normal', '')
+
     # behind the scenes use twitter id
     user_id = user["twitter_id"]
 

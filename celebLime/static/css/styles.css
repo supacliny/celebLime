@@ -125,8 +125,9 @@ header {
     bottom: 0;
     left: 0;
     background: white; }
-    .profile .avatar img {
-      border-bottom: 1px solid #e0e0e0; }
+    .profile .avatar .image-container {
+      position: relative;
+      overflow: hidden; }
     .profile .avatar .follow {
       background-color: #679924;
       border: 1px solid #608e21;

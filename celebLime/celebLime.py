@@ -20,7 +20,7 @@ import requests
 
 ## CONFIG SETTINGS ##
 
-DEBUG = False
+DEBUG = True
 CONSUMER_TOKEN = "169194713-GNag4qKFdwHsOTn0vpaRtLGssCTGolct7Qcp3AUv"
 CONSUMER_KEY = "DXRAHKyo7akk8CvscsRivg"
 CONSUMER_SECRET = "cXfqDfMFBQutTMf9KpZWGt2HWDhBVxTajAqVDuFH7U"
@@ -213,13 +213,15 @@ def home():
 # first half of twitter oauth - go to twitter login page, then redirect to home page
 @app.route("/login")
 def login():
-    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET, CALLBACK_URL)
+    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET, CALLBACK_URL, secure=True)
 
     try:
         redirect_url = auth.get_authorization_url(True)
+        print redirect_url
         session["request_token"] = (auth.request_token.key,auth.request_token.secret)
         return redirect(redirect_url)
-    except tweepy.TweepError:
+    except tweepy.TweepError, e:
+        print e
         print "Access error! Failed to get request token."
         return redirect(url_for("home"))
 
@@ -246,7 +248,7 @@ def verify():
     # otherwise we are clear
     verifier = request.args["oauth_verifier"]
 
-    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET, secure=True)
 
     token = session.get("request_token")
     session.pop("request_token", None)

@@ -217,7 +217,6 @@ def login():
 
     try:
         redirect_url = auth.get_authorization_url(True)
-        print redirect_url
         session["request_token"] = (auth.request_token.key,auth.request_token.secret)
         return redirect(redirect_url)
     except tweepy.TweepError, e:
